@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Dante Commedia · Inferno — MS Harley 3459
+   Dante's Commedia · Inferno — ms. Harley 3459
    Digital Scholarly Edition — Application
    ========================================================================== */
 
@@ -118,7 +118,7 @@ function parseCommedia(doc) {
     const headEl = qsaTEI(cantoDiv, 'head')[0];
     const heading = headEl ? headEl.textContent.trim() : `Canto ${toRoman(n)}`;
 
-    // Walk through children to build a page-aware structure
+    // 
     const elements = []; // {type: 'pb'|'cb'|'terzina', ...}
     walkCantoChildren(cantoDiv, elements);
 
@@ -380,7 +380,7 @@ function renderCommentaryNode(node) {
         state.noteCounter++;
         const noteId = `app-${Date.now()}-${state.noteCounter}`;
         const content = `Lem.: ${lem.textContent.trim()} | Var.: ${rdg.textContent.trim()}`;
-        return `${escapeHTML(lem.textContent.trim())}<span class="note-indicator app-indicator" data-note-id="${noteId}" data-note-title="Apparato" data-note-content="${escapeHTML(content)}" title="Apparato filologico">⊕</span>`;
+        return `${escapeHTML(lem.textContent.trim())}<span class="note-indicator app-indicator" data-note-id="${noteId}" data-note-title="Apparato" data-note-content="${escapeHTML(content)}" title="Apparato filologico">🔍</span>`;
       }
     }
     // Render lem only
@@ -395,7 +395,7 @@ function renderCommentaryNode(node) {
     if (orig && reg) {
       const origContent = renderCommentaryChildren(orig);
       const regContent = renderCommentaryChildren(reg);
-      return `<span class="choice-reg" title="Lezione regolarizzata">${regContent}</span><span class="choice-orig" title="Lezione originale">${origContent}</span>`;
+      return `<span class="choice-reg" title="Lezione emendata">${regContent}</span><span class="choice-orig" title="Lezione originale">${origContent}</span>`;
     }
     if (reg) return renderCommentaryChildren(reg);
     if (orig) return renderCommentaryChildren(orig);
@@ -803,9 +803,9 @@ function renderTerzina(el) {
     for (const m of margins) {
       if (m.type === 'non_verbal') {
         const symbol = m.content.trim() || '⸿';
-        marginHtml += `<span class="margin-indicator nonverbal" data-margin-type="non_verbal" data-margin-content="${escapeHTML(symbol)}" data-margin-place="${m.place}" title="Segno marginale">⸿</span>`;
+        marginHtml += `<span class="margin-indicator nonverbal" data-margin-type="non_verbal" data-margin-content="${escapeHTML(symbol)}" data-margin-place="${m.place}" title="Segno marginale non verbale">⸿</span>`;
       } else {
-        marginHtml += `<span class="margin-indicator" data-margin-type="verbal" data-margin-content="${escapeHTML(m.content)}" data-margin-place="${m.place}" title="Annotazione marginale">m</span>`;
+        marginHtml += `<span class="margin-indicator" data-margin-type="verbal" data-margin-content="${escapeHTML(m.content)}" data-margin-place="${m.place}" title="Annotazione al margine">m</span>`;
       }
     }
 
@@ -927,7 +927,7 @@ function showMarginTooltip(e, indicator) {
   const placeLabels = {
     'external_margin': 'Margine esterno',
     'internal_margin': 'Margine interno',
-    'intercolumn': 'Intercolonnio',
+    'intercolumn': 'Intercolumnio',
     'inferior_margin': 'Margine inferiore',
   };
 
