@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dante, Commedia · Inferno — MS Harley 3459</title>
+  <title>Dante Alighieri, Commedia · Chiose Latine Volgarizzate — ms. Harley 3459</title>
   <meta name="description" content="Edizione scientifica digitale dell'Inferno di Dante dal MS Harley 3459 (British Library), a cura di Serena Malatesta.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">  
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -32,7 +31,7 @@
       <div class="header-actions">
         <div class="search-container">
           <i data-lucide="search" class="search-icon"></i>
-          <input type="text" id="searchInput" class="search-input" placeholder="Cerca nel testo e nel commento...">
+          <input type="text" id="searchInput" class="search-input" placeholder="Cerca nel testo e nel commento... (Ctrl+K)">
           <div id="searchResults" class="search-results"></div>
         </div>
         <button id="darkModeToggle" class="icon-btn" aria-label="Tema scuro/chiaro" title="Tema scuro/chiaro">
@@ -176,15 +175,14 @@
      <section class="about-section">
   <h3>Licenza</h3>
   <p>
-    © Università degli Studi di Padova, 2025; Université de Tours. 
+    © Università degli Studi di Padova - Université de Tours 2025. 
     Edizione distribuita con licenza 
     <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">
       CC BY-NC-SA 4.0
     </a>.
   </p>
   <p>
-    Le immagini del manoscritto sono state realizzate mediante metodi <em>homemade</em> 
-    e pubblicate con il consenso della British Library.
+    Le riproduzioni digitali del manoscritto sono state eseguite con mezzi propri e pubblicate su autorizzazione della British Library.
   </p>
 </section>
       </div>
@@ -205,6 +203,7 @@
   <!-- Margin tooltip -->
   <div id="marginTooltip" class="margin-tooltip"></div>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="app.js"></script>
 <script data-pplx-inline-edit>
 (function(){
@@ -269,3 +268,4 @@
 })();
 </script></body>
 </html>
+
