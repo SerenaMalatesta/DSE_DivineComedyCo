@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
+	schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Marginalia to Dante’s Inferno according to MS Harley 3459</title>
+            <editor resp="transcription, encoding">Serena Malatesta</editor>
+         </titleStmt>
+
+         <publicationStmt>
+            <publisher>University of Padua – Université de Tours</publisher>
+            <pubPlace>Padua</pubPlace>
+            <date when="2025">2025</date>
+         </publicationStmt>
+
+         <sourceDesc>
+            <p> This file contains the marginal annotations (verbal and non-verbal) transmitted in
+               MS Harley 3459 alongside Dante’s *Inferno*. Notes are encoded using &lt;note&gt; with
+               @place attributes and are linked to the base text through @target pointers. </p>
+         </sourceDesc>
+      </fileDesc>
+
+      <encodingDesc>
+         <projectDesc>
+            <p> This marginal apparatus is encoded following TEI P5 and relies on XInclude to
+               synchronise with the base transcription. All non-verbal signs (piedimosca / capitulum
+               / maniculae) are encoded as custom characters declared in &lt;charDecl&gt;. </p>
+         </projectDesc>
+
+         <charDecl>
+            <char xml:id="piedimosca">
+               <unicodeProp name="Name" value="CAPITULUM"/>
+               <unicodeProp name="Block" value="Supplemental_Punctuation"/>
+               <mapping type="unicode">U+2E3F</mapping>
+               <desc>Segno (capitulum / piedimosca) usato nei commenti medievali.</desc>
+            </char>
+         </charDecl>
+      </encodingDesc>
+      <profileDesc>
+         <langUsage>
+            <language ident="it">Medieval Italian</language>
+         </langUsage>
+      </profileDesc>
+
+      <revisionDesc>
+         <change when="2025-03-01"> Initial encoding of verbal and non-verbal marginalia. </change>
+      </revisionDesc>
+   </teiHeader>
+
+
+
+   <text>
+      <body>
+
+         <xi:include href="commedia_inferno.xml" xpointer="Inferno"/>
+         <!-- MARGINE INF.1 -->
+         <!-- Carta 2r -->
+         <div type="canto" n="1">
+            <pb n="2r" facs="#c2r" corresp="#carta_002r"/>
+
+            <div type="margin" xml:id="Ha_Marg_Inf.01">
+               <p>
+                  <note place="internal_margin">
+                     <ref type="non_verbal" target="#Inf.01.001" corresp="#piedimosca"
+                        xml:id="Ha-An-Ma-Inf.01.001"><g ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.01.002" corresp="#piedimosca"
+                        xml:id="Ha-An-Ma-Inf.01.002"><g ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.01.013" corresp="#piedimosca"
+                        xml:id="Ha-An-Ma-Inf.01.013"><g ref="#piedimosca"/></ref>
+                     <ref type="verbal" target="#Inf.01.032" xml:id="Ha-An-Ma-Inf.01.032"> [32 -
+                        Lonza] lusuria </ref>
+                  </note>
+                  <note place="intercolumn">
+                     <ref type="non_verbal" target="#Inf.01.043" corresp="#piedimosca"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.01.049" corresp="#piedimosca"><g
+                           ref="#piedimosca"/></ref>
+                  </note>
+                  <note place="external_margin">
+                     <note type="verbal" target="#Inf.01.041" xml:id="Ha-An-Ma-Inf.01.041"> [41]
+                        Pone se per buono ingiunge per la buona sensualità regolata dalla dritta
+                        ragione</note>
+                     <note type="verbal" target="#Inf.01.045" xml:id="Ha-An-Ma-Inf.01.045"> [45 -
+                        Leone] La superbia </note>
+                     <note type="verbal" target="#Inf.01.049" xml:id="Ha-An-Ma-Inf.01.049"> [49 –
+                        Lupa] L’avarizia </note>
+                     <note type="verbal" target="#Inf.01.052" xml:id="Ha-An-Ma-Inf.01.052"> [52]
+                        Pone per la selva questo mondo e la scurità per li peccati </note>
+                     <note type="verbal" target="#Inf.01.079" xml:id="Ha-An-Ma-Inf.01.079"> [79 -
+                        Virgilio] Cioè la ragione filosofica e naturale quanta per uomo umano e per
+                        istudio se ne può avere</note>
+                  </note>
+               </p>
+            </div>
+         </div>
+
+         <!-- MARGINE INF.2 -->
+         <div type="canto" n="2">
+            <!-- Carta 4r -->
+            <pb n="4r" facs="#c2r" corresp="#carta_004r"/>
+            <cb n="a"/>
+            <div type="margin" xml:id="Ha_Marg_Inf.02">
+               <p>
+                  <note place="internal_margin">
+                     <ref type="non_verbal" target="#Inf.02.013" xml:id="Ha-An-Ma-Inf.02.013"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.02.016" xml:id="Ha-An-Ma-Inf.02.016"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.02.022" xml:id="Ha-An-Ma-Inf.02.022"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.02.025" xml:id="Ha-An-Ma-Inf.02.025"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.02.027" xml:id="Ha-An-Ma-Inf.02.027"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.02.028" xml:id="Ha-An-Ma-Inf.02.028"><g
+                           ref="#piedimosca"/></ref>
+                  </note>
+                  <cb n="B"/>
+                  <note place="intercolumn">
+                     <ref type="non_verbal" target="#Inf.02.052" xml:id="Ha-An-Ma-Inf.02.052"><g
+                           ref="#piedimosca"/></ref>
+                     <ref type="non_verbal" target="#Inf.02.076" xml:id="Ha-An-Ma-Inf.02.076"><g
+                           ref="#piedimosca"/></ref>
+                  </note>
+                  <!-- Carta 4v -->
+                  <pb n="4v" facs="#c4v"/>
+                  <cb n="A"/>
+                  <note place="internal_margin">
+                     <ref type="verbal" target="#Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094">Per questa
+                        cosa</ref>
+                     <ref type="non_verbal" target="#Inf.02.103" xml:id="Ha-An-Ma-Inf.02.103"><g
+                           ref="#piedimosca"/></ref>
+                  </note>
+                  <note place="inferior_margin">
+                     <ref type="verbal" target="#Ha-An-Ma-Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094_2"
+                        >Per questa cosa dice essere uscito di 'nferno questa donna è solamente la
+                        carità <add place="supralinear">divina</add> la quale è fondamento di nostra
+                        salute <choice>
+                           <orig><subst>
+                                 <del rend="erased">la prima</del>
+                                 <add>dellalmetre</add>
+                              </subst></orig>
+                           <reg>dell'altre tre</reg>
+                        </choice>, la quale è fondamento di nostra salute. Dell’altre tre sì è la
+                        divina grazia, sentimento e scienzia, lume di teologia: queste utime sono le
+                        tre donne benedette che parlano di lui ne la corte del cielo. Per Lucia la
+                        grazia di Dio misericordiosa e nimica d’ogni crudeltà.</ref>
+                  </note>
+               </p>
+            </div>
+         </div>
+
+         <!-- MARGINE INF.3 -->
+         <!-- Carta 5v -->
+         <div n="3" type="canto">
+            <pb n="5v" facs="#c5v" corresp="#carta_005v"/>
+            <div type="margin" xml:id="Ha_Marg_Inf.03">
+               <div type="margin" xml:id="Ha_Marg_Inf.03.052">
+                  <p>
+                     <note place="internal_margin">
+                        <ref type="verbal" target="#Inf.03.052" xml:id="Ha-An-Ma-Inf.03.052"><quote>
+                              [52] <emph>E io che rig<supplied reason="omitted">uardai</supplied>
+                                 ecc.</emph></quote></ref> Nel mondo presente, né già di questa
+                        generazione, una parte è in significazione di merito, per la ’nsigna degli
+                        eletti; l’altra parte è in significazione di punizione, voltando la ’nsegna <choice>
+                           <orig>ttuttavia</orig>
+                           <reg>tuttavia</reg>
+                        </choice> e <subst>
+                           <del rend="erased">erina</del>
+                           <add>ritornando</add>
+                        </subst> e voltando in un proposito, sí come questi dannati, non mai fermati
+                        in uno de’ due propositi, notabilemente mantenersi statosi, cioè che non
+                        furono vivi né ’n bene né ’n male.</note></p>
+               </div>
+
+               <pb n="6r" facs="#c6r" corresp="#carta_006r"/>
+               <div type="margin" xml:id="Ha_Marg_Inf.03.109">
+                  <p>
+                     <note place="internal_margin">
+                        <ref type="verbal" xml:id="Ha-An-Ma-Inf.03.109">Lo dimonio dimostra al
+                           peccatore vivo in Dio molta misericordia e poca giustizia per farlo
+                           pecare; ma quand’è morto, li fa tutto l’opposito e vagli col vero e dice:
+                           « Tu sse’ pessima persona, e però meriti lo ’nferno e non sperar mai
+                           vedere el cielo nella faccia di Dio ». <quote>[109] <emph>Caron
+                                 dimonio</emph></quote>: è interpetrato Caron razionem, cioè per
+                           ragione; per nave: cioè non essere il peccatore in penitenza di suoi
+                           pecati a la morte finale.</ref></note>
+                  </p>
+               </div>
+            </div>
+         </div>
+
+         <!-- MARGINE INF.4 -->
+         <div n="4" type="canto">
+            <div type="margin" xml:id="Ha_Marg_Inf.04">
+               <div type="margin" xml:id="Ha_Marg_Inf.04.053">
+                  <p>
+                     <note place="intercolumn">
+                        <ref type="verbal" target="#Inf.03.053" xml:id="Ha-An-Ma-Inf.03.053"><quote>
+                              [53] <emph>Quasi vuol dire che per 3 modi si soleva
+                              salvare</emph></quote></ref> ma tutti a un fine dirizzati, cioè a la
+                        fede di Christo. E questo è parlare d’Ugho da San Vitore, che dice che al
+                        tempo di Moisè era a sufficienza credere Idio per sua misericordia riparare.
+                        Questo era da Moisè inanzi. E da Moisè in qua credere Idio manderebe Messia,
+                        e verrebe a riparare la legge. E venuto che fu Christo, credere per lo
+                        battesimo chome llui ordinò.</note></p>
+               </div>
+               <div type="margin" xml:id="Ha_Marg_Inf.04.087">
+                  <p>
+                     <note place="external_margin">
+                        <ref type="verbal" target="#Inf.03.087" xml:id="Ha-An-Ma-Inf.03.087"><quote>
+                              [87] <emph>Homerio per la giustizia</emph></quote></ref>; <ref
+                           type="verbal" target="#Inf.03.088" xml:id="Ha-An-Ma-Inf.03.088"><quote>
+                              [88] <emph>Horazio per la prudenza</emph></quote></ref>; <ref
+                           type="verbal" target="#Inf.03.089" xml:id="Ha-An-Ma-Inf.03.089"><quote>
+                              [89] <emph>Hovidio per la temperanza</emph></quote></ref>; <ref
+                           type="verbal" target="#Inf.03.090" xml:id="Ha-An-Ma-Inf.03.090"><quote>
+                              [90] <emph>Lucano per la fortezza</emph></quote></ref>. <ref
+                           type="verbal" target="#Inf.03.121" xml:id="Ha-An-Ma-Inf.03.121">Sì che
+                           aggiunto a queste IIII la ragione filosofica e naturale e lo buono e
+                           diritto ingegno, con queste sei si può cominciare a fare buone
+                           operazioni. <quote> [121] <emph>Eletra pone per la madre de’
+                              forti</emph></quote></ref>; <ref type="verbal" target="#Inf.03.122"
+                           xml:id="Ha-An-Ma-Inf.03.122"><quote> [122] <emph>Ettor significa la
+                                 costanza</emph></quote></ref>; <ref type="verbal"
+                           target="#Inf.03.123" xml:id="Ha-An-Ma-Inf.03.123"><quote> [123]
+                                 <emph>Enea la lunganimità</emph></quote></ref>; <ref type="verbal"
+                           target="#Inf.03.124" xml:id="Ha-An-Ma-Inf.03.124"><quote> [124]
+                                 <emph>Cammilla castità e verginità</emph></quote></ref>; <ref
+                           type="verbal" target="#Inf.03.125" xml:id="Ha-An-Ma-Inf.03.125"><quote>
+                              [125] <emph>Pantasalea pudicizia</emph></quote>, cioè non si
+                           congiungere con uomo umano, se non per avere figliuoli. E essa venne a
+                           tTroia per avere figliuoli d’Ettor, ma non poté, il perché essa morì
+                           vergine; e fu donna di grandissima vertù.</ref>
+                        <ref type="verbal" target="#Inf.03.126" xml:id="Ha-An-Ma-Inf.03.126"><quote>
+                              [126] <emph>Lo re Latino e</emph></quote></ref>
+                        <ref type="verbal" target="#Inf.03.127" xml:id="Ha-An-Ma-Inf.03.127"><quote>
+                              [127] <emph>Lavina pone per la inteligenza</emph></quote></ref>; <ref
+                           type="verbal" target="#Inf.03.128" xml:id="Ha-An-Ma-Inf.03.128"><quote>
+                              [128] <emph>Bruto per la fortezza acquistata e abituata ne
+                                 l’animo</emph></quote></ref>. <ref type="verbal"
+                           target="#Inf.03.129" xml:id="Ha-An-Ma-Inf.03.129"><quote> [129]
+                                 <emph>Lucrezia, Iulia, Marzia, Cornelia</emph></quote>: quattro
+                           romane caste e con virtù quanta essere potesse</ref>; <ref type="verbal"
+                           target="#Inf.03.130" xml:id="Ha-An-Ma-Inf.03.130"><quote> [130] <emph>il
+                                 Saladino fu uomo di tanta vertù</emph></quote> , che vuole il poeta
+                           che fusse solo cioè che i·llui furono tutte opere di virtù. </ref>
+                        <ref type="verbal" target="#Inf.03.060" xml:id="Ha-An-Ma-Inf.03.060"><quote>
+                              [60] <emph>Papa Celestrino</emph></quote></ref> pone per uom idioto e
+                        però lo mette tra la scongiurati. <ref type="verbal" target="#Inf.06.013"
+                           xml:id="Ha-An-Ma-Inf.04.013"><quote> [13]
+                           <emph>Cerbero</emph></quote></ref> per lo vizio de la gola. </note>
+                  </p>
+               </div>
+
+               <pb n="7v" facs="#c7v" corresp="#carta_007v"/>
+               <div type="margin" xml:id="Ha_Marg_Inf.04.084">
+                  <p>
+                     <note place="inferior_margin">
+                        <ref type="verbal" target="#Inf.03.084" xml:id="Ha-An-Ma-Inf.04.084"><quote>
+                              [84] <emph>Né ttrista né llieta</emph></quote></ref>: non trista
+                        perché non avevon gran pene arispetto delli altri, e non lieti perché non
+                        avevono la groria e dice <ref type="verbal" target="#Inf.04.083"
+                           xml:id="Ha-An-Ma-Inf.03.083"><quote> [83]
+                           <emph>grandi</emph></quote></ref> per istudio, per vertù, per iscienzia.
+                           <ref type="verbal" target="#Inf.03.088" xml:id="Ha-An-Ma-Inf.04.088"
+                              ><quote> [88] <emph>Homero pone co la spada</emph></quote> per un de’
+                           primi singulari poeti, e dice che tutti a quattro gli fano onore perché
+                           studiò e’ loro libri e nella loro gentilezza di scienza e sapienza, onde
+                           ne li resurge grande onore.</ref> Per <ref type="verbal"
+                           target="#Inf.03.095" xml:id="Ha-An-Ma-Inf.04.095"><quote> [95]
+                                 <emph>l’altissimo canto</emph></quote> la poesia non per grandezza,
+                           ma per l’entrare fittivo.</ref>
+                     </note>
+                  </p>
+               </div>
+
+
+               <div type="margin" xml:id="Ha_Marg_Inf.04.000">
+                  <p>
+                     <note place="inferior_margin"> Due pene hanno e’ peccatori: ja di perduta
+                        visione di Dio; ija di sentita pena. </note>
+                  </p>
+               </div>
+            </div>
+         </div>
+      </body>
+   </text>
+</TEI>

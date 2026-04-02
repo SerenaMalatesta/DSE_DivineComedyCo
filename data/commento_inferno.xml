@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
+	schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Commentary to Dante’s Inferno from MS Harley 3459 (Volgarised Latin Glosses of
+               the Anonymous Lombard)</title>
+            <editor resp="transcription, encoding">Serena Malatesta</editor>
+            <respStmt>
+               <resp>Digital edition and TEI encoding</resp>
+               <name>Serena Malatesta</name>
+            </respStmt>
+         </titleStmt>
+
+         <editionStmt>
+            <edition n="1.0" xml:lang="en"> Digital scholarly edition of the vernacular commentary
+               to Dante’s Inferno as transmitted in MS Harley 3459. </edition>
+         </editionStmt>
+
+         <publicationStmt>
+            <publisher>University of Padua – Digital Philology Unit</publisher>
+            <pubPlace>Padua</pubPlace>
+            <date when="2025">2025</date>
+         </publicationStmt>
+
+         <sourceDesc>
+            <p> This file contains the vernacular commentary to Dante’s <emph>Inferno</emph>
+               preserved in London, British Library, MS Harley 3459. The commentary is a
+                  <emph>volgarised</emph> version of the medieval Latin glosses on the
+                  <emph>Commedia</emph>, closely related to the exegetical tradition attributed to
+               the so-called <quote>Anonymous Lombard</quote>. The transcription is diplomatic and
+               reflects the linguistic and scribal features of the manuscript. </p>
+         </sourceDesc>
+      </fileDesc>
+
+      <encodingDesc>
+         <projectDesc>
+            <p> This file constitutes the base transcription of <emph>Inferno</emph> encoded in TEI
+               P5 from the manuscript MS Harley 3459 (British Library). The encoding retains
+               original orthography, scribal corrections, erasures, supralinear additions, and
+               material structure (folios and columns). </p>
+         </projectDesc>
+
+         <editorialDecl>
+            <normalization>
+               <p>The edition presented here adopts an interpretative approach, while retaining a
+                  semi-diplomatic transcription in cases where it is considered useful to keep track
+                  of the graphic and linguistic peculiarities of late 15th-century Florentine. The
+                     <emph>h</emph> in the combinations <emph>cha</emph>, <emph>cho</emph>,
+                     <emph>gha</emph>, <emph>gho</emph>, etc. will be eliminated, as will the
+                     <emph>i</emph> in <emph>cie</emph>, <emph>gie</emph> (<emph>ripingieua,
+                     dispregiera, progienie</emph>), except in the cases of <emph>cielo</emph> and
+                     <emph>leggiera</emph>. The groups <emph>lgl</emph> and <emph>ngn</emph> will
+                  also be reduced to <emph>gl</emph> and <emph>gn</emph>, and the article
+                     <emph>gl</emph> before a-, o-, u- will be reduced to <emph>gli</emph>.
+                  Similarly, <emph>et</emph> will be reduced to <emph>e</emph>, and the forms
+                     <emph>ho</emph> (conjunction) and <emph>he</emph> (stressed verb) will be
+                  reduced to <emph>o</emph> and <emph>è</emph>. The combinations <emph>ss</emph> +
+                  consonant (sstarai) will also be reduced to <emph>s</emph>. The editor's
+                  interventions will be marked with the encoding: &lt;choice&gt; &lt;orig&gt;
+                  &lt;reg&gt;.</p>
+            </normalization>
+            <correction>
+               <p>Scribal corrections are encoded using &lt;subst&gt;, &lt;add&gt;, and
+                  &lt;del&gt;.</p>
+            </correction>
+            <interpretation>
+               <p>Phonosyntactic phenomena are represented through the custom character “middle_dot”
+                  (U+00B7).</p>
+            </interpretation>
+            <punctuation>
+               <p>Punctuation is standardised.</p>
+            </punctuation>
+         </editorialDecl>
+
+         <charDecl>
+            <char xml:id="piedimosca">
+               <unicodeProp name="Name" value="CAPITULUM"/>
+               <unicodeProp name="Block" value="Supplemental_Punctuation"/>
+               <mapping type="unicode">U+2E3F</mapping>
+               <desc>Medieval capitulum sign.</desc>
+            </char>
+
+            <char xml:id="middle_dot">
+               <unicodeProp name="Name" value="MIDDLE DOT"/>
+               <unicodeProp name="Block" value="Latin-1 Supplement"/>
+               <mapping type="unicode">U+00B7</mapping>
+               <desc>Editorial phonosyntactic marker.</desc>
+            </char>
+         </charDecl>
+      </encodingDesc>
+   </teiHeader>
+
+
+   <text>
+      <body xml:id="commentary_inferno">
+         <xi:include href="commedia_inferno.xml" xpointer="Inferno"/>
+
+         <!-- commentary istituzionale -->
+         <!-- commentary INF.1 -->
+         <div n="1" type="commentary" xml:id="Ha_An_Inf.01">
+            <!-- Carta 2vb -->
+            <pb n="2v" facs="#c2v"/>
+            <cb n="b"/>
+            <div type="commentary" xml:id="Ha_An_Inf.01.001">
+               <p>
+                  <ref target="#Inf.01.001"> [1] <quote><emph>Nel mezzo del cammin di nostra
+                           vita</emph></quote></ref>. In questo luogo intende l'autore che egli era
+                  nel torno di trentatrè anni, insino al qual tempo crescono le virtù del corpo e da
+                  indì innanzi cominciano a mancare. E però dice <mentioned>nel mezzo</mentioned>
+                  quasi come sia in fra 'l crescere el menovare; e ancora perché quel tempo può
+                  essere appellato mezzo corso di nostra vita umana assai giustamente. E però dice
+                  il profeta: <cit>
+                     <quote xml:lang="lat"> «Anni <app>
+                           <lem>Sion</lem>
+                           <rdg>sicut</rdg>
+                        </app> aranea meditabuntur: dies annorum nostrorum in <app
+                           type="philological">
+                           <lem>ipsis</lem>
+                           <rdg>psis</rdg>
+                        </app> LXX anni» </quote>
+                     <note type="philological-note"> Cfr. Ps. 90 9-10 e ms. A Agg. alla glossa Eg
+                        (Parisi2025), ms. Mü: Unde ait propheta in psalmo: « anni nostri sicut
+                        aranea meditabunt et dies annorum vestrorum etc »; ms. Gu: Et ideo hait
+                        propheta in salmus : « anni nostri sicut arena meditabuntur. Dies annorum
+                        nostrorum in ipsis LXX annis ». </note>
+                  </cit>, cioè, sì come radi pensano, gli anni nostri stanno in LXX, sì che ne'
+                  XXXIII o ne' trentacinque l'uomo è nel mezzo di sua vita. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.002">
+               <p>
+                  <ref target="#Inf.01.002">[2] <quote><emph>Mi ritrovai per una selva
+                        scura</emph></quote>.</ref> In questo luogo dice l'autore che esso era
+                  vizioso e pecatore. E la diritta via, ciò sono l'opere di Dio, aveva abandonate e
+                  disprezzate. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.013">
+               <p>
+                  <ref target="#Inf.01.013">
+                     <quote>[13]<emph>Ma ppoi ch'io fu a ppiè d'un colle
+                  giunto</emph></quote></ref>. In questa parte vuol dire l'autore che apressandosi
+                  esso a le vertudi <!-- Carta 3ra -->
+                  <pb n="3r" facs="#c3r"/>
+                  <cb n="a"/> e cessandosi da' vizî, vide insù la sommità del monte gli sprendori
+                  del sole, cioè considerando in sé medesimo, conobbe e’ vizî e volsesi acostare a
+                  le vertù e a le cose buone. E però dice la Scrittura parlando di Dio: <cit>
+                     <quote>«A voi, li quali temete el nome mio, e' nascerà sole di
+                        giustizia»</quote>
+                     <note type="bibliographical-ref">vd. Mal. 3 20.</note>
+                  </cit> . </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.032">
+               <p>
+                  <ref target="#Inf.01.032"><quote>[32] <emph>Una lonza leggiera e presta
+                           molto</emph></quote></ref>. Per la lonza intende il pecato de la luxuria
+                  e de la vanigroria, la quale brievemente assalisce l'uomo e subitamente lo fa
+                  pieno di diverse cogittazioni, e fa l'uomo macolato di molti diversi vizi; e
+                  questo impediva in tentazioni. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.045">
+               <p>
+                  <ref target="#Inf.01.045"><quote>[45] <emph>La vista che m'apparve d'uno
+                           leone</emph></quote></ref>. In questa parte per lo leone intende la
+                  superbia, la quale similemente dà impedimento a lui ad ascendere al monte de la
+                  vertù, né poteva raguardare la valle dell'umiltà; et questo è quel che dice
+                  l'autore nel testo. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.046">
+               <p>
+                  <ref target="#Inf.01.046"><quote>[46] <emph>Contra me
+                  venisse</emph></quote></ref>. <ref target="#Inf.01.047">
+                     <quote>[47]<emph> con la testa alta e con rabbiosa</emph></quote></ref>. Per
+                  dar paura, acciò che non riguardasse el sopra detto monte de la vertù. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.049">
+               <p>
+                  <ref target="#Inf.01.049">
+                     <quote>[49] <emph>E una lupa</emph></quote></ref>. In questa parte per la lupa
+                  intende l'autore la cupidigia e l'avarizia, la qual mai non si sazia. E queste
+                  cose molto impediscono gli uomini ad acostarsi a la vertù divina né può l'uomo
+                  drizzare la mente al cielo accecato nella cupidigia de beni temporali: <quote>
+                     l'avaro non s'empie mai né llascia altrui dormire. <note
+                        type="bibliographical-ref">vd. Ecl., 5 11.</note></quote>
+               </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.060">
+               <p>
+                  <ref target="#Inf.01.060"><quote>[60] <emph>Mi ripingeva là dove l'sol
+                        tace</emph></quote></ref>. In questo luogo vuol dire che il sole è tacito
+                  dove sono le tenebre condense e palpabile; e però dice che quella lupa ripingeva
+                  lui ne le tenebre de' vizî e non lo lasciava salire al monte della virtù. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.063">
+               <p>
+                  <ref target="#Inf.01.063">
+                     <quote>[63] <emph>Pareva fioco</emph></quote></ref>. In questa parte vuol dire
+                  l'autore di Vergilio che lungo silenzo avia tenuto, cioè che nessuno avia parlato
+                  di lui. E però dice <emph>fioco</emph>, cioè di bassa e roca boce. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.070">
+               <p>
+                  <ref target="#Inf.01.070"><quote> [70] <emph>Nacqui sotto
+                     Iulio</emph></quote></ref>. In questa parte vuol dire l'aultore che Vergilio
+                  parla di sé medesimo, e dice come esso fu nato nel tempo di Iulio Cesere. Ma <cb
+                     n="B"/> vero è che doppo la natività di Vergilio poco visse Iulio, e doppo lui
+                  cominciò a regnare <subst>
+                     <del rend="erasure">Cesere</del>
+                     <add place="above">Ottaviano</add>
+                  </subst> Agusto, nel tempo del quale Vergilio pervene a prospero e fiorito stato,
+                  ciò fu nel tempo dell'idoli; e però dice nel testo: <ref target="#Inf.01.072"
+                        ><quote> [72] <emph>al tempo delli dèi falsi e
+                     burgiardi</emph></quote></ref>. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.074">
+               <p>
+                  <ref target="#Inf.01.074">
+                     <quote> [74] <emph>Figliuolo d'Anchixe</emph></quote></ref>. In questo dice
+                  come Vergilio fu maestro e dottore, e come e' narrò e disse de' fatti d'Enea,
+                  figliuolo d'Anchixe, e de' fatti di Troia; e anco sì come l'autore pone che esso
+                  Enea fusse figliuolo di Anchisse e di Venere. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.075">
+               <p>
+                  <ref target="#Inf.01.075"><quote>[75] <emph>Illion fu
+                     combusto</emph></quote></ref>. In questa parte vuol dimostrare la disposizione
+                  de la città di Troia e dice come Illion fu un bellissimo castello del re Priàno,
+                  il quale fu combusto e arso nel tempo de la distruzione de la città di Troia. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.094">
+               <p>
+                  <ref target="#Inf.01.094"><quote> [94] <emph>Che questa bestia per la qual tu
+                           gride</emph></quote></ref>. In questa parte parla de la lupa, cioè
+                  cupidità, la quale nessun può passare, ma continuamente s'involve più l'uomo in
+                  essa; onde quanto più ha l'uomo de' beni temporali, tanto più cresce la cupidità e
+                  'l disiderio; e imperciò per la via de la verità e de le vertudi non lascia l'uom
+                  passare. Onde dice san Girolamo: <cit>
+                     <quote> « Avegna che ttutti e vizî <choice>
+                           <orig>inuochino</orig>
+                           <reg>invechino</reg>
+                        </choice>, solo l'avarizia ringiovanisce ».</quote>
+                     <note type="bibliographical-ref">Onde dice san Girolamo] Ms. A: Unde ait
+                        Ieronimus; Ms. Mü: Ut dicit Gregorius. La citazione è presente anche in
+                        GUIDO DA PISA:262: Et ideo beatus Ieronimus bene ait: « cum cetera vitia in
+                        homine senescant, sola avaritia iuvenescit», Rinaldi riferisce a Agostino,
+                        Sermones ad fratres, serm. 48 col. 1330. Presente anche in BENVENUTO:40,
+                        Inf. I 49-50.</note>
+                  </cit>
+               </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.100">
+               <p>
+                  <ref target="#Inf.01.100"><quote>[100] <emph>Molti sono gli
+                     animali</emph></quote></ref>. In questa parte vuol dire l'autore che questa
+                  cupidità a molti diventa moglie e donna. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.101">
+               <p>
+                  <ref target="#Inf.01.101"><quote>[101] <emph>E ppiù saranno ancora infin che 'l
+                           veltro</emph></quote></ref>. In questa parte vuol dire l'autore che
+                  questo veltro, del quale detto è, nimico de la lupa, ciò s'intende Cristo e l'uomo
+                  vertudioso il quale profetezza e manifesta l'avenimento di Cristo, lo qual dee
+                  venire in sua vertù e sapienza e discacciare de le menti e degli animi degli
+                  uomini ogni <!-- Carta 3va -->
+                  <pb n="3v" facs="#c3v"/>
+                  <cb n="a"/> cupidità e avarizia; e che nel suo tempo fioriranno le vertudi e
+                  saranno in gran valore, e cesserannosi li vizî, e saranno gli uomini giusti come
+                  furono ne la prima etade. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.103">
+               <p>
+                  <ref target="#Inf.01.103">
+                     <quote> [103] <emph>Costui non ciberà tera né peltro</emph></quote></ref>. In
+                  questa parte vuol dire l'altore che questo uom vertudioso, cioè Cristo, non
+                  disidera tera né peltro, cioè alcuna cosa terrena. Per
+                     <mentioned>peltro</mentioned> s'intende ogni metallo. Quasi vuol dire: questo
+                  tale uomo, lo qual dee venire, non sarà amadore di richezze né d'avere, ma di
+                  sapienzia e vertù, e alle virtudi si leverà e dispregerà la terrena cupidità. </p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.01.105">
+               <p>
+                  <ref target="#Inf.01.105">
+                     <quote> [105] <emph>E ssua nazione sarà tra ffeltro e
+                     ffeltro</emph></quote></ref>. In questa parte vuol dire l'autore che questo
+                  vertudioso uom, cioè Cristo, lo qual dee venire, nascerà di vili e umili parenti,
+                  sì come el feltro è infra lli panni vilissimo. E però riprende in questo luogo
+                  coloro che dicono che di vil padre e madre non può nascere uom vertudioso e nobile
+                  e questo è modo di parlare <choice>
+                     <orig>affermanzie</orig>
+                     <reg>affermative</reg>
+                  </choice>. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.01.107">
+               <p>
+                  <ref target="#Inf.01.107">
+                     <quote> [107] <emph> La vergine Camilla </emph></quote></ref>. In questa parte
+                  intende l'autore narrare de le storie de poeti e dice che, secondo che <choice>
+                     <orig>narra<del rend="erased">ti</del></orig>
+                     <reg>narra</reg>
+                  </choice> il suo maestro e dottore Vergilio, questa Camilla fu una vergine in
+                  Italia, la quale venne in socorso di Turno quando doveva combattere con Enea. La
+                  qual Cammilla fu morta da Enea nella battaglia, e ppoi fu morto Turno, re de'
+                  Rutoli. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.01.108">
+               <p>
+                  <ref target="#Inf.01.108">
+                     <quote> [108] <emph>Uriallo e tTurno e Nixo di ferute</emph>. </quote></ref>In
+                  questa parte l'autore <choice>
+                     <orig>pleseguita de la</orig>
+                     <reg> prosegue la </reg>
+                  </choice>
+                  <note type="philological-note"> [vd. <ref target="#Inf.07.086">Inf. VII 86</ref>
+                     plesegue]</note> storia e dice che <choice>
+                     <orig>Urialle</orig>
+                     <reg>Uriallo</reg>
+                  </choice> e Nixo furon due compagni della gente d'Enea, e quasi oltre a modo
+                  s'amavano insieme. Avenne che, scontrandoli una volta Turno insieme in una schiera
+                  con grande exercito, domandò chi fussono que' due; ma quando <choice>
+                     <orig>Urialle</orig>
+                     <reg>Uriallo</reg>
+                  </choice> e Niso conobono <!-- Carta 3vb -->
+                  <cb n="b"/> Turno incontranente fuggirono ne la selva e quivi furon trovati e
+                  morti da Turno e da la suo gente. Ma innanzi vedendo <choice>
+                     <orig>Urialle</orig>
+                     <reg>Uriallo</reg>
+                  </choice> essere morto Niso suo compagno crudelmente, co molto furore si misse
+                  infra la gente di Turno, sì come uomo disideroso di morte per amore di Niso suo
+                  compagno, e llà fu ucciso. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.01.109">
+               <p>
+                  <ref target="#Inf.01.109">
+                     <quote>[109] <emph>Questi la caccerà per ogni villa</emph> .</quote></ref> In
+                  questa parte ritorna l'autore a pparlare di questo <choice>
+                     <orig>uom giusto <del rend="erased">edice</del></orig>
+                     <reg>uom giusto</reg>
+                  </choice>, cioè Cristo, e dice che lla cupiditade e l'avarizia sarà in tutto
+                  discacciata di questo mondo da quell'uomo lo qual dee venire, cioè Cristo, e
+                  rimanderà quella allo 'nferno, dove primamente fu nata e per invidia fu tralatata
+                  in questo mondo; con ciò sia cosa che Lucifero portando invidia all'umana
+                  generazione creata a ppossedere la etterna gloria, la quale esso avia perduta,
+                  intramisse ne le menti degli uomini l'avarizia e la cupidità, la quale è radice di
+                  tutti e' mali, acciò che per quella gli uomini meritassono di perdere la grolia,
+                  la qual fu apparechiata loro, e il luogo loro diputato. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.01.116">
+               <p>
+                  <ref target="#Inf.01.116">
+                     <quote>[116]<emph>Spiriti dolenti</emph>.</quote></ref> In questa parte vuole
+                  dire l'autore che questi sono spiriti infernali, e quali disiderano che muoia
+                  l'anima come gli è morto il corpo. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.01.118">
+               <p>
+                  <ref target="#Inf.01.118">
+                     <quote>[118]<emph>E vedrai coloro che son contenti</emph>.</quote></ref> In
+                  questa parte vuol dire che Vergilio dimostrerà a llui l'anime che sono in
+                  Purgatorio, le quali anime per la speranza che hanno de la vita etterna stano
+                  contenti de la pena./.</p>
+            </div>
+         </div>
+
+         <!--CANTO II-->
+         <div n="2" type="commentary" xml:id="Ha_An_Inf.02">
+            <!-- Carta 4vb -->
+            <pb n="4v" facs="#c4v"/>
+            <cb n="b"/>
+            <div type="commentary" xml:id="Ha_An_Inf.02.001">
+               <p><ref target="#Inf.02.001">
+                     <quote> [1]<emph>Lo giorno se n'andava e ll'aire bruno</emph></quote></ref>. In
+                  questa parte vuol dire l'autore nel principio; e dice che egli era sera e gli
+                  altri animali si riposano de le loro fatiche, e esso autore apparechiava sé a
+                  viaggio e ll'animo suo a ssentire e' dolori e ' lamenti dell'anime, le quali ne lo
+                  'nferno son punite e ttormentate per le quali cose seguite con passione e
+                  pietade.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.02.013">
+               <p>
+                  <ref target="#Inf.02.013">
+                     <quote> [13]<emph>Tu dici che di Silvio il parente</emph>.</quote></ref> In
+                  questa parte vuol dire l'autore che, sicondo che dice Virgilio, patri Silvio fu
+                  Enea troiano, e sendo elli corruttibile e mortale, sì dice che esso discese a lo
+                  'nferno per discernere e investicare da Anchixse suo padre in che modo potesse
+                  vincere Turno suo nimico, e in quel luogo comprese il modo d'avere vettoria. E
+                  però dice nel testo [27] <ref target="#Inf.02.027"><emph>di sua vittoria e del
+                        papale amanto</emph></ref>. <pb n="5r" facs="#c5r"/>
+                  <cb n="a"/> In questo luogo pone come l'andare d'Enea a lo 'nferno fu molto
+                  necessario, imperò che esso Enea imparò ne lo 'nferno in che modo potesse aver
+                  vettoria de' nimici suoi, e di poi la vittoria generò seme de la edificazione di
+                  Roma, e Roma fu diputata a la appostolica sedia, come detto è. Adunque sì dimostra
+                  che l'andata sua fusse cagione di [27]<ref target="#Inf.02.027"><emph> papale
+                        amanto</emph></ref>.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.02.028">
+               <p>
+                  <ref target="#Inf.02.028">
+                     <quote>[28]<emph>Andovi poi el Vaso d'elezzione</emph></quote></ref>. In questo
+                  luogo dice che il biato Paolo appostolo andò poi a lo 'nferno quando fu portato
+                  infino al terzo cielo, overo che d'inde vide lo 'nferno.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.02.052">
+               <p>
+                  <ref target="#Inf.02.052">
+                     <quote>[52]<emph>Io ero tra coloro che son sospesi</emph></quote></ref>. Dice
+                  come Virgilio era ne. limbo co l'inocenti.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.02.076">
+               <p>
+                  <ref target="#Inf.02.076">
+                     <quote>[76]<emph>O donna di vertù</emph></quote></ref>. In questa parte
+                  dimostra che per la vertù ciascuno uom vivente trapassa la umana generazione e
+                  cciò che si contiene nel minor cerchio, cioè in questo mondo.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.02.102">
+               <p>
+                  <ref target="#Inf.02.102">
+                     <quote>[102]<emph>Co l'antica Rachele</emph></quote></ref>. Sicondo che è
+                  scritto nel Genesis <quote>in vigesimo ottavo capitolo<note
+                        type="bibliographical-ref">Cfr. Gn, 28-29.</note></quote>, Labano ebbe due
+                  figliuole: l'una ebbe nome Lia, l'altra Rachele; e fu questo Laban fratello di
+                  Rebech, la quale fu moglie di Isach e madre di Iacob e di Exaù. Ma con ciò sia
+                  cosa che molto sarebbe lungo a narrare questa storia secondo che ne la Bibbia si
+                  contiene, intende brievemente dire che <choice>
+                     <orig>Isah</orig>
+                     <reg>Isach</reg>
+                  </choice>, padre di Iacob, comandò e disse ad Iacob: «Non piglierai moglie de la
+                  generazione di Canaam, ma andrai in Mesopotamia a la casa di Battuel, padre della
+                  madre tua, e ppiglierai per moglie alcuna de le figliuole di Laban, fratello de la
+                  madre tua». Andò Iacob e pervenne a casa di Labam, e stette co. llui per alcun
+                  tempo e pasceva le pecore sue; e così stando, piacque a llui Rachele e chiesela a
+                  Laban per moglie. <cb n="b"/>
+                  <choice>
+                     <orig>Laba</orig>
+                     <reg>Laban</reg>
+                  </choice> disse: «Tu starai nel servigio mio sett'anni, e poi te la darò per
+                  moglie». E questo patto piacque a Giacob e poco gli parve il tempo per lo grande
+                  amore che portava a Rachele. E finiti e sette anni, Giacob disse a Laban: «Dammi
+                  la moglie mia, imperò che è finito el tempo». Fece Laban gran convito e nozze, e
+                  la sera misse nel letto Lia, sua figliuola maggiore. E venuta la mattina, Iacob
+                  conobe che quella era Lia e non Rachele, la quale egli amava. E disse al suocero
+                  suo: «Che ha' tu fatto? O non t'ho io servito per Rachele tanto tempo? E ttu m'ha'
+                  data Lia!». Rispose Laban: «Non è usanza i. nostro paese che la minore sia data a
+                  marito inanzi a la maggiore. Ma compi li dì de la settimana di costei, e poi ti
+                  darò Rachele per altri sette anni e quali tu starai nel servigio mio». E così
+                  Iacob per lo disiderio d'avere Rachele stette nel servigio di Labam altri sette
+                  anni. E per Lia s'intende la vita attiva, e per Rachele vita contemplativa, quasi
+                  come dica che starà l'uomo in contemplazione. </p>
+            </div>
+         </div>
+
+         <!--CANTO III-->
+         <div n="3" type="commentary" xml:id="Ha_An_Inf.03">
+            <!-- Carta 6rA -->
+            <pb n="6v" facs="#c6r"/>
+            <cb n="A"/>
+            <div type="commentary" xml:id="Ha_An_Inf.03.001">
+               <p>[1] <ref target="#Inf.03.001">
+                     <emph>Pe me si va ne la<del rend="erasure">dle</del> città
+                     dolente</emph>.</ref> In questa parte dice l’autore che quando Vergilio lo
+                  menava a lo ’nferno essi pervennono a una porta ne la sommità de la quale era
+                  scritto: <mentioned>[1] per me si va ne la città dolente</mentioned> e seguita poi
+                     <ref target="#Inf.03.004"><quote>[4]<emph>Giustizia mosse ’l mio alto
+                           fattore</emph></quote>.</ref> In questo luogo vuol dire l’autore che per
+                  questa porta si va a lo ’nferno ladove etternale dolore e ppianto e stridore di
+                  denti e per queste parole e altre che seguitano dice l’autore che giustamente fece
+                  Idio lo ’nferno per chagione de pecatori e che innanzi la creazione de lo ’nferno
+                  nessuna cosa era creata se non le etternali e la prima pena che sostengono coloro
+                  che vanno per questa porta e che mai non hanno speranza d’avere alcun bene e però
+                  dice nel testo: <ref target="#Inf.03.009"><quote>[9]<emph> lasciate ogni speranza
+                           vo’ che entrate</emph></quote></ref></p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.03.035">
+               <p><ref target="Inf.03.035">[35] <emph>tengono l’anime triste di coloro</emph>.</ref>
+                  In questa parte dice che questi cotali funno uomini di nessun valore e di nessuna
+                  bontade e quali son puniti ne la prima parte de lo ’nferno insieme co gli angioli
+                  e quali nel tempo de la superbia di Luicifero né funno ribelli a Dio né furon
+                  ferventi nel suo amore,<del rend="erasure">el</del> e' quali lo cielo discaccia
+                  acciò che in alcuna cosa li malvagi non abia grolia e però in questo luogo co gli
+                  altri simili a lloro son puniti. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.03.060">
+               <p> [60] <ref target="#Inf.03.60"><emph>Che fece per viltà el gran
+                     rifiuto</emph>.</ref> In questa parte dimostra che vide l’ombra di Esaut, lo
+                  qual fu <choice>
+                     <orig>primogentto</orig>
+                     <reg>primogenito</reg>
+                  </choice> di <choice>
+                     <orig>Isah</orig>
+                     <reg>Isach</reg>
+                  </choice> e fratello di Iacob, onde questo Isau vendeo ad Iacob le ragioni del suo
+                  primo reditaggio per una minestra di lentichie. E, se questo vuoli meglio
+                  intendere, leggi nel Genesis in vigesimo quinto capitolo overo che questa ombra fu
+                  frate Pietro da Morrona detto papa Cilestino e rifiutò il papato vilmente.</p>
+            </div>
+         </div>
+
+         <!-- CANTO IV -->
+         <div n="4" type="commentary" xml:id="Ha_An_Inf.04">
+            <!-- Carta 7rb -->
+            <pb n="7r" facs="#c7r"/>
+            <cb n="b"/>
+            <div type="commentary" xml:id="Ha_An_Inf.04.001">
+               <p><ref target="#Inf.04.001"><quote>[1]<emph>Ruppemi l’alto <add place="above"
+                              >sonno</add> ne la testa</emph></quote></ref>. In questo luogo dice
+                  l’autore che un truono destò lui. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.053">
+               <p>
+                  <ref target="#Inf.04.053"><quote>[53]<emph> Quando ci vidi venire un
+                           possente.</emph></quote></ref>. In questa parte dice che, vedendosi
+                  essere posto nel profondo e in luogo tenebroso, volendo e considerando sé
+                  certificare, dimandò el dottore suo se alcuno usciva di quel luogo o per suo
+                  meriti o per alcuni che fussono in questo mondo. E allora rispose el dottore e
+                  disse che novellamene era venuto in quel luogo quand’un potente venne che spogliò
+                  quel luogo. E questo fu Cristo, quando doppo la sua passione descese a lo ’nferno
+                  e quindi trasse e’ Santi Padri e innanzi a questo non si salvava spirito umano per
+                  lo pecato del primo uommo: il qual pecato lavò Cristo co· lla sua passione. <!-- Carta 7va -->
+                  <pb n="7v" facs="#c7v"/>
+                  <cb n="a"/>E è da intendere che questo luogo era el limbo dove nessun’altra pena
+                  è, se non che coloro li quali stanno in quel luogo sempre disiderano e niente
+                  sperano di potere avere di quel che disiderano. </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.106">
+               <p><ref target="Inf.04.106"><quote>[106]<emph>Venimo a ppiè d’un nobile
+                           castello.</emph></quote></ref>. In questa parte dice l’autore che per
+                  questo castello s’intende la scienza e per sette mura s’intende sette arti
+                  liberali, per le quali risprendono li savi che dimoran quivi.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.118">
+               <p><ref target="Inf.04.118"><quote>[118]<emph>Colà diritto sopra ’l verde
+                           smalto</emph></quote></ref>Cioè sopra l’erba verde in un prato. <note
+                     type="philological-commentary">Cioè sopra l’erba verde in un prato; ms. Eg, Mü:
+                     Super erbam viridem in quodam prato. ]Gu: verde smalto: super erbam viridem in
+                     quodam prato vidit illos sapientes.</note>
+               </p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.121">
+               <p><ref target="Inf.04.121"><quote>[121]<emph>I’ vidi Eletra con molti
+                           compagni</emph></quote></ref>. Ora in questa parte narra l’autore che
+                  Eletra fu moglie de Attalante, overo Attalo, il qual fu figliolo di Targhumme de
+                  la progenie di Iafet, terzo figliuolo di Noè, il quale Attalante fu il primo
+                  abitatore e edificatore in Italia e di loro nacque Dardano, il qual fu il primo
+                  abitatore e edificatore de la città di Dardania cioè Troia.</p>
+            </div>
+
+            <div type="commentary" xml:id="Ha_An_Inf.04.122a">
+               <p><ref target="Inf.04.122"><quote>[122] <emph>Ettor</emph></quote></ref>. Questo
+                  Ettor fu uomo valentissimo, sì che avanzò ogn’altro in prodezza e valentria e fu
+                  figliuolo del re Priàno di Troia.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.122b">
+               <p><ref target="Inf.04.122"><quote>[122] <emph>Enea</emph></quote></ref>. Questo Enea
+                  similemente fu troiano figliuolo d’Anchise e di Venere.<note
+                     type="philological-commentary">Presente solo in Gu: Enea. iste, ut dictum, est
+                     fuit filius Anchisis de Troia.</note></p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.123">
+               <p><ref target="Inf.04.123"><quote>[123] <emph>Cesare armato</emph></quote></ref>.
+                  Questo Cesare fu romano uomo valentissimo e fu il primo imperadore che avessono e’
+                  romani.</p>
+            </div>
+            <div type="commentary" xml:id="Ha_An_Inf.04.124">
+               <p><ref target="Inf.04.124a"><quote>[124] <emph>Cammilla.</emph>
+                     </quote></ref>Questa Camilla fu una reina in Italia la qual <choice>
+                     <orig>vene</orig>
+                     <reg>venne</reg>
+                  </choice> in <choice>
+                     <orig>soccorso corso</orig>
+                     <reg>soccorso</reg>
+                  </choice> di Turno come detto è nel primo capitolo. <note
+                     type="philological-commentary">[Non presente in Eg, Mü o Gu]</note></p>
+            </div>
+            <div>
+               <p><ref target="Inf.04.124b"><quote>[124] <emph>Pantesalea</emph></quote></ref>.
+                  Questa Pantassalea fu reina de li manzoni e del regno feminoro, la qual vene in
+                  socorso de’ Troiani per amore di Ettorre, lo quale essa grandemente amava e così
+                  questa reina ne la battaglia fu morta da pPirro, figliuolo d’Achille.</p>
+            </div>
+            <div>
+               <p><ref target="Inf.04.125"><quote>[125]<emph>Re Latino</emph></quote></ref>. Questo
+                  re Latino fu re di Italia, padre de Lavina, per la quale <!-- Carta 7vb -->
+                  <pb n="7" facs="c7v"/>
+                  <cb n="b"/> Enea combatté con Turno, imperciò che Amata <del rend="erased"
+                  >q</del>, moglie del detto re Latino, non voleva che Enea avesse Lavina sua
+                  figliuola per moglie, e ’l re Latino, sapendo come Enea era in Italia e udendo de
+                  le sue virtudi, disiderava d’averlo per genero e a lui fece molti doni, e Amata
+                  mandò per Turno. Onde Enea e Turno combatterono insieme, e avendo Enea vinto,
+                  prese Lavina per moglie, la quale era di maravigliosa bellezza. E per questa
+                  cagione Enea, dopo la morte del re Latino, possedeo el regno di Italia. </p>
+            </div>
+
+         </div>
+      </body>
+   </text>
+</TEI>

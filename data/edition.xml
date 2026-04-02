@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>Chiose Latine alla Commedia di Dante: Edizione Critica Digitale</title>
+        <author>Anonimo Lombardo</author>
+        <editor xml:id="editor-SM">Serena Malatesta</editor>
+        <respStmt>
+          <resp>Codifica digitale</resp>
+          <name>Serena Malatesta</name>
+        </respStmt>
+      </titleStmt>
+      <editionStmt>
+        <edition>Edizione critica digitale, <date>2026</date></edition>
+      </editionStmt>
+      <publicationStmt>
+        <publisher>Università degli Studi di Padova</publisher>
+        <pubPlace>Padova</pubPlace>
+        <date when="2026">2026</date>
+        <availability>
+          <licence target="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+            CC BY-NC-SA 4.0
+          </licence>
+        </availability>
+      </publicationStmt>
+      <sourceDesc>
+        <listWit>
+          <witness xml:id="A">
+            <msDesc>
+              <msIdentifier>
+                <settlement>Milano</settlement>
+                <repository>Biblioteca Ambrosiana</repository>
+                <idno>C 198 inf.</idno>
+              </msIdentifier>
+              <msContents>
+                <summary>Commedia con chiose latine marginali e interlineari, sec. XIV</summary>
+              </msContents>
+              <physDesc>
+                <objectDesc>
+                  <supportDesc material="perg">
+                    <extent>ff. I + 142 + I'</extent>
+                  </supportDesc>
+                  <layoutDesc>
+                    <layout columns="1" writtenLines="34">Testo su una colonna con chiose marginali</layout>
+                  </layoutDesc>
+                </objectDesc>
+                <handDesc>
+                  <handNote xml:id="hand-A1">Mano principale del testo poetico</handNote>
+                  <handNote xml:id="hand-A2">Mano del glossatore latino</handNote>
+                </handDesc>
+              </physDesc>
+            </msDesc>
+          </witness>
+          <witness xml:id="B">
+            <msDesc>
+              <msIdentifier>
+                <settlement>Firenze</settlement>
+                <repository>Biblioteca Medicea Laurenziana</repository>
+                <idno>Pl. XL. 22</idno>
+              </msIdentifier>
+              <msContents>
+                <summary>Commedia con apparato esegetico latino, sec. XIV ex.</summary>
+              </msContents>
+            </msDesc>
+          </witness>
+          <witness xml:id="Ha">
+            <msDesc>
+              <msIdentifier>
+                <settlement>Hamburg</settlement>
+                <repository>Staats- und Universitätsbibliothek</repository>
+                <idno>cod. 21 in scrinio</idno>
+              </msIdentifier>
+              <msContents>
+                <summary>Volgarizzamento delle Chiose Latine, sec. XIV-XV</summary>
+              </msContents>
+            </msDesc>
+          </witness>
+        </listWit>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <editorialDecl>
+        <p>Le integrazioni editoriali sono segnalate tra parentesi quadre: [...]</p>
+        <p>Le espunzioni sono indicate con parentesi uncinate: &lt;...&gt;</p>
+        <p>Le lacune sono indicate con tre punti sospesi tra parentesi quadre: [···]</p>
+        <p>I passi corrotti sono contrassegnati con l'obelus: †</p>
+        <normalization>
+          <p>La grafia è stata normalizzata secondo l'uso corrente del latino medievale.</p>
+        </normalization>
+        <punctuation>
+          <p>La punteggiatura è stata adeguata all'uso moderno.</p>
+        </punctuation>
+      </editorialDecl>
+      <variantEncoding method="parallel-segmentation" location="internal"/>
+    </encodingDesc>
+    <profileDesc>
+      <langUsage>
+        <language ident="la">Latino</language>
+        <language ident="it">Italiano</language>
+      </langUsage>
+      <creation>
+        <date notBefore="1320" notAfter="1360">Seconda metà del XIV secolo</date>
+        <placeName>Italia settentrionale (area lombarda)</placeName>
+      </creation>
+    </profileDesc>
+  </teiHeader>
+
+  <facsimile>
+    <surface xml:id="fol_1r">
+      <label>f. 1r</label>
+      <graphic url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Dante_Alighieri%27s_Divine_Comedy_-_Inferno_-_manuscript.jpg/800px-Dante_Alighieri%27s_Divine_Comedy_-_Inferno_-_manuscript.jpg" width="800" height="1100"/>
+      <zone xml:id="zone_1r_text" ulx="100" uly="120" lrx="650" lry="950"/>
+      <zone xml:id="zone_1r_gloss1" ulx="660" uly="120" lrx="790" lry="400"/>
+      <zone xml:id="zone_1r_gloss2" ulx="660" uly="410" lrx="790" lry="700"/>
+    </surface>
+    <surface xml:id="fol_1v">
+      <label>f. 1v</label>
+      <graphic url="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Inferno_Canto_1_verses_1-3.jpg/800px-Inferno_Canto_1_verses_1-3.jpg" width="800" height="1100"/>
+    </surface>
+    <surface xml:id="fol_2r">
+      <label>f. 2r</label>
+      <graphic url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Divina_Commedia_-_Inferno_-_Canto_I_-_miniatura.jpg/800px-Divina_Commedia_-_Inferno_-_Canto_I_-_miniatura.jpg" width="800" height="1100"/>
+    </surface>
+  </facsimile>
+
+  <text>
+    <front>
+      <div type="preface">
+        <head>Nota al testo</head>
+        <p>La presente edizione critica digitale delle <title>Chiose Latine alla Commedia</title>
+        offre il testo del commento attribuito all'<persName ref="#anonimo-lombardo">Anonimo Lombardo</persName>,
+        ricostruito sulla base della collazione dei testimoni
+        <ref target="#A">A</ref>, <ref target="#B">B</ref> e del volgarizzamento
+        <ref target="#Ha">Ha</ref>. L'apparato critico è strutturato in forma positiva e registra
+        le varianti significative dei tre testimoni.</p>
+        <p>I manoscritti che tramandano la <title>Commedia</title> non vanno considerati come
+        semplici supporti testuali, ma come oggetti materiali e culturali complessi. Essi si
+        configurano come dispositivi interpretativi, nei quali il testo è costantemente affiancato
+        e mediato da elementi che ne orientano la ricezione e la comprensione.</p>
+      </div>
+    </front>
+    <body>
+      <div type="canto" n="Inf. I" xml:id="inf-1">
+        <head>Inferno, Canto I</head>
+
+        <div type="section" n="1-3" xml:id="inf-1-1">
+          <head>vv. 1-3</head>
+          <pb n="1r" facs="#fol_1r"/>
+          <lg type="terzina" n="1">
+            <l n="1" xml:id="inf-1-v1">Nel mezzo del cammin di nostra vita</l>
+            <l n="2" xml:id="inf-1-v2">mi ritrovai per una selva oscura,</l>
+            <l n="3" xml:id="inf-1-v3">ché la diritta via era smarrita.</l>
+          </lg>
+
+          <div type="gloss" xml:id="gloss-inf-1-1" facs="#zone_1r_gloss1">
+            <head type="rubric">Chiosa a Inf. I, 1-3</head>
+            <p xml:lang="la">
+              <app xml:id="app-1">
+                <lem wit="#A">Auctor iste in principio sui operis ponit se fuisse in quadam silva,
+                idest in statu <choice><sic>pecati</sic><corr>peccati</corr></choice>,
+                et dicit quod erat in medio
+                <app xml:id="app-1a">
+                  <lem wit="#A #B">itineris vite sue</lem>
+                  <rdg wit="#Ha">del cammino della vita sua</rdg>
+                </app>,
+                idest in etate <num type="cardinal" value="35">XXXV</num> annorum.</lem>
+                <rdg wit="#B">Auctor ponit se in principio operis fuisse in silva quadam,
+                scilicet in statu peccati, et dicit se fuisse in medio itineris vite sue,
+                idest in etate triginta quinque annorum.</rdg>
+              </app>
+            </p>
+            <note type="commentary" resp="#editor-SM" xml:id="note-1">
+              L'<persName ref="#anonimo-lombardo">Anonimo Lombardo</persName> interpreta la selva
+              come allegoria del peccato secondo la tradizione esegetica più consolidata.
+              La specificazione dell'età di trentacinque anni riprende il dato convenzionale
+              desunto da <bibl><author>Isaia</author> <citedRange>38, 10</citedRange></bibl>
+              e confermato dal <bibl><title>Convivio</title> <citedRange>IV, xxiii, 9</citedRange></bibl>
+              di <persName ref="#dante">Dante</persName> stesso.
+              Cfr. anche <bibl><author>Bellomo</author>, <title>Dizionario dei commentatori
+              danteschi</title>, <citedRange>pp. 63-65</citedRange></bibl>.
+            </note>
+            <note type="margin" place="margin-right" hand="#hand-A2" xml:id="postilla-1">
+              <mentioned xml:lang="la">Nota quod silva est peccatum</mentioned>
+            </note>
+          </div>
+        </div>
+
+        <div type="section" n="4-6" xml:id="inf-1-2">
+          <head>vv. 4-6</head>
+          <lg type="terzina" n="2">
+            <l n="4" xml:id="inf-1-v4">Ahi quanto a dir qual era è cosa dura</l>
+            <l n="5" xml:id="inf-1-v5">esta selva selvaggia e aspra e forte</l>
+            <l n="6" xml:id="inf-1-v6">che nel pensier rinova la paura!</l>
+          </lg>
+
+          <div type="gloss" xml:id="gloss-inf-1-2" facs="#zone_1r_gloss2">
+            <head type="rubric">Chiosa a Inf. I, 4-6</head>
+            <p xml:lang="la">
+              <app xml:id="app-2">
+                <lem wit="#A">Hic dicit auctor quod
+                <app xml:id="app-2a">
+                  <lem wit="#A">difficile est dicere</lem>
+                  <rdg wit="#B">difficile fuit dicere</rdg>
+                </app>
+                qualis erat illa silva, quia erat
+                <app xml:id="app-2b">
+                  <lem wit="#A #B">silvestris et aspera et fortis</lem>
+                  <rdg wit="#Ha">salvatica et aspra et forte</rdg>
+                </app>,
+                idest plena diversis peccatis.</lem>
+                <rdg wit="#B">Dicit hic auctor quod difficile fuit dicere qualis erat
+                illa silva, quia erat silvestris et aspera et fortis, idest plena
+                <supplied reason="omitted" resp="#editor-SM">diversis</supplied> peccatis.</rdg>
+              </app>
+            </p>
+            <note type="commentary" resp="#editor-SM" xml:id="note-2">
+              La triplice aggettivazione <mentioned xml:lang="la">silvestris, aspera, fortis</mentioned>
+              corrisponde ai tre attributi danteschi della selva (<mentioned>selvaggia, aspra, forte</mentioned>).
+              L'interpretazione dell'<persName ref="#anonimo-lombardo">Anonimo</persName> è qui
+              strettamente aderente alla lettera del testo. Si noti la caduta di <mentioned xml:lang="la">diversis</mentioned>
+              nel testimone <ref target="#B">B</ref>, integrato per congettura.
+            </note>
+            <note type="margin" place="margin-right" hand="#hand-A2" xml:id="postilla-2">
+              <mentioned xml:lang="la">Silva tripliciter describitur</mentioned>
+            </note>
+          </div>
+        </div>
+
+        <div type="section" n="7-9" xml:id="inf-1-3">
+          <head>vv. 7-9</head>
+          <lg type="terzina" n="3">
+            <l n="7" xml:id="inf-1-v7">Tant' è amara che poco è più morte;</l>
+            <l n="8" xml:id="inf-1-v8">ma per trattar del ben ch'i' vi trovai,</l>
+            <l n="9" xml:id="inf-1-v9">dirò de l'altre cose ch'i' v'ho scorte.</l>
+          </lg>
+
+          <div type="gloss" xml:id="gloss-inf-1-3">
+            <head type="rubric">Chiosa a Inf. I, 7-9</head>
+            <p xml:lang="la">
+              <app xml:id="app-3">
+                <lem wit="#A #B">Hic dicit quod tanta est amaritudo illius silve quod
+                <app xml:id="app-3a">
+                  <lem wit="#A">parum plus est mors</lem>
+                  <rdg wit="#B">parum amplius est mors</rdg>
+                </app>,
+                sed ut tractet de bono quod ibi invenit, dicet de aliis rebus
+                quas ibi vidit.</lem>
+                <rdg wit="#Ha">Qui dice che tanta è l'amarezza di quella selva che poco
+                più è la morte, ma per trattare del bene che vi trovò, dirà
+                dell'altre cose che vi ha vedute.</rdg>
+              </app>
+            </p>
+            <note type="commentary" resp="#editor-SM" xml:id="note-3">
+              Il commento parafrasa fedelmente il testo dantesco. L'<mentioned xml:lang="la">amaritudo</mentioned>
+              traduce l'«amara» del v. 7. Si noti la variante <mentioned xml:lang="la">parum plus / parum amplius</mentioned>
+              tra <ref target="#A">A</ref> e <ref target="#B">B</ref>, che non altera il senso.
+              Il volgarizzamento <ref target="#Ha">Ha</ref> restituisce il testo in forma pressoché letterale.
+            </note>
+          </div>
+        </div>
+
+        <div type="section" n="10-12" xml:id="inf-1-4">
+          <head>vv. 10-12</head>
+          <pb n="1v" facs="#fol_1v"/>
+          <lg type="terzina" n="4">
+            <l n="10" xml:id="inf-1-v10">Io non so ben ridir com' i' v'intrai,</l>
+            <l n="11" xml:id="inf-1-v11">tant' era pien di sonno a quel punto</l>
+            <l n="12" xml:id="inf-1-v12">che la verace via abbandonai.</l>
+          </lg>
+
+          <div type="gloss" xml:id="gloss-inf-1-4">
+            <head type="rubric">Chiosa a Inf. I, 10-12</head>
+            <p xml:lang="la">
+              <app xml:id="app-4">
+                <lem wit="#A">Dicit auctor quod
+                <app xml:id="app-4a">
+                  <lem wit="#A">nescit bene referre quomodo intraverit</lem>
+                  <rdg wit="#B">non bene scit dicere quomodo intravit</rdg>
+                </app>
+                in illam silvam, quia erat
+                <app xml:id="app-4b">
+                  <lem wit="#A #B">plenus somno</lem>
+                  <rdg wit="#Ha">pieno di sonno</rdg>
+                </app>,
+                idest plenus ignorantia, in illo puncto quo
+                <app xml:id="app-4c">
+                  <lem wit="#A">veram viam dimisit</lem>
+                  <rdg wit="#B">veracem viam reliquit</rdg>
+                </app>.</lem>
+              </app>
+            </p>
+            <note type="commentary" resp="#editor-SM" xml:id="note-4">
+              L'identificazione <mentioned xml:lang="la">somnus = ignorantia</mentioned> è costante
+              nella tradizione esegetica trecentesca. Si veda anche
+              <bibl><author>Guido da Pisa</author>, <title>Expositiones et Glose</title>,
+              <citedRange>ad loc.</citedRange></bibl> per un parallelo interpretativo.
+              La variante <mentioned xml:lang="la">referre / dicere</mentioned> e
+              <mentioned xml:lang="la">dimisit / reliquit</mentioned> tra i due testimoni latini
+              rappresenta un caso di variazione sinonimica che non incide sul senso.
+            </note>
+            <note type="margin" place="interlinear" hand="#hand-A2" xml:id="postilla-3">
+              <mentioned xml:lang="la">somnus, i. ignorantia</mentioned>
+            </note>
+          </div>
+        </div>
+
+        <div type="section" n="13-18" xml:id="inf-1-5">
+          <head>vv. 13-18</head>
+          <lg type="terzina" n="5">
+            <l n="13" xml:id="inf-1-v13">Ma poi ch'i' fui al piè d'un colle giunto,</l>
+            <l n="14" xml:id="inf-1-v14">là dove terminava quella valle</l>
+            <l n="15" xml:id="inf-1-v15">che m'avea di paura il cor compunto,</l>
+          </lg>
+          <lg type="terzina" n="6">
+            <l n="16" xml:id="inf-1-v16">guardai in alto e vidi le sue spalle</l>
+            <l n="17" xml:id="inf-1-v17">vestite già de' raggi del pianeta</l>
+            <l n="18" xml:id="inf-1-v18">che mena dritto altrui per ogne calle.</l>
+          </lg>
+
+          <div type="gloss" xml:id="gloss-inf-1-5">
+            <head type="rubric">Chiosa a Inf. I, 13-18</head>
+            <p xml:lang="la">
+              <app xml:id="app-5">
+                <lem wit="#A">Postquam auctor
+                <app xml:id="app-5a">
+                  <lem wit="#A">pervenit ad pedem cuiusdam collis</lem>
+                  <rdg wit="#B">ad pedem collis cuiusdam pervenit</rdg>
+                </app>,
+                ubi terminabatur illa vallis que cor eius compunxerat timore,
+                respexit sursum et vidit
+                <app xml:id="app-5b">
+                  <lem wit="#A #B">humeros collis vestitos radiis solis</lem>
+                  <rdg wit="#Ha">le spalle del colle vestite dei raggi del sole</rdg>
+                </app>,
+                qui ducit homines per rectam viam. Collis significat virtutem,
+                sol autem significat <persName>Deum</persName> vel
+                <app xml:id="app-5c">
+                  <lem wit="#A">divinam gratiam</lem>
+                  <rdg wit="#B">gratiam divinam</rdg>
+                </app>.</lem>
+              </app>
+            </p>
+            <note type="commentary" resp="#editor-SM" xml:id="note-5">
+              L'identificazione allegorica colle = virtù e sole = Dio o grazia divina è canonica.
+              L'<persName ref="#anonimo-lombardo">Anonimo</persName> segue qui la linea esegetica
+              prevalente. Si noti l'inversione nell'ordo verborum tra
+              <ref target="#A">A</ref> e <ref target="#B">B</ref>
+              (<mentioned xml:lang="la">pervenit ad pedem / ad pedem pervenit</mentioned>),
+              fenomeno frequente nella tradizione delle chiose, che suggerisce una certa libertà
+              nella trasmissione del testo prosastico.
+            </note>
+          </div>
+        </div>
+
+      </div>
+    </body>
+    <back>
+      <div type="bibliography">
+        <listBibl>
+          <bibl xml:id="bellomo-2004"><author>Bellomo, Saverio</author>, <title>Dizionario dei commentatori danteschi. L'esegesi della Commedia da Iacopo Alighieri a Nidobeato</title>, Firenze, Olschki, <date>2004</date>.</bibl>
+          <bibl xml:id="parisi-2020"><author>Parisi, Luca</author>, <title>Le Chiose latine alla Commedia</title>, Roma, Salerno Editrice, <date>2020</date>.</bibl>
+          <bibl xml:id="petrocchi-1966"><author>Petrocchi, Giorgio</author>, <title>La Commedia secondo l'antica vulgata</title>, Milano, Mondadori, <date>1966-67</date>.</bibl>
+        </listBibl>
+      </div>
+      <div type="indices">
+        <listPerson>
+          <person xml:id="dante">
+            <persName>Dante Alighieri</persName>
+            <birth when="1265">1265</birth>
+            <death when="1321">1321</death>
+          </person>
+          <person xml:id="anonimo-lombardo">
+            <persName>Anonimo Lombardo</persName>
+            <floruit notBefore="1320" notAfter="1360">Metà del XIV secolo</floruit>
+          </person>
+        </listPerson>
+        <listPlace>
+          <place xml:id="firenze">
+            <placeName>Firenze</placeName>
+          </place>
+          <place xml:id="milano">
+            <placeName>Milano</placeName>
+          </place>
+        </listPlace>
+      </div>
+    </back>
+  </text>
+</TEI>
