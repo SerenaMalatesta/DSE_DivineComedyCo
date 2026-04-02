@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dante, Commedia · Inferno — MS Harley 3459</title>
+  <meta name="description" content="Edizione scientifica digitale dell'Inferno di Dante dal MS Harley 3459 (British Library), a cura di Serena Malatesta.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-top">
+      <div class="header-brand">
+        <svg class="logo-icon" viewBox="0 0 32 32" width="32" height="32" aria-label="Logo edizione digitale">
+          <rect x="2" y="4" width="18" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="12" y="4" width="18" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="6" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="1"/>
+          <line x1="6" y1="14" x2="14" y2="14" stroke="currentColor" stroke-width="1"/>
+          <line x1="6" y1="18" x2="16" y2="18" stroke="currentColor" stroke-width="1"/>
+          <line x1="6" y1="22" x2="12" y2="22" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <div class="header-titles">
+          <h1 class="site-title">Dante, <em>Commedia</em> · Inferno</h1>
+          <p class="site-subtitle">MS Harley 3459 · Edizione digitale a cura di Serena Malatesta</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="search-container">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="searchInput" class="search-input" placeholder="Cerca nel testo e nel commento...">
+          <div id="searchResults" class="search-results"></div>
+        </div>
+        <button id="darkModeToggle" class="icon-btn" aria-label="Tema scuro/chiaro" title="Tema scuro/chiaro">
+          <i data-lucide="moon" class="dark-icon"></i>
+          <i data-lucide="sun" class="light-icon"></i>
+        </button>
+        <button id="aboutBtn" class="icon-btn" aria-label="Informazioni" title="Informazioni sul progetto">
+          <i data-lucide="info"></i>
+        </button>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <div class="view-tabs">
+        <button class="view-tab active" data-view="facsimile">
+          <i data-lucide="book-open" style="width:16px;height:16px"></i>
+          Facsimile e Testo
+        </button>
+        <button class="view-tab" data-view="commento">
+          <i data-lucide="message-square-text" style="width:16px;height:16px"></i>
+          Commento
+        </button>
+      </div>
+      <div class="text-mode-toggle">
+        <span class="toggle-label" id="toggleLabelReg" title="Lezione regolarizzata (interventi editoriali)">Reg</span>
+        <button id="origRegToggle" class="toggle-switch" aria-label="Alterna tra lezione originale e regolarizzata" title="Alterna orig/reg">
+          <span class="toggle-thumb"></span>
+        </button>
+        <span class="toggle-label" id="toggleLabelOrig" title="Lezione originale del manoscritto">Orig</span>
+      </div>
+      <div class="canto-nav">
+        <label for="cantoSelect" class="canto-label">Canto</label>
+        <select id="cantoSelect" class="canto-select"></select>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Loading -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Caricamento dell'edizione...</p>
+  </div>
+
+  <!-- View 1: Facsimile e Testo -->
+  <main id="viewFacsimile" class="view view-facsimile active">
+    <div class="facsimile-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Facsimile</h2>
+        <div class="folio-nav">
+          <button id="prevFolio" class="folio-btn" aria-label="Carta precedente" title="Carta precedente">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <span id="folioLabel" class="folio-label">c. 2r</span>
+          <button id="nextFolio" class="folio-btn" aria-label="Carta successiva" title="Carta successiva">
+            <i data-lucide="chevron-right"></i>
+          </button>
+        </div>
+        <div class="zoom-controls">
+          <button id="zoomOut" class="icon-btn-sm" aria-label="Rimpicciolisci" title="Rimpicciolisci">
+            <i data-lucide="zoom-out"></i>
+          </button>
+          <span id="zoomLevel" class="zoom-label">100%</span>
+          <button id="zoomIn" class="icon-btn-sm" aria-label="Ingrandisci" title="Ingrandisci">
+            <i data-lucide="zoom-in"></i>
+          </button>
+          <button id="zoomReset" class="icon-btn-sm" aria-label="Ripristina zoom" title="Ripristina zoom">
+            <i data-lucide="maximize-2"></i>
+          </button>
+        </div>
+      </div>
+      <div id="facsimileViewer" class="facsimile-viewer">
+        <div id="facsimileImageWrap" class="facsimile-image-wrap">
+          <img id="facsimileImg" class="facsimile-img" alt="Facsimile del manoscritto" draggable="false">
+          <div id="columnBadges" class="column-badges"></div>
+        </div>
+      </div>
+      <div id="folioContentSummary" class="folio-content-summary"></div>
+    </div>
+    <div class="text-panel">
+      <div class="panel-header">
+        <h2 class="panel-title" id="textPanelTitle">Testo poetico</h2>
+      </div>
+      <div id="textContent" class="text-content"></div>
+    </div>
+  </main>
+
+  <!-- View 2: Commento -->
+  <main id="viewCommento" class="view view-commento">
+    <div class="commento-container">
+      <div class="panel-header commento-header">
+        <h2 class="panel-title" id="commentoPanelTitle">Commento — Canto I</h2>
+      </div>
+      <div id="commentoContent" class="commento-content"></div>
+    </div>
+  </main>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Informazioni sul progetto</h2>
+        <button id="aboutClose" class="icon-btn" aria-label="Chiudi">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <section class="about-section">
+          <h3>Il manoscritto</h3>
+          <p>Il <strong>MS Harley 3459</strong>, conservato presso la <em>British Library</em> di Londra, è un testimone della <em>Commedia</em> di Dante Alighieri risalente alla fine del XV secolo. Il manoscritto è in lingua italiana e contiene il testo dell'<em>Inferno</em> accompagnato da un commento volgare derivato dalle chiose latine attribuite al cosiddetto <em>Anonimo Lombardo</em>.</p>
+        </section>
+        <section class="about-section">
+          <h3>L'edizione digitale</h3>
+          <p>Questa edizione scientifica digitale è stata curata da <strong>Serena Malatesta</strong> (Università degli Studi di Padova, Université de Tours) nell'ambito del progetto <em>Fontegaia</em>. L'edizione comprende:</p>
+          <ul>
+            <li>La trascrizione interpretativa del testo poetico</li>
+            <li>Il commento volgare (volgarizzamento delle chiose latine dell'Anonimo Lombardo)</li>
+            <li>L'apparato delle annotazioni marginali (verbali e non verbali)</li>
+            <li>Il facsimile digitale del manoscritto</li>
+          </ul>
+        </section>
+        <section class="about-section">
+          <h3>Criteri editoriali</h3>
+          <p>L'edizione adotta un approccio interpretativo, conservando una trascrizione semi-diplomatica nei casi in cui si ritenga utile documentare le peculiarità grafiche e linguistiche del fiorentino tardo-quattrocentesco. Tra gli interventi normalizzativi:</p>
+          <ul>
+            <li>Eliminazione della <em>h</em> nelle combinazioni <em>cha</em>, <em>cho</em>, <em>gha</em>, <em>gho</em></li>
+            <li>Riduzione dei gruppi <em>lgl</em> e <em>ngn</em> a <em>gl</em> e <em>gn</em></li>
+            <li>Riduzione di <em>et</em> a <em>e</em></li>
+            <li>I fenomeni fonosintattici sono rappresentati dal carattere <em>middle dot</em> (·)</li>
+          </ul>
+          <p>Gli interventi dell'editore sono segnalati con la codifica <code>&lt;choice&gt; &lt;orig&gt; &lt;reg&gt;</code>.</p>
+        </section>
+        <section class="about-section">
+          <h3>Dichiarazione dei caratteri</h3>
+          <table class="char-table">
+            <thead><tr><th>Carattere</th><th>Unicode</th><th>Descrizione</th></tr></thead>
+            <tbody>
+              <tr><td>⸿</td><td>U+2E3F</td><td>Capitulum / piedimosca medievale</td></tr>
+              <tr><td>·</td><td>U+00B7</td><td>Middle dot — marcatore fonosintattico editoriale</td></tr>
+            </tbody>
+          </table>
+        </section>
+     <section class="about-section">
+  <h3>Licenza</h3>
+  <p>
+    © Università degli Studi di Padova, 2025; Université de Tours. 
+    Edizione distribuita con licenza 
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">
+      CC BY-NC-SA 4.0
+    </a>.
+  </p>
+  <p>
+    Le immagini del manoscritto sono state realizzate mediante metodi <em>homemade</em> 
+    e pubblicate con il consenso della British Library.
+  </p>
+</section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Note popup -->
+  <div id="notePopup" class="note-popup">
+    <div class="note-popup-header">
+      <span class="note-popup-title"></span>
+      <button class="note-popup-close icon-btn-sm" aria-label="Chiudi">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="note-popup-body"></div>
+  </div>
+
+  <!-- Margin tooltip -->
+  <div id="marginTooltip" class="margin-tooltip"></div>
+
+  <script src="app.js"></script>
+<script data-pplx-inline-edit>
+(function(){
+  if(window===window.top)return;
+  function inlineAll(orig,clone){
+    if(orig.nodeType!==1)return;
+    try{
+      var cs=getComputedStyle(orig);
+      var t='';
+      for(var i=0;i<cs.length;i++){t+=cs[i]+':'+cs.getPropertyValue(cs[i])+';';}
+      clone.style.cssText=t;
+    }catch(e){}
+    var oc=orig.children,cc=clone.children;
+    for(var j=0;j<oc.length&&j<cc.length;j++){inlineAll(oc[j],cc[j]);}
+  }
+  function stripExternal(clone){
+    var imgs=clone.querySelectorAll('img');
+    for(var i=0;i<imgs.length;i++){
+      var s=imgs[i].getAttribute('src');
+      if(s&&!s.startsWith('data:'))imgs[i].removeAttribute('src');
+    }
+    var all=clone.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var st=all[i].style.cssText;
+      if(st&&st.indexOf('url(')>=0){
+        all[i].style.cssText=st.replace(/url\(["']?(?!data:)[^)"']*["']?\)/gi,'none');
+      }
+    }
+  }
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='INLINE_EDIT_CAPTURE_REQUEST')return;
+    var scrollX=window.scrollX||window.pageXOffset||0;
+    var scrollY=window.scrollY||window.pageYOffset||0;
+    var w=window.innerWidth,h=window.innerHeight;
+    try{
+      var clone=document.documentElement.cloneNode(true);
+      var rm=clone.querySelectorAll('script,link[rel="stylesheet"],style');
+      for(var i=0;i<rm.length;i++){rm[i].remove();}
+      inlineAll(document.documentElement,clone);
+      stripExternal(clone);
+      var html=new XMLSerializer().serializeToString(clone);
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+        +'<foreignObject width="100%" height="100%">'
+        +'<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px;height:'+h+'px;overflow:hidden">'
+        +'<div style="transform:translate(-'+scrollX+'px,-'+scrollY+'px);transform-origin:top left">'
+        +html+'</div></div></foreignObject></svg>';
+      var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0);
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:c.toDataURL('image/png'),scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.onerror=function(){
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.src=svgUrl;
+    }catch(err){
+      window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+    }
+  });
+})();
+</script></body>
+</html>
