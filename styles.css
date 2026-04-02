@@ -1,1337 +1,1258 @@
 /* ==========================================================================
-   Dante's Commedia · Inferno — ms. Harley 3459
-   Digital Scholarly Edition — Application
+   Dante Commedia · Inferno — MS Harley 3459
+   Digital Scholarly Edition — Styles
    ========================================================================== */
 
-const TEI_NS = 'http://www.tei-c.org/ns/1.0';
-const XI_NS = 'http://www.w3.org/2001/XInclude';
+/* --- Custom Properties (Light) --- */
+:root {
+  --bg: #F5F0E8;
+  --bg-surface: #EDE8DD;
+  --bg-panel: #FAF8F4;
+  --bg-panel-alt: #F0ECE3;
+  --border: #D4CCBA;
+  --border-light: #E2DACE;
+  --text: #3B2F1E;
+  --text-muted: #7A6E5D;
+  --text-faint: #A89E8E;
+  --accent: #8B2500;
+  --accent-hover: #6E1D00;
+  --accent-bg: rgba(139,37,0,0.06);
+  --highlight: rgba(139,37,0,0.08);
+  --highlight-active: rgba(139,37,0,0.14);
+  --header-bg: #3B2F1E;
+  --header-text: #F5F0E8;
+  --header-muted: #C4B8A4;
+  --nav-bg: #EDE8DD;
+  --tab-active-bg: #3B2F1E;
+  --tab-active-text: #F5F0E8;
+  --popup-bg: #FAF8F4;
+  --popup-shadow: rgba(59,47,30,0.18);
+  --scrollbar-thumb: #C4B8A4;
+  --scrollbar-track: transparent;
+  --font-family: 'Nunito', sans-serif;
+  --font-sans: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --transition: 0.2s ease;
+}
 
-/* --- State --- */
-const state = {
-  commediaDoc: null,
-  commentoDoc: null,
-  marginiDoc: null,
-  cantos: [],          // parsed canto data
-  commentary: {},      // cantoNum -> array of commentary entries
-  marginalia: {},      // lineId -> array of margin notes
-  folioContentMap: {}, // folioN -> {colA: {testo, commento, verseRange}, colB: {...}}
-  folios: [],          // ordered folio entries {n, filename}
-  currentView: 'facsimile',
-  currentCanto: 1,
-  currentFolioIdx: 0,
-  zoom: 1,
-  isDark: false,
-  showOrig: false,
-  noteCounter: 0,
-};
+/* --- Dark Mode --- */
+body.dark {
+  --bg: #1A1612;
+  --bg-surface: #211D17;
+  --bg-panel: #262118;
+  --bg-panel-alt: #2A251C;
+  --border: #3D3628;
+  --border-light: #332D22;
+  --text: #DDD5C5;
+  --text-muted: #9E9484;
+  --text-faint: #6B6155;
+  --accent: #D4784A;
+  --accent-hover: #E8925E;
+  --accent-bg: rgba(212,120,74,0.08);
+  --highlight: rgba(212,120,74,0.1);
+  --highlight-active: rgba(212,120,74,0.18);
+  --header-bg: #141210;
+  --header-text: #DDD5C5;
+  --header-muted: #9E9484;
+  --nav-bg: #1E1A15;
+  --tab-active-bg: #D4784A;
+  --tab-active-text: #1A1612;
+  --popup-bg: #2A251C;
+  --popup-shadow: rgba(0,0,0,0.4);
+  --scrollbar-thumb: #4A4236;
+}
 
-/* --- Facsimile file mapping --- */
-const FACSIMILE_MAP = {
-  '2r':  'CNMD0000428772_-00006_carta_2r-12.jpg',
-  '2v':  'CNMD0000428772_-00007_carta_2v-13.jpg',
-  '3r':  'CNMD0000428772_-00008_carta_3r-14.jpg',
-  '3v':  'CNMD0000428772_-00009_carta_3v-15.jpg',
-  '4r':  'CNMD0000428772_-00010_carta_4r-16.jpg',
-  '4v':  'CNMD0000428772_-00011_carta_4v-17.jpg',
-  '5r':  'CNMD0000428772_-00012_carta_5r-18.jpg',
-  '5v':  'CNMD0000428772_-00013_carta_5v-19.jpg',
-  '6r':  'CNMD0000428772_-00014_carta_6r-20.jpg',
-  '6v':  'CNMD0000428772_-00015_carta_6v-21.jpg',
-  '7r':  'CNMD0000428772_-00016_carta_7r-22.jpg',
-  '7v':  'CNMD0000428772_-00017_carta_7v-23.jpg',
-  '8r':  'CNMD0000428772_-00018_carta_8r-24.jpg',
-  '8v':  'CNMD0000428772_-00019_carta_8v-25.jpg',
-  '9r':  'CNMD0000428772_-00020_carta_9r-26.jpg',
-  '9v':  'CNMD0000428772_-00021_carta_9v-27.jpg',
-  '10r': 'CNMD0000428772_-00022_carta_10r-28.jpg',
-  '10v': 'CNMD0000428772_-00023_carta_10v-29.jpg',
-  '11r': 'CNMD0000428772_-00024_carta_11r-5.jpg',
-  '11v': 'CNMD0000428772_-00025_carta_11v-6.jpg',
-};
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* Ordered folio list */
-const FOLIO_ORDER = ['2r','2v','3r','3v','4r','4v','5r','5v','6r','6v','7r','7v','8r','8v','9r','9v','10r','10v','11r','11v'];
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-/* --- DOM refs --- */
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => document.querySelectorAll(sel);
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-const els = {};
-function cacheDom() {
-  els.loadingOverlay = $('#loadingOverlay');
-  els.viewFacsimile = $('#viewFacsimile');
-  els.viewCommento = $('#viewCommento');
-  els.cantoSelect = $('#cantoSelect');
-  els.textContent = $('#textContent');
-  els.commentoContent = $('#commentoContent');
-  els.commentoPanelTitle = $('#commentoPanelTitle');
-  els.textPanelTitle = $('#textPanelTitle');
-  els.facsimileImg = $('#facsimileImg');
-  els.facsimileImageWrap = $('#facsimileImageWrap');
-  els.facsimileViewer = $('#facsimileViewer');
-  els.folioLabel = $('#folioLabel');
-  els.zoomLevel = $('#zoomLevel');
-  els.searchInput = $('#searchInput');
-  els.searchResults = $('#searchResults');
-  els.notePopup = $('#notePopup');
-  els.marginTooltip = $('#marginTooltip');
-  els.aboutModal = $('#aboutModal');
-  els.columnBadges = $('#columnBadges');
-  els.folioContentSummary = $('#folioContentSummary');
+/* Scrollbars */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* --- Header --- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  gap: 16px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.logo-icon {
+  color: var(--header-muted);
+  flex-shrink: 0;
+}
+
+.header-titles { min-width: 0; }
+
+.site-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--header-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.site-title em { font-style: italic; }
+
+.site-subtitle {
+  font-size: 0.75rem;
+  color: var(--header-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Search */
+.search-container {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--header-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.08);
+  color: var(--header-text);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  padding: 7px 12px 7px 32px;
+  width: 240px;
+  outline: none;
+  transition: var(--transition);
+}
+.search-input::placeholder { color: var(--header-muted); }
+.search-input:focus {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  width: 420px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--popup-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px var(--popup-shadow);
+  z-index: 200;
+  display: none;
+}
+.search-results.visible {
+  display: block;
+}
+
+.search-result-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition);
+}
+.search-result-item:hover { background: var(--highlight); }
+.search-result-item:last-child { border-bottom: none; }
+
+.search-result-ref {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.search-result-text {
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+.search-result-text mark {
+  background: var(--highlight-active);
+  color: var(--accent);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+.search-no-results {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Icon buttons */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  color: var(--header-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.icon-btn:hover { background: rgba(255,255,255,0.1); color: var(--header-text); }
+.icon-btn i, .icon-btn svg { width: 18px; height: 18px; }
+
+.icon-btn-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.icon-btn-sm:hover { background: var(--highlight); color: var(--text); }
+.icon-btn-sm i { width: 16px; height: 16px; }
+
+/* Dark mode toggle */
+body:not(.dark) .light-icon { display: none; }
+body.dark .dark-icon { display: none; }
+
+/* --- Navigation --- */
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.view-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.view-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 10px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 2px solid transparent;
+  position: relative;
+}
+.view-tab:hover { color: var(--text); }
+.view-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.canto-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.canto-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.canto-select {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  padding: 6px 28px 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  color: var(--text);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%237A6E5D' stroke-width='2'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+/* --- Orig/Reg Toggle Switch --- */
+.text-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+}
+
+.toggle-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  transition: color 0.25s;
+  cursor: default;
+  user-select: none;
+}
+
+.toggle-label.active {
+  color: var(--accent);
+}
+
+/* Default state: Reg is active when neither has .active class yet (before JS init) */
+body:not(.show-orig) #toggleLabelReg {
+  color: var(--accent);
+}
+body.show-orig #toggleLabelReg:not(.active) {
+  color: var(--text-faint);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-panel);
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.toggle-switch:hover {
+  border-color: var(--accent);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.25s, background 0.25s;
+}
+
+.toggle-switch.active {
+  background: rgba(139, 37, 0, 0.1);
+  border-color: var(--accent);
+}
+
+.toggle-switch.active .toggle-thumb {
+  transform: translateX(16px);
+  background: var(--accent);
+}
+
+body.dark .toggle-switch.active {
+  background: rgba(212, 120, 74, 0.12);
+}
+
+/* --- Loading --- */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 1000;
+  transition: opacity 0.4s;
+}
+.loading-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* --- Views --- */
+.view { display: none; }
+.view.active { display: flex; }
+
+/* ==========================================================================
+   VIEW 1: Facsimile e Testo
+   ========================================================================== */
+.view-facsimile {
+  height: calc(100vh - 92px);
+  overflow: hidden;
+}
+
+.facsimile-panel {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.text-panel {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel-alt);
+  flex-shrink: 0;
+  gap: 8px;
+  min-height: 42px;
+}
+
+.panel-title {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.folio-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.folio-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.folio-btn:hover { border-color: var(--text-muted); color: var(--text); }
+.folio-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.folio-btn i { width: 16px; height: 16px; }
+
+.folio-label {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 50px;
+  text-align: center;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zoom-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: center;
+}
+
+/* Facsimile viewer */
+.facsimile-viewer {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+  cursor: grab;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(139,37,0,0.02) 0%, transparent 50%),
+    var(--bg-surface);
+}
+.facsimile-viewer:active { cursor: grabbing; }
+
+.facsimile-image-wrap {
+  position: relative;
+  transform-origin: center top;
+  transition: transform 0.15s ease;
+  line-height: 0;
+}
+
+.facsimile-img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(59,47,30,0.12);
+  user-select: none;
+}
+body.dark .facsimile-img {
+  filter: brightness(0.88);
+}
+
+/* Column content badges */
+.column-badges {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.col-badge {
+  position: absolute;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  pointer-events: auto;
+  transition: opacity var(--transition);
+}
+
+.col-badge.col-left {
+  left: 12px;
+}
+.col-badge.col-right {
+  right: 52%;
+  left: auto;
+}
+
+/* When only one badge (full page content), center it */
+.col-badge.col-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.col-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Testo badge */
+.col-badge.badge-testo {
+  background: rgba(245, 240, 232, 0.88);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.col-badge.badge-testo .col-badge-dot {
+  background: var(--text-muted);
+}
+
+/* Commento badge */
+.col-badge.badge-commento {
+  background: rgba(139, 37, 0, 0.85);
+  color: #FAF8F4;
+  border: 1px solid rgba(139, 37, 0, 0.6);
+}
+.col-badge.badge-commento .col-badge-dot {
+  background: #FAF8F4;
+}
+
+/* Misto badge (testo + commento nella stessa colonna) */
+.col-badge.badge-misto {
+  background: rgba(139, 37, 0, 0.7);
+  color: #FAF8F4;
+  border: 1px solid rgba(139, 37, 0, 0.5);
+}
+.col-badge.badge-misto .col-badge-dot {
+  background: linear-gradient(135deg, #FAF8F4 50%, rgba(139,37,0,0.9) 50%);
+}
+
+/* Dark mode badges */
+body.dark .col-badge.badge-testo {
+  background: rgba(26, 22, 18, 0.88);
+  color: var(--text);
+  border-color: var(--border);
+}
+body.dark .col-badge.badge-testo .col-badge-dot {
+  background: var(--text-muted);
+}
+body.dark .col-badge.badge-commento {
+  background: rgba(212, 120, 74, 0.85);
+  color: #1A1612;
+  border-color: rgba(212, 120, 74, 0.6);
+}
+body.dark .col-badge.badge-commento .col-badge-dot {
+  background: #1A1612;
+}
+body.dark .col-badge.badge-misto {
+  background: rgba(212, 120, 74, 0.7);
+  color: #1A1612;
+  border-color: rgba(212, 120, 74, 0.5);
+}
+
+/* Folio content summary below image */
+.folio-content-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 6px 12px;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-panel-alt);
+  flex-shrink: 0;
+}
+
+.folio-content-summary .content-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.folio-content-summary .legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.folio-content-summary .legend-dot.dot-testo {
+  background: var(--text-muted);
+}
+.folio-content-summary .legend-dot.dot-commento {
+  background: var(--accent);
+}
+
+/* Text content */
+.text-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px 40px;
+}
+
+.canto-heading {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 28px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant: small-caps;
+}
+
+.folio-marker {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin: 12px 0 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.02em;
+}
+.folio-marker:hover {
+  background: var(--highlight-active);
+}
+
+.column-marker {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  color: var(--text-faint);
+  margin-left: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.terzina {
+  margin-bottom: 16px;
+  padding-left: 40px;
+  position: relative;
+}
+
+.verse-line {
+  font-family: var(--font-serif);
+  font-size: 1.12rem;
+  line-height: 1.85;
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--transition);
+  padding: 1px 6px;
+  border-radius: 3px;
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.verse-line:hover { background: var(--highlight); }
+.verse-line.active { background: var(--highlight-active); }
+
+.line-number {
+  position: absolute;
+  left: -38px;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  width: 28px;
+  text-align: right;
+  user-select: none;
+  line-height: 1.85;
+  top: 1px;
+}
+
+.verse-text { flex: 1; }
+
+/* choice orig/reg */
+.choice-reg {
+  background: rgba(139, 37, 0, 0.06);
+  border-radius: 2px;
+  padding: 0 1px;
+  cursor: help;
+  transition: background 0.2s;
+}
+.choice-reg:hover {
+  background: rgba(139, 37, 0, 0.12);
+}
+.choice-orig {
+  display: none;
+  color: var(--accent);
+  background: rgba(139, 37, 0, 0.08);
+  border-radius: 2px;
+  padding: 0 1px;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+  cursor: help;
+  transition: background 0.2s;
+}
+.choice-orig:hover {
+  background: rgba(139, 37, 0, 0.15);
+}
+body.show-orig .choice-reg { display: none; }
+body.show-orig .choice-orig { display: inline; }
+
+/* Dark mode choice adjustments */
+body.dark .choice-reg {
+  background: rgba(212, 120, 74, 0.08);
+}
+body.dark .choice-reg:hover {
+  background: rgba(212, 120, 74, 0.15);
+}
+body.dark .choice-orig {
+  background: rgba(212, 120, 74, 0.1);
+}
+body.dark .choice-orig:hover {
+  background: rgba(212, 120, 74, 0.18);
+}
+
+/* scribal corrections in text */
+.scribal-del {
+  text-decoration: line-through;
+  color: var(--text-faint);
+  font-size: 0.92em;
+}
+.scribal-add {
+  color: var(--accent);
+  font-size: 0.88em;
+  vertical-align: super;
+}
+
+/* margin indicators */
+.margin-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.6rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: var(--transition);
+  margin-left: 4px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+.margin-indicator:hover {
+  background: var(--highlight-active);
+  transform: scale(1.15);
+}
+.margin-indicator.nonverbal {
+  font-size: 0.72rem;
+  font-family: var(--font-serif);
+  width: 16px;
+  height: 16px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
 }
 
 /* ==========================================================================
-   XML Loading & Parsing
+   VIEW 2: Commento
    ========================================================================== */
-
-async function loadXML(url) {
-  const resp = await fetch(url);
-  const text = await resp.text();
-  return new DOMParser().parseFromString(text, 'application/xml');
+.view-commento {
+  justify-content: center;
+  min-height: calc(100vh - 92px);
 }
 
-function qsTEI(el, sel) {
-  // Query within TEI namespace
-  return el.querySelector(sel);
+.commento-container {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
 }
 
-function qsaTEI(el, tag) {
-  return [...el.getElementsByTagNameNS(TEI_NS, tag)];
+.commento-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  margin: 0 -24px;
+  padding: 12px 24px;
 }
 
-function getAttr(el, name) {
-  // xml:id needs special handling
-  if (name === 'xml:id') return el.getAttribute('xml:id') || el.getAttributeNS('http://www.w3.org/XML/1998/namespace', 'id');
-  return el.getAttribute(name);
+.commento-content {
+  padding-top: 24px;
+}
+
+.commentary-entry {
+  margin-bottom: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border-light);
+}
+.commentary-entry:last-child { border-bottom: none; }
+
+.commentary-lemma {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 10px;
+  line-height: 1.5;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.lemma-ref {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  background: var(--bg-panel-alt);
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.lemma-text {
+  font-style: italic;
+}
+
+.commentary-body {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.82;
+  color: var(--text);
+}
+
+.commentary-body .mentioned {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.commentary-body .block-quote {
+  display: block;
+  margin: 12px 0 12px 24px;
+  padding: 10px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+  font-style: italic;
+  color: var(--text);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.commentary-body .block-quote .quote-source {
+  display: block;
+  font-size: 0.82rem;
+  font-style: normal;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* Note indicators in commento */
+.note-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 0.58rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  vertical-align: super;
+  margin: 0 2px;
+  transition: var(--transition);
+  line-height: 1;
+  position: relative;
+  top: -2px;
+}
+.note-indicator:hover {
+  transform: scale(1.2);
+  background: var(--accent-hover);
+}
+
+.note-indicator.app-indicator {
+  background: var(--bg-panel-alt);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-size: 0.54rem;
+}
+
+/* Note popup */
+.note-popup {
+  position: fixed;
+  z-index: 500;
+  width: 380px;
+  max-height: 320px;
+  background: var(--popup-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px var(--popup-shadow);
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+}
+.note-popup.visible {
+  display: flex;
+}
+
+.note-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-panel-alt);
+}
+
+.note-popup-title {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.note-popup-body {
+  padding: 12px 14px;
+  overflow-y: auto;
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* Margin tooltip */
+.margin-tooltip {
+  position: fixed;
+  z-index: 500;
+  max-width: 340px;
+  padding: 10px 14px;
+  background: var(--popup-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px var(--popup-shadow);
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text);
+  pointer-events: none;
+  display: none;
+}
+.margin-tooltip.visible {
+  display: block;
+}
+
+.margin-tooltip .margin-ref {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
 }
 
 /* ==========================================================================
-   Parse Commedia
+   Modal
    ========================================================================== */
-function parseCommedia(doc) {
-  const cantos = [];
-  const cantoDivs = qsaTEI(doc, 'div').filter(d => d.getAttribute('type') === 'canto');
-
-  for (const cantoDiv of cantoDivs) {
-    const n = parseInt(cantoDiv.getAttribute('n'));
-    const xmlId = getAttr(cantoDiv, 'xml:id');
-    const headEl = qsaTEI(cantoDiv, 'head')[0];
-    const heading = headEl ? headEl.textContent.trim() : `Canto ${toRoman(n)}`;
-
-    // 
-    const elements = []; // {type: 'pb'|'cb'|'terzina', ...}
-    walkCantoChildren(cantoDiv, elements);
-
-    cantos.push({ n, xmlId, heading, elements });
-  }
-  return cantos;
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.2s ease;
+  display: none;
+}
+.modal-overlay.visible {
+  display: flex;
 }
 
-function walkCantoChildren(parent, elements) {
-  for (const node of parent.childNodes) {
-    if (node.nodeType !== 1) continue; // skip text nodes
-    const localName = node.localName;
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    if (localName === 'pb') {
-      const n = node.getAttribute('n');
-      if (n) elements.push({ type: 'pb', n });
-    } else if (localName === 'cb') {
-      const n = node.getAttribute('n');
-      if (n) elements.push({ type: 'cb', n });
-    } else if (localName === 'head') {
-      // Skip canto head (handled separately)
-    } else if (localName === 'lg') {
-      const lgType = node.getAttribute('type');
-      if (lgType === 'terzina') {
-        const lines = parseTerzina(node, elements);
-        elements.push({ type: 'terzina', lines });
-      }
-    } else {
-      // Recurse into any wrapper elements
-      walkCantoChildren(node, elements);
-    }
-  }
+.modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: 80vh;
+  background: var(--popup-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px var(--popup-shadow);
 }
 
-function parseTerzina(lgEl, elements) {
-  const lines = [];
-  for (const child of lgEl.childNodes) {
-    if (child.nodeType !== 1) continue;
-    if (child.localName === 'pb') {
-      elements.push({ type: 'pb', n: child.getAttribute('n') });
-    } else if (child.localName === 'cb') {
-      elements.push({ type: 'cb', n: child.getAttribute('n') });
-    } else if (child.localName === 'l') {
-      const xmlId = getAttr(child, 'xml:id');
-      const lineNum = extractLineNum(xmlId);
-      const html = renderLineContent(child);
-      lines.push({ xmlId, lineNum, html });
-    }
-  }
-  return lines;
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header .icon-btn { color: var(--text-muted); }
+.modal-header .icon-btn:hover { background: var(--highlight); color: var(--text); }
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
 }
 
-function extractLineNum(xmlId) {
-  if (!xmlId) return '';
-  const parts = xmlId.split('.');
-  return parts.length >= 3 ? parseInt(parts[2]).toString() : xmlId;
+.modal-body {
+  overflow-y: auto;
+  padding: 24px;
 }
 
-function renderLineContent(lineEl) {
-  let html = '';
-  for (const node of lineEl.childNodes) {
-    if (node.nodeType === 3) {
-      html += escapeHTML(node.textContent);
-    } else if (node.nodeType === 1) {
-      html += renderInlineElement(node);
-    }
-  }
-  return html;
+.about-section {
+  margin-bottom: 24px;
+}
+.about-section:last-child { margin-bottom: 0; }
+
+.about-section h3 {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 10px;
 }
 
-function renderInlineElement(el) {
-  const localName = el.localName;
-
-  if (localName === 'choice') {
-    const orig = qsaTEI(el, 'orig')[0];
-    const reg = qsaTEI(el, 'reg')[0];
-    if (orig && reg) {
-      const origContent = renderLineContent(orig);
-      const regContent = renderLineContent(reg);
-      return `<span class="choice-reg" title="Lezione regolarizzata">${regContent}</span><span class="choice-orig" title="Lezione originale">${origContent}</span>`;
-    }
-    return renderLineContent(el);
-  }
-
-  if (localName === 'g') {
-    const ref = el.getAttribute('ref');
-    if (ref === '#middle_dot') return '·';
-    if (ref === '#piedimosca') return '⸿';
-    return el.textContent;
-  }
-
-  if (localName === 'subst') {
-    const del = qsaTEI(el, 'del')[0];
-    const add = qsaTEI(el, 'add')[0];
-    let html = '';
-    if (del) html += `<span class="scribal-del">${renderLineContent(del)}</span>`;
-    if (add) html += `<span class="scribal-add">${renderLineContent(add)}</span>`;
-    return html;
-  }
-
-  if (localName === 'del') {
-    return `<span class="scribal-del">${renderLineContent(el)}</span>`;
-  }
-
-  if (localName === 'add') {
-    return `<span class="scribal-add">${renderLineContent(el)}</span>`;
-  }
-
-  if (localName === 'supplied') {
-    return `[${renderLineContent(el)}]`;
-  }
-
-  if (localName === 'pb' || localName === 'cb') {
-    return ''; // handled at higher level
-  }
-
-  return renderLineContent(el);
+.about-section p, .about-section li {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 8px;
 }
 
-function escapeHTML(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+.about-section ul {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.about-section a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.about-section code {
+  font-size: 0.85em;
+  background: var(--bg-panel-alt);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.char-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.char-table th {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 2px solid var(--border);
+}
+.char-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-light);
+  font-family: var(--font-serif);
+}
+.char-table td:first-child {
+  font-size: 1.3rem;
+  text-align: center;
+  width: 50px;
+}
+.char-table td:nth-child(2) {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--text-muted);
 }
 
 /* ==========================================================================
-   Parse Commentary
+   Responsive
    ========================================================================== */
-function parseCommentary(doc) {
-  const commentary = {};
-  // Top-level commentary divs: <div n="1" type="commentary" xml:id="Ha_An_Inf.01">
-  const topDivs = qsaTEI(doc, 'div').filter(d =>
-    d.getAttribute('type') === 'commentary' && d.getAttribute('n')
-  );
-
-  for (const topDiv of topDivs) {
-    const cantoN = parseInt(topDiv.getAttribute('n'));
-    if (!commentary[cantoN]) commentary[cantoN] = [];
-
-    // Inner divs: <div type="commentary" xml:id="Ha_An_Inf.01.001">
-    const innerDivs = qsaTEI(topDiv, 'div').filter(d => d.getAttribute('type') === 'commentary');
-
-    for (const innerDiv of innerDivs) {
-      const xmlId = getAttr(innerDiv, 'xml:id');
-      const entry = parseCommentaryEntry(innerDiv, xmlId);
-      if (entry) commentary[cantoN].push(entry);
-    }
+@media (max-width: 900px) {
+  .view-facsimile {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 92px);
   }
-  return commentary;
+  .facsimile-panel, .text-panel {
+    width: 100%;
+    border-right: none;
+  }
+  .facsimile-panel {
+    height: 50vh;
+    border-bottom: 1px solid var(--border);
+  }
+  .text-panel {
+    height: auto;
+    min-height: 50vh;
+  }
+  .search-input { width: 160px; }
+  .header-top { padding: 8px 12px; }
+  .main-nav { padding: 0 12px; }
+  .text-content { padding: 16px 18px 32px; }
 }
 
-function parseCommentaryEntry(div, xmlId) {
-  state.noteCounter = 0;
-  const pEls = qsaTEI(div, 'p');
-  if (pEls.length === 0) return null;
-
-  // Extract lemma from first <ref> > <quote> > <emph>
-  let lemmaText = '';
-  let lineRef = '';
-  const firstRef = qsaTEI(div, 'ref')[0];
-  if (firstRef) {
-    const target = firstRef.getAttribute('target');
-    if (target) lineRef = target.replace('#', '');
-    const emph = qsaTEI(firstRef, 'emph')[0];
-    if (emph) lemmaText = emph.textContent.trim();
-    const quoteEl = qsaTEI(firstRef, 'quote')[0];
-    if (!lemmaText && quoteEl) lemmaText = quoteEl.textContent.trim();
-  }
-
-  // Extract line number from lineRef for display
-  let refLabel = '';
-  if (lineRef) {
-    const parts = lineRef.split('.');
-    if (parts.length >= 3) {
-      refLabel = `Inf. ${romanFromParts(parts[1])}, ${parseInt(parts[2])}`;
-    }
-  }
-
-  // Build commentary body HTML
-  const bodyHtml = renderCommentaryBody(pEls[0]);
-
-  return { xmlId, lineRef, refLabel, lemmaText, bodyHtml };
+@media (max-width: 600px) {
+  .site-subtitle { display: none; }
+  .search-input { width: 120px; }
+  .view-tab span { display: none; }
+  .commento-container { padding: 0 12px 40px; }
+  .text-mode-toggle { gap: 4px; padding: 0 4px; }
+  .toggle-label { font-size: 0.65rem; }
+  .toggle-switch { width: 32px; height: 18px; }
+  .toggle-thumb { width: 12px; height: 12px; }
+  .toggle-switch.active .toggle-thumb { transform: translateX(14px); }
 }
-
-function romanFromParts(str) {
-  const n = parseInt(str);
-  return toRoman(n);
-}
-
-function renderCommentaryBody(pEl) {
-  let html = '';
-  state.noteCounter = 0;
-  // Skip the first <ref> element (already displayed as lemma)
-  let skippedFirstRef = false;
-  for (const child of pEl.childNodes) {
-    if (child.nodeType === 1 && child.localName === 'ref' && child.getAttribute('target') && !skippedFirstRef) {
-      skippedFirstRef = true;
-      continue; // skip the first ref — it's the lemma
-    }
-    html += renderCommentaryNode(child);
-  }
-  return html.replace(/^\s*\.\s*/, '').trim();
-}
-
-function renderCommentaryNode(node) {
-  if (node.nodeType === 3) return escapeHTML(node.textContent);
-  if (node.nodeType !== 1) return '';
-
-  const name = node.localName;
-
-  // Skip the very first ref+quote (it's the lemma we already extracted)
-  // We handle this by rendering it lightly
-  if (name === 'ref' && node.getAttribute('target')) {
-    // If this is a secondary ref (not the first one), render inline
-    const target = node.getAttribute('target');
-    const quoteEl = qsaTEI(node, 'quote')[0];
-    const emphEl = qsaTEI(node, 'emph')[0];
-    if (emphEl || quoteEl) {
-      const text = emphEl ? emphEl.textContent : quoteEl ? quoteEl.textContent : '';
-      return `<em class="mentioned">${escapeHTML(text.trim())}</em>`;
-    }
-    return renderCommentaryChildren(node);
-  }
-
-  if (name === 'emph' || name === 'mentioned') {
-    return `<em class="mentioned">${renderCommentaryChildren(node)}</em>`;
-  }
-
-  if (name === 'quote') {
-    // Check parent for <cit>
-    if (node.parentNode && node.parentNode.localName === 'cit') {
-      const langAttr = node.getAttribute('xml:lang') || node.getAttributeNS('http://www.w3.org/XML/1998/namespace', 'lang');
-      return `<span class="block-quote">${renderCommentaryChildren(node)}</span>`;
-    }
-    return `«${renderCommentaryChildren(node)}»`;
-  }
-
-  if (name === 'cit') {
-    return renderCommentaryChildren(node);
-  }
-
-  if (name === 'note') {
-    const type = node.getAttribute('type');
-    if (type === 'philological-note' || type === 'bibliographical-ref' || type === 'philological-commentary') {
-      state.noteCounter++;
-      const noteId = `note-${Date.now()}-${state.noteCounter}`;
-      const noteContent = escapeHTML(node.textContent.trim());
-      const label = type === 'bibliographical-ref' ? 'Rif. bibliografico' :
-                    type === 'philological-commentary' ? 'Nota filologica' : 'Nota filologica';
-      return `<span class="note-indicator" data-note-id="${noteId}" data-note-title="${label}" data-note-content="${noteContent.replace(/"/g, '&quot;')}" title="${label}">${state.noteCounter}</span>`;
-    }
-    return renderCommentaryChildren(node);
-  }
-
-  if (name === 'app') {
-    const type = node.getAttribute('type');
-    if (type === 'philological') {
-      const lem = qsaTEI(node, 'lem')[0];
-      const rdg = qsaTEI(node, 'rdg')[0];
-      if (lem && rdg) {
-        state.noteCounter++;
-        const noteId = `app-${Date.now()}-${state.noteCounter}`;
-        const content = `Lem.: ${lem.textContent.trim()} | Var.: ${rdg.textContent.trim()}`;
-        return `${escapeHTML(lem.textContent.trim())}<span class="note-indicator app-indicator" data-note-id="${noteId}" data-note-title="Apparato" data-note-content="${escapeHTML(content)}" title="Apparato filologico">🔍</span>`;
-      }
-    }
-    // Render lem only
-    const lem = qsaTEI(node, 'lem')[0];
-    if (lem) return renderCommentaryChildren(lem);
-    return renderCommentaryChildren(node);
-  }
-
-  if (name === 'choice') {
-    const orig = qsaTEI(node, 'orig')[0];
-    const reg = qsaTEI(node, 'reg')[0];
-    if (orig && reg) {
-      const origContent = renderCommentaryChildren(orig);
-      const regContent = renderCommentaryChildren(reg);
-      return `<span class="choice-reg" title="Lezione emendata">${regContent}</span><span class="choice-orig" title="Lezione originale">${origContent}</span>`;
-    }
-    if (reg) return renderCommentaryChildren(reg);
-    if (orig) return renderCommentaryChildren(orig);
-    return renderCommentaryChildren(node);
-  }
-
-  if (name === 'subst') {
-    const del = qsaTEI(node, 'del')[0];
-    const add = qsaTEI(node, 'add')[0];
-    let html = '';
-    if (del) html += `<span class="scribal-del">${escapeHTML(del.textContent)}</span>`;
-    if (add) html += `<span class="scribal-add">${escapeHTML(add.textContent)}</span>`;
-    return html;
-  }
-
-  if (name === 'del') {
-    return `<span class="scribal-del">${renderCommentaryChildren(node)}</span>`;
-  }
-
-  if (name === 'add') {
-    return `<span class="scribal-add">${escapeHTML(node.textContent)}</span>`;
-  }
-
-  if (name === 'g') {
-    const ref = node.getAttribute('ref');
-    if (ref === '#middle_dot') return '·';
-    if (ref === '#piedimosca') return '⸿';
-    return node.textContent;
-  }
-
-  if (name === 'pb' || name === 'cb') {
-    return ''; // skip page/column breaks in commentary view
-  }
-
-  if (name === 'supplied') {
-    return `[${renderCommentaryChildren(node)}]`;
-  }
-
-  return renderCommentaryChildren(node);
-}
-
-function renderCommentaryChildren(node) {
-  let html = '';
-  for (const child of node.childNodes) {
-    html += renderCommentaryNode(child);
-  }
-  return html;
-}
-
-/* ==========================================================================
-   Parse Marginalia
-   ========================================================================== */
-function parseMarginalia(doc) {
-  const marginalia = {}; // lineId -> [{type, content, place}]
-
-  const cantoDivs = qsaTEI(doc, 'div').filter(d => d.getAttribute('type') === 'canto');
-  for (const cantoDiv of cantoDivs) {
-    const notes = qsaTEI(cantoDiv, 'note');
-    for (const note of notes) {
-      const place = note.getAttribute('place');
-      const type = note.getAttribute('type');
-      const target = note.getAttribute('target');
-
-      if (type === 'verbal' || type === 'non_verbal') {
-        // This is a specific note with a target
-        const lineId = target ? target.replace('#', '') : '';
-        if (lineId) {
-          if (!marginalia[lineId]) marginalia[lineId] = [];
-          marginalia[lineId].push({
-            type: type,
-            content: note.textContent.trim(),
-            place: place || getParentPlace(note),
-          });
-        }
-      } else if (place) {
-        // Container note — find child refs
-        const refs = qsaTEI(note, 'ref');
-        for (const ref of refs) {
-          const refType = ref.getAttribute('type') || 'verbal';
-          const refTarget = ref.getAttribute('target');
-          const lineId = refTarget ? refTarget.replace('#', '') : '';
-          if (lineId) {
-            if (!marginalia[lineId]) marginalia[lineId] = [];
-            marginalia[lineId].push({
-              type: refType,
-              content: ref.textContent.trim(),
-              place: place,
-            });
-          }
-        }
-        // Also find child <note> elements
-        const childNotes = [...note.children].filter(c => c.localName === 'note');
-        for (const cn of childNotes) {
-          const cnType = cn.getAttribute('type') || 'verbal';
-          const cnTarget = cn.getAttribute('target');
-          const lineId = cnTarget ? cnTarget.replace('#', '') : '';
-          if (lineId) {
-            if (!marginalia[lineId]) marginalia[lineId] = [];
-            marginalia[lineId].push({
-              type: cnType,
-              content: cn.textContent.trim(),
-              place: place,
-            });
-          }
-        }
-      }
-    }
-  }
-  return marginalia;
-}
-
-function getParentPlace(el) {
-  let parent = el.parentNode;
-  while (parent) {
-    if (parent.localName === 'note' && parent.getAttribute('place')) {
-      return parent.getAttribute('place');
-    }
-    parent = parent.parentNode;
-  }
-  return '';
-}
-
-/* ==========================================================================
-   Build Folio → Content Map
-   Maps each folio+column to its content types (testo/commento) with verse ranges
-   ========================================================================== */
-function buildFolioContentMap(commediaDoc, commentoDoc) {
-  const map = {}; // folioN -> { A: {testo: bool, commento: bool, verseRange: str}, B: {...} }
-
-  // Helper: ensure folio entry exists
-  function ensureFolio(folioN) {
-    if (!map[folioN]) {
-      map[folioN] = {
-        A: { testo: false, commento: false, verseRange: '', cantoN: 0 },
-        B: { testo: false, commento: false, verseRange: '', cantoN: 0 },
-      };
-    }
-  }
-
-  // Helper: normalize column name to A/B
-  function normCol(col) {
-    if (!col) return 'A';
-    const u = col.toUpperCase();
-    return (u === 'B') ? 'B' : 'A';
-  }
-
-  // 1) Walk commedia XML for text content per folio/column
-  let curPb = null;
-  let curCb = 'A';
-  let curCantoN = 0;
-  let colLines = {}; // (folio, col) -> [lineNums]
-
-  function walkTextNode(node) {
-    if (node.nodeType !== 1) return;
-    const localName = node.localName;
-
-    if (localName === 'pb') {
-      const n = node.getAttribute('n');
-      if (n) { curPb = n; curCb = 'A'; }
-    } else if (localName === 'cb') {
-      const n = node.getAttribute('n');
-      if (n) curCb = normCol(n);
-    } else if (localName === 'div' && node.getAttribute('type') === 'canto') {
-      const n = parseInt(node.getAttribute('n'));
-      if (n) curCantoN = n;
-    } else if (localName === 'l' && curPb) {
-      const xmlId = getAttr(node, 'xml:id');
-      if (xmlId) {
-        ensureFolio(curPb);
-        const col = normCol(curCb);
-        map[curPb][col].testo = true;
-        if (!map[curPb][col].cantoN) map[curPb][col].cantoN = curCantoN;
-
-        const key = curPb + '|' + col;
-        if (!colLines[key]) colLines[key] = [];
-        const parts = xmlId.split('.');
-        if (parts.length >= 3) colLines[key].push(parseInt(parts[2]));
-      }
-    }
-
-    for (const child of node.childNodes) {
-      walkTextNode(child);
-    }
-  }
-
-  const textBody = commediaDoc.getElementsByTagNameNS(TEI_NS, 'body')[0];
-  if (textBody) walkTextNode(textBody);
-
-  // Fill verse ranges
-  for (const [key, nums] of Object.entries(colLines)) {
-    if (nums.length === 0) continue;
-    const [folioN, col] = key.split('|');
-    const min = Math.min(...nums);
-    const max = Math.max(...nums);
-    const cantoN = map[folioN][col].cantoN;
-    map[folioN][col].verseRange = `${toRoman(cantoN)}, ${min}–${max}`;
-  }
-
-  // 2) Walk commento XML for commentary content per folio/column
-  let comPb = null;
-  let comCb = 'A';
-  let insideCommentary = false;
-
-  function walkCommentoNode(node) {
-    if (node.nodeType !== 1) return;
-    const localName = node.localName;
-
-    if (localName === 'pb') {
-      const n = node.getAttribute('n');
-      if (n) { comPb = n; comCb = 'A'; }
-    } else if (localName === 'cb') {
-      const n = node.getAttribute('n');
-      if (n) comCb = normCol(n);
-    } else if (localName === 'div' && node.getAttribute('type') === 'commentary') {
-      // Mark this folio/col as having commentary
-      if (comPb) {
-        ensureFolio(comPb);
-        map[comPb][normCol(comCb)].commento = true;
-      }
-    }
-
-    for (const child of node.childNodes) {
-      walkCommentoNode(child);
-    }
-  }
-
-  const comBody = commentoDoc.getElementsByTagNameNS(TEI_NS, 'body')[0];
-  if (comBody) walkCommentoNode(comBody);
-
-  // Also check for pb/cb inside commentary entries (mid-entry page breaks)
-  // Already handled by walking all nodes including those inside divs
-
-  return map;
-}
-
-/* ==========================================================================
-   Render Column Badges on Facsimile
-   ========================================================================== */
-function renderColumnBadges() {
-  const folioN = FOLIO_ORDER[state.currentFolioIdx];
-  const info = state.folioContentMap[folioN];
-  const badgeContainer = els.columnBadges;
-  const summaryEl = els.folioContentSummary;
-
-  if (!info) {
-    badgeContainer.innerHTML = '';
-    summaryEl.innerHTML = '';
-    return;
-  }
-
-  const colA = info.A;
-  const colB = info.B;
-
-  // Determine what each column contains
-  function getColType(col) {
-    if (col.testo && col.commento) return 'misto';
-    if (col.commento) return 'commento';
-    if (col.testo) return 'testo';
-    return null;
-  }
-
-  function badgeLabel(col, colType) {
-    if (colType === 'misto') {
-      let label = 'Testo + Commento';
-      if (col.verseRange) label = `Testo ${col.verseRange} + Comm.`;
-      return label;
-    }
-    if (colType === 'commento') return 'Commento';
-    if (colType === 'testo') {
-      return col.verseRange ? `Testo ${col.verseRange}` : 'Testo';
-    }
-    return '';
-  }
-
-  const typeA = getColType(colA);
-  const typeB = getColType(colB);
-
-  let badgesHtml = '';
-
-  // If both columns have the same type and it's a simple case, show a single centered badge
-  if (typeA && typeB) {
-    // Two columns, two badges
-    badgesHtml += `<div class="col-badge col-left badge-${typeA}">
-      <span class="col-badge-dot"></span>
-      <span>Col. A · ${badgeLabel(colA, typeA)}</span>
-    </div>`;
-    badgesHtml += `<div class="col-badge col-right badge-${typeB}">
-      <span class="col-badge-dot"></span>
-      <span>Col. B · ${badgeLabel(colB, typeB)}</span>
-    </div>`;
-  } else if (typeA && !typeB) {
-    badgesHtml += `<div class="col-badge col-left badge-${typeA}">
-      <span class="col-badge-dot"></span>
-      <span>${badgeLabel(colA, typeA)}</span>
-    </div>`;
-  } else if (!typeA && typeB) {
-    badgesHtml += `<div class="col-badge col-right badge-${typeB}">
-      <span class="col-badge-dot"></span>
-      <span>${badgeLabel(colB, typeB)}</span>
-    </div>`;
-  }
-
-  badgeContainer.innerHTML = badgesHtml;
-
-  // Summary bar below image
-  const hasTesto = colA.testo || colB.testo;
-  const hasCommento = colA.commento || colB.commento;
-
-  let summaryHtml = '';
-  if (hasTesto && hasCommento) {
-    summaryHtml = `<span class="content-legend"><span class="legend-dot dot-testo"></span> Testo</span>
-                   <span class="content-legend"><span class="legend-dot dot-commento"></span> Commento</span>
-                   <span style="color:var(--accent);font-weight:500;">Carta con compresenza testo–commento</span>`;
-  } else if (hasCommento) {
-    summaryHtml = `<span class="content-legend"><span class="legend-dot dot-commento"></span> Carta interamente di commento</span>`;
-  } else if (hasTesto) {
-    summaryHtml = `<span class="content-legend"><span class="legend-dot dot-testo"></span> Carta di testo poetico</span>`;
-  }
-  summaryEl.innerHTML = summaryHtml;
-}
-
-/* ==========================================================================
-   Rendering — View 1: Facsimile e Testo
-   ========================================================================== */
-function renderFacsimileView() {
-  const canto = state.cantos.find(c => c.n === state.currentCanto);
-  if (!canto) return;
-
-  // Find which folios belong to this canto
-  const cantoFolios = [];
-  for (const el of canto.elements) {
-    if (el.type === 'pb' && !cantoFolios.includes(el.n)) {
-      cantoFolios.push(el.n);
-    }
-  }
-
-  // If the canto doesn't start with a pb, use the first pb from the previous canto or default
-  if (cantoFolios.length === 0) {
-    cantoFolios.push(FOLIO_ORDER[0]);
-  }
-
-  // Set folio to first of this canto
-  const firstFolioIdx = FOLIO_ORDER.indexOf(cantoFolios[0]);
-  if (firstFolioIdx >= 0) {
-    state.currentFolioIdx = firstFolioIdx;
-  }
-
-  renderTextForCanto(canto);
-  updateFacsimile();
-}
-
-function renderTextForCanto(canto) {
-  els.textPanelTitle.textContent = `Testo poetico — Canto ${toRoman(canto.n)}`;
-  let html = `<div class="canto-heading">${escapeHTML(canto.heading)}</div>`;
-
-  for (const el of canto.elements) {
-    if (el.type === 'pb') {
-      html += `<div class="folio-marker" data-folio="${el.n}" title="Vai al facsimile della carta ${el.n}">[c. ${el.n}]</div>`;
-    } else if (el.type === 'cb') {
-      html += `<span class="column-marker">col. ${el.n}</span>`;
-    } else if (el.type === 'terzina') {
-      html += renderTerzina(el);
-    }
-  }
-
-  els.textContent.innerHTML = html;
-
-  // Bind folio markers
-  els.textContent.querySelectorAll('.folio-marker').forEach(marker => {
-    marker.addEventListener('click', () => {
-      const folio = marker.dataset.folio;
-      const idx = FOLIO_ORDER.indexOf(folio);
-      if (idx >= 0) {
-        state.currentFolioIdx = idx;
-        updateFacsimile();
-      }
-    });
-  });
-
-  // Bind verse clicks
-  els.textContent.querySelectorAll('.verse-line').forEach(line => {
-    line.addEventListener('click', () => {
-      // Remove previous active
-      els.textContent.querySelectorAll('.verse-line.active').forEach(l => l.classList.remove('active'));
-      line.classList.add('active');
-    });
-  });
-
-  // Bind margin indicators
-  els.textContent.querySelectorAll('.margin-indicator').forEach(ind => {
-    ind.addEventListener('mouseenter', (e) => showMarginTooltip(e, ind));
-    ind.addEventListener('mouseleave', hideMarginTooltip);
-    ind.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showMarginTooltip(e, ind);
-    });
-  });
-}
-
-function renderTerzina(el) {
-  let html = '<div class="terzina">';
-  for (const line of el.lines) {
-    const margins = state.marginalia[line.xmlId] || [];
-    let marginHtml = '';
-    for (const m of margins) {
-      if (m.type === 'non_verbal') {
-        const symbol = m.content.trim() || '⸿';
-        marginHtml += `<span class="margin-indicator nonverbal" data-margin-type="non_verbal" data-margin-content="${escapeHTML(symbol)}" data-margin-place="${m.place}" title="Segno marginale non verbale">⸿</span>`;
-      } else {
-        marginHtml += `<span class="margin-indicator" data-margin-type="verbal" data-margin-content="${escapeHTML(m.content)}" data-margin-place="${m.place}" title="Annotazione al margine">m</span>`;
-      }
-    }
-
-    html += `<div class="verse-line" data-line-id="${line.xmlId}">`;
-    html += `<span class="line-number">${line.lineNum}</span>`;
-    html += `<span class="verse-text">${line.html}</span>`;
-    html += marginHtml;
-    html += `</div>`;
-  }
-  html += '</div>';
-  return html;
-}
-
-/* ==========================================================================
-   Rendering — View 2: Commento
-   ========================================================================== */
-function renderCommentoView() {
-  const cantoN = state.currentCanto;
-  const entries = state.commentary[cantoN] || [];
-  els.commentoPanelTitle.textContent = `Commento — Canto ${toRoman(cantoN)}`;
-
-  if (entries.length === 0) {
-    els.commentoContent.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;font-family:var(--font-serif);">Nessun commento disponibile per questo canto.</p>';
-    return;
-  }
-
-  let html = '';
-  for (const entry of entries) {
-    html += `<div class="commentary-entry" data-line-ref="${entry.lineRef}">`;
-    html += `<div class="commentary-lemma">`;
-    if (entry.refLabel) {
-      html += `<span class="lemma-ref">${escapeHTML(entry.refLabel)}</span>`;
-    }
-    if (entry.lemmaText) {
-      html += `<span class="lemma-text">${escapeHTML(entry.lemmaText)}</span>`;
-    }
-    html += `</div>`;
-    html += `<div class="commentary-body">${entry.bodyHtml}</div>`;
-    html += `</div>`;
-  }
-
-  els.commentoContent.innerHTML = html;
-
-  // Bind note indicators
-  els.commentoContent.querySelectorAll('.note-indicator').forEach(ind => {
-    ind.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showNotePopup(e, ind);
-    });
-  });
-}
-
-/* ==========================================================================
-   Facsimile Viewer
-   ========================================================================== */
-function updateFacsimile() {
-  const folioN = FOLIO_ORDER[state.currentFolioIdx];
-  const filename = FACSIMILE_MAP[folioN];
-
-  if (filename) {
-    els.facsimileImg.src = `assets/facsimile/${filename}`;
-    els.facsimileImg.alt = `Facsimile carta ${folioN}`;
-  } else {
-    els.facsimileImg.src = '';
-    els.facsimileImg.alt = 'Immagine non disponibile';
-  }
-
-  els.folioLabel.textContent = `c. ${folioN}`;
-  $('#prevFolio').disabled = state.currentFolioIdx <= 0;
-  $('#nextFolio').disabled = state.currentFolioIdx >= FOLIO_ORDER.length - 1;
-
-  applyZoom();
-  renderColumnBadges();
-}
-
-function applyZoom() {
-  els.facsimileImageWrap.style.transform = `scale(${state.zoom})`;
-  els.zoomLevel.textContent = `${Math.round(state.zoom * 100)}%`;
-}
-
-/* ==========================================================================
-   Popups & Tooltips
-   ========================================================================== */
-function showNotePopup(e, indicator) {
-  const popup = els.notePopup;
-  const title = indicator.dataset.noteTitle || 'Nota';
-  const content = indicator.dataset.noteContent || '';
-
-  popup.querySelector('.note-popup-title').textContent = title;
-  popup.querySelector('.note-popup-body').innerHTML = `<p>${content}</p>`;
-  popup.classList.add('visible');
-
-  // Position near the indicator
-  const rect = indicator.getBoundingClientRect();
-  let top = rect.bottom + 8;
-  let left = rect.left;
-
-  // Keep within viewport
-  const popW = 380;
-  const popH = popup.offsetHeight || 200;
-  if (left + popW > window.innerWidth) left = window.innerWidth - popW - 16;
-  if (left < 8) left = 8;
-  if (top + popH > window.innerHeight) top = rect.top - popH - 8;
-
-  popup.style.top = `${top}px`;
-  popup.style.left = `${left}px`;
-}
-
-function hideNotePopup() {
-  els.notePopup.classList.remove('visible');
-}
-
-function showMarginTooltip(e, indicator) {
-  const tooltip = els.marginTooltip;
-  const type = indicator.dataset.marginType;
-  const content = indicator.dataset.marginContent;
-  const place = indicator.dataset.marginPlace || '';
-
-  const placeLabels = {
-    'external_margin': 'Margine esterno',
-    'internal_margin': 'Margine interno',
-    'intercolumn': 'Intercolumnio',
-    'inferior_margin': 'Margine inferiore',
-  };
-
-  let html = '';
-  if (place) html += `<span class="margin-ref">${placeLabels[place] || place}</span>`;
-  html += escapeHTML(content);
-
-  tooltip.innerHTML = html;
-  tooltip.classList.add('visible');
-
-  const rect = indicator.getBoundingClientRect();
-  let top = rect.bottom + 8;
-  let left = rect.left;
-
-  if (left + 340 > window.innerWidth) left = window.innerWidth - 340 - 16;
-  if (left < 8) left = 8;
-  if (top + tooltip.offsetHeight > window.innerHeight) top = rect.top - tooltip.offsetHeight - 8;
-
-  tooltip.style.top = `${top}px`;
-  tooltip.style.left = `${left}px`;
-}
-
-function hideMarginTooltip() {
-  els.marginTooltip.classList.remove('visible');
-}
-
-/* ==========================================================================
-   Search
-   ========================================================================== */
-function performSearch(query) {
-  if (!query || query.length < 2) {
-    els.searchResults.classList.remove('visible');
-    return;
-  }
-
-  const results = [];
-  const lowerQ = query.toLowerCase();
-
-  // Search in cantos
-  for (const canto of state.cantos) {
-    for (const el of canto.elements) {
-      if (el.type === 'terzina') {
-        for (const line of el.lines) {
-          const plainText = stripHTML(line.html);
-          if (plainText.toLowerCase().includes(lowerQ)) {
-            results.push({
-              type: 'testo',
-              cantoN: canto.n,
-              ref: `Inf. ${toRoman(canto.n)}, ${line.lineNum}`,
-              text: plainText,
-              lineId: line.xmlId,
-            });
-          }
-        }
-      }
-    }
-  }
-
-  // Search in commentary
-  for (const [cantoN, entries] of Object.entries(state.commentary)) {
-    for (const entry of entries) {
-      const plainText = stripHTML(entry.bodyHtml);
-      if (plainText.toLowerCase().includes(lowerQ)) {
-        results.push({
-          type: 'commento',
-          cantoN: parseInt(cantoN),
-          ref: entry.refLabel || `Inf. ${toRoman(parseInt(cantoN))}`,
-          text: plainText.substring(0, 200),
-          lineRef: entry.lineRef,
-        });
-      }
-    }
-  }
-
-  renderSearchResults(results.slice(0, 20), query);
-}
-
-function renderSearchResults(results, query) {
-  if (results.length === 0) {
-    els.searchResults.innerHTML = '<div class="search-no-results">Nessun risultato trovato.</div>';
-    els.searchResults.classList.add('visible');
-    return;
-  }
-
-  const lowerQ = query.toLowerCase();
-  let html = '';
-  for (const r of results) {
-    const highlighted = highlightMatch(r.text, lowerQ);
-    html += `<div class="search-result-item" data-canto="${r.cantoN}" data-type="${r.type}" data-line="${r.lineId || r.lineRef || ''}">`;
-    html += `<div class="search-result-ref">${r.type === 'commento' ? 'Commento' : 'Testo'} · ${escapeHTML(r.ref)}</div>`;
-    html += `<div class="search-result-text">${highlighted}</div>`;
-    html += `</div>`;
-  }
-
-  els.searchResults.innerHTML = html;
-  els.searchResults.classList.add('visible');
-
-  // Bind clicks
-  els.searchResults.querySelectorAll('.search-result-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const cantoN = parseInt(item.dataset.canto);
-      const type = item.dataset.type;
-
-      state.currentCanto = cantoN;
-      els.cantoSelect.value = cantoN;
-
-      if (type === 'commento') {
-        switchView('commento');
-        renderCommentoView();
-      } else {
-        switchView('facsimile');
-        renderFacsimileView();
-        // Try to scroll to the line
-        setTimeout(() => {
-          const lineId = item.dataset.line;
-          if (lineId) {
-            const lineEl = els.textContent.querySelector(`[data-line-id="${lineId}"]`);
-            if (lineEl) {
-              lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              lineEl.classList.add('active');
-            }
-          }
-        }, 100);
-      }
-
-      els.searchResults.classList.remove('visible');
-      els.searchInput.value = '';
-    });
-  });
-}
-
-function highlightMatch(text, query) {
-  const idx = text.toLowerCase().indexOf(query);
-  if (idx < 0) return escapeHTML(text);
-
-  // Show context around match
-  const start = Math.max(0, idx - 40);
-  const end = Math.min(text.length, idx + query.length + 60);
-  let excerpt = text.substring(start, end);
-  if (start > 0) excerpt = '…' + excerpt;
-  if (end < text.length) excerpt += '…';
-
-  // Highlight
-  const matchIdx = excerpt.toLowerCase().indexOf(query);
-  if (matchIdx >= 0) {
-    return escapeHTML(excerpt.substring(0, matchIdx)) +
-           `<mark>${escapeHTML(excerpt.substring(matchIdx, matchIdx + query.length))}</mark>` +
-           escapeHTML(excerpt.substring(matchIdx + query.length));
-  }
-  return escapeHTML(excerpt);
-}
-
-function stripHTML(html) {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
-}
-
-/* ==========================================================================
-   Navigation & UI
-   ========================================================================== */
-function switchView(view) {
-  state.currentView = view;
-  $$('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
-  els.viewFacsimile.classList.toggle('active', view === 'facsimile');
-  els.viewCommento.classList.toggle('active', view === 'commento');
-
-  if (view === 'commento') {
-    renderCommentoView();
-  } else {
-    renderFacsimileView();
-  }
-}
-
-function switchCanto(n) {
-  state.currentCanto = n;
-  if (state.currentView === 'facsimile') {
-    renderFacsimileView();
-  } else {
-    renderCommentoView();
-  }
-}
-
-function populateCantoSelect() {
-  const cantoNums = state.cantos.map(c => c.n).sort((a, b) => a - b);
-  els.cantoSelect.innerHTML = cantoNums.map(n =>
-    `<option value="${n}">Canto ${toRoman(n)}</option>`
-  ).join('');
-  els.cantoSelect.value = state.currentCanto;
-}
-
-/* ==========================================================================
-   Pan & Zoom for Facsimile
-   ========================================================================== */
-function initFacsimileInteraction() {
-  let isPanning = false;
-  let startX, startY, scrollLeft, scrollTop;
-
-  els.facsimileViewer.addEventListener('mousedown', (e) => {
-    isPanning = true;
-    startX = e.pageX - els.facsimileViewer.offsetLeft;
-    startY = e.pageY - els.facsimileViewer.offsetTop;
-    scrollLeft = els.facsimileViewer.scrollLeft;
-    scrollTop = els.facsimileViewer.scrollTop;
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isPanning) return;
-    e.preventDefault();
-    const x = e.pageX - els.facsimileViewer.offsetLeft;
-    const y = e.pageY - els.facsimileViewer.offsetTop;
-    els.facsimileViewer.scrollLeft = scrollLeft - (x - startX);
-    els.facsimileViewer.scrollTop = scrollTop - (y - startY);
-  });
-
-  document.addEventListener('mouseup', () => {
-    isPanning = false;
-  });
-
-  // Mouse wheel zoom
-  els.facsimileViewer.addEventListener('wheel', (e) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      state.zoom = Math.max(0.3, Math.min(4, state.zoom + delta));
-      applyZoom();
-    }
-  }, { passive: false });
-}
-
-/* ==========================================================================
-   Event Binding
-   ========================================================================== */
-function bindEvents() {
-  // View tabs
-  $$('.view-tab').forEach(tab => {
-    tab.addEventListener('click', () => switchView(tab.dataset.view));
-  });
-
-  // Canto select
-  els.cantoSelect.addEventListener('change', () => {
-    switchCanto(parseInt(els.cantoSelect.value));
-  });
-
-  // Folio navigation
-  $('#prevFolio').addEventListener('click', () => {
-    if (state.currentFolioIdx > 0) {
-      state.currentFolioIdx--;
-      updateFacsimile();
-    }
-  });
-  $('#nextFolio').addEventListener('click', () => {
-    if (state.currentFolioIdx < FOLIO_ORDER.length - 1) {
-      state.currentFolioIdx++;
-      updateFacsimile();
-    }
-  });
-
-  // Zoom
-  $('#zoomIn').addEventListener('click', () => {
-    state.zoom = Math.min(4, state.zoom + 0.2);
-    applyZoom();
-  });
-  $('#zoomOut').addEventListener('click', () => {
-    state.zoom = Math.max(0.3, state.zoom - 0.2);
-    applyZoom();
-  });
-  $('#zoomReset').addEventListener('click', () => {
-    state.zoom = 1;
-    applyZoom();
-  });
-
-  // Search
-  let searchTimer;
-  els.searchInput.addEventListener('input', () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => performSearch(els.searchInput.value.trim()), 250);
-  });
-  els.searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      els.searchResults.classList.remove('visible');
-      els.searchInput.blur();
-    }
-  });
-
-  // Close search on click outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-container')) {
-      els.searchResults.classList.remove('visible');
-    }
-    if (!e.target.closest('.note-popup') && !e.target.closest('.note-indicator')) {
-      hideNotePopup();
-    }
-  });
-
-  // Orig/Reg toggle
-  $('#origRegToggle').addEventListener('click', () => {
-    state.showOrig = !state.showOrig;
-    document.body.classList.toggle('show-orig', state.showOrig);
-    $('#origRegToggle').classList.toggle('active', state.showOrig);
-    $('#toggleLabelReg').classList.toggle('active', !state.showOrig);
-    $('#toggleLabelOrig').classList.toggle('active', state.showOrig);
-  });
-
-  // Dark mode
-  $('#darkModeToggle').addEventListener('click', () => {
-    state.isDark = !state.isDark;
-    document.body.classList.toggle('dark', state.isDark);
-  });
-
-  // About modal
-  $('#aboutBtn').addEventListener('click', () => {
-    els.aboutModal.classList.add('visible');
-  });
-  $('#aboutClose').addEventListener('click', () => {
-    els.aboutModal.classList.remove('visible');
-  });
-  els.aboutModal.addEventListener('click', (e) => {
-    if (e.target === els.aboutModal) els.aboutModal.classList.remove('visible');
-  });
-
-  // Note popup close
-  els.notePopup.querySelector('.note-popup-close').addEventListener('click', hideNotePopup);
-
-  // Keyboard shortcuts
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      els.aboutModal.classList.remove('visible');
-      hideNotePopup();
-      els.searchResults.classList.remove('visible');
-    }
-    // Ctrl+K for search
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      els.searchInput.focus();
-    }
-  });
-
-  // Facsimile pan
-  initFacsimileInteraction();
-}
-
-/* ==========================================================================
-   Utilities
-   ========================================================================== */
-function toRoman(num) {
-  const romanNumerals = [
-    [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
-    [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
-    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
-  ];
-  let result = '';
-  for (const [value, numeral] of romanNumerals) {
-    while (num >= value) { result += numeral; num -= value; }
-  }
-  return result;
-}
-
-/* ==========================================================================
-   Initialization
-   ========================================================================== */
-async function init() {
-  cacheDom();
-
-  try {
-    const [commediaDoc, commentoDoc, marginiDoc] = await Promise.all([
-      loadXML('data/commedia_inferno.xml'),
-      loadXML('data/commento_inferno.xml'),
-      loadXML('data/margini_inferno.xml'),
-    ]);
-
-    state.commediaDoc = commediaDoc;
-    state.commentoDoc = commentoDoc;
-    state.marginiDoc = marginiDoc;
-
-    // Parse
-    state.cantos = parseCommedia(commediaDoc);
-    state.commentary = parseCommentary(commentoDoc);
-    state.marginalia = parseMarginalia(marginiDoc);
-    state.folioContentMap = buildFolioContentMap(commediaDoc, commentoDoc);
-
-    // Populate UI
-    populateCantoSelect();
-    bindEvents();
-
-    // Initial render
-    renderFacsimileView();
-
-    // Initialize Lucide icons
-    lucide.createIcons();
-
-    // Hide loading
-    els.loadingOverlay.classList.add('hide');
-    setTimeout(() => els.loadingOverlay.remove(), 500);
-
-  } catch (err) {
-    console.error('Error loading edition:', err);
-    els.loadingOverlay.innerHTML = `
-      <div style="text-align:center;padding:40px;">
-        <p style="color:var(--accent);font-size:1.1rem;margin-bottom:8px;">Errore nel caricamento</p>
-        <p style="color:var(--text-muted);font-size:0.85rem;">${escapeHTML(err.message)}</p>
-      </div>
-    `;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', init);
