@@ -752,6 +752,10 @@ body.dark .col-badge.badge-misto {
 .folio-marker:hover {
   background: var(--highlight-active);
 }
+.folio-marker.active {
+  background: var(--accent);
+  color: var(--header-text);
+}
 
 .column-marker {
   display: inline-block;

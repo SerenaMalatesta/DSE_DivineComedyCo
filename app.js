@@ -451,6 +451,17 @@ function renderCommentaryChildren(node) {
 function parseMarginalia(doc) {
   const marginalia = {}; // lineId -> [{type, content, place}]
 
+  function pushMarginalia(lineId, item) {
+    if (!lineId) return;
+    if (!marginalia[lineId]) marginalia[lineId] = [];
+    const exists = marginalia[lineId].some(existing =>
+      existing.type === item.type &&
+      existing.content === item.content &&
+      existing.place === item.place
+    );
+    if (!exists) marginalia[lineId].push(item);
+  }
+
   const cantoDivs = qsaTEI(doc, 'div').filter(d => d.getAttribute('type') === 'canto');
   for (const cantoDiv of cantoDivs) {
     const notes = qsaTEI(cantoDiv, 'note');
@@ -462,14 +473,11 @@ function parseMarginalia(doc) {
       if (type === 'verbal' || type === 'non_verbal') {
         // This is a specific note with a target
         const lineId = target ? target.replace('#', '') : '';
-        if (lineId) {
-          if (!marginalia[lineId]) marginalia[lineId] = [];
-          marginalia[lineId].push({
-            type: type,
-            content: note.textContent.trim(),
-            place: place || getParentPlace(note),
-          });
-        }
+        pushMarginalia(lineId, {
+          type: type,
+          content: note.textContent.trim(),
+          place: place || getParentPlace(note),
+        });
       } else if (place) {
         // Container note — find child refs
         const refs = qsaTEI(note, 'ref');
@@ -477,14 +485,11 @@ function parseMarginalia(doc) {
           const refType = ref.getAttribute('type') || 'verbal';
           const refTarget = ref.getAttribute('target');
           const lineId = refTarget ? refTarget.replace('#', '') : '';
-          if (lineId) {
-            if (!marginalia[lineId]) marginalia[lineId] = [];
-            marginalia[lineId].push({
-              type: refType,
-              content: ref.textContent.trim(),
-              place: place,
-            });
-          }
+          pushMarginalia(lineId, {
+            type: refType,
+            content: ref.textContent.trim(),
+            place: place,
+          });
         }
         // Also find child <note> elements
         const childNotes = [...note.children].filter(c => c.localName === 'note');
@@ -492,14 +497,11 @@ function parseMarginalia(doc) {
           const cnType = cn.getAttribute('type') || 'verbal';
           const cnTarget = cn.getAttribute('target');
           const lineId = cnTarget ? cnTarget.replace('#', '') : '';
-          if (lineId) {
-            if (!marginalia[lineId]) marginalia[lineId] = [];
-            marginalia[lineId].push({
-              type: cnType,
-              content: cn.textContent.trim(),
-              place: place,
-            });
-          }
+          pushMarginalia(lineId, {
+            type: cnType,
+            content: cn.textContent.trim(),
+            place: place,
+          });
         }
       }
     }
@@ -769,8 +771,7 @@ function renderTextForCanto(canto) {
       const folio = marker.dataset.folio;
       const idx = FOLIO_ORDER.indexOf(folio);
       if (idx >= 0) {
-        state.currentFolioIdx = idx;
-        updateFacsimile();
+        setCurrentFolioIdx(idx);
       }
     });
   });
@@ -793,6 +794,48 @@ function renderTextForCanto(canto) {
       showMarginTooltip(e, ind);
     });
   });
+}
+
+function findCantoForFolio(folioN) {
+  return state.cantos.find(canto => canto.elements.some(el => el.type === 'pb' && el.n === folioN));
+}
+
+function scrollTextToFolio(folioN) {
+  const marker = els.textContent.querySelector(`.folio-marker[data-folio="${folioN}"]`);
+  if (!marker) return;
+
+  els.textContent.querySelectorAll('.folio-marker.active').forEach(m => m.classList.remove('active'));
+  marker.classList.add('active');
+
+  const container = els.textContent;
+  const markerRect = marker.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const offset = markerRect.top - containerRect.top + container.scrollTop - 24;
+  container.scrollTo({ top: offset, behavior: 'smooth' });
+}
+
+function syncTextWithFolio(folioN) {
+  const targetCanto = findCantoForFolio(folioN) || state.cantos.find(c => c.n === state.currentCanto);
+  if (!targetCanto) return;
+
+  if (targetCanto.n !== state.currentCanto) {
+    state.currentCanto = targetCanto.n;
+    els.cantoSelect.value = targetCanto.n;
+    renderTextForCanto(targetCanto);
+  }
+
+  scrollTextToFolio(folioN);
+}
+
+function setCurrentFolioIdx(idx) {
+  const bounded = Math.max(0, Math.min(idx, FOLIO_ORDER.length - 1));
+  state.currentFolioIdx = bounded;
+  updateFacsimile();
+}
+
+function goToFolio(folioN) {
+  const idx = FOLIO_ORDER.indexOf(folioN);
+  if (idx >= 0) setCurrentFolioIdx(idx);
 }
 
 function renderTerzina(el) {
@@ -879,6 +922,10 @@ function updateFacsimile() {
 
   applyZoom();
   renderColumnBadges();
+
+  if (state.currentView === 'facsimile') {
+    syncTextWithFolio(folioN);
+  }
 }
 
 function applyZoom() {
@@ -1175,14 +1222,12 @@ function bindEvents() {
   // Folio navigation
   $('#prevFolio').addEventListener('click', () => {
     if (state.currentFolioIdx > 0) {
-      state.currentFolioIdx--;
-      updateFacsimile();
+      setCurrentFolioIdx(state.currentFolioIdx - 1);
     }
   });
   $('#nextFolio').addEventListener('click', () => {
     if (state.currentFolioIdx < FOLIO_ORDER.length - 1) {
-      state.currentFolioIdx++;
-      updateFacsimile();
+      setCurrentFolioIdx(state.currentFolioIdx + 1);
     }
   });
 
