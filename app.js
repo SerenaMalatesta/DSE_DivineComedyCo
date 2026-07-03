@@ -27,30 +27,30 @@ const state = {
 
 /* --- Facsimile file mapping --- */
 const FACSIMILE_MAP = {
-  '2r':  'CNMD0000428772_-00006_carta_2r-12.jpg',
-  '2v':  'CNMD0000428772_-00007_carta_2v-13.jpg',
-  '3r':  'CNMD0000428772_-00008_carta_3r-14.jpg',
-  '3v':  'CNMD0000428772_-00009_carta_3v-15.jpg',
-  '4r':  'CNMD0000428772_-00010_carta_4r-16.jpg',
-  '4v':  'CNMD0000428772_-00011_carta_4v-17.jpg',
-  '5r':  'CNMD0000428772_-00012_carta_5r-18.jpg',
-  '5v':  'CNMD0000428772_-00013_carta_5v-19.jpg',
-  '6r':  'CNMD0000428772_-00014_carta_6r-20.jpg',
-  '6v':  'CNMD0000428772_-00015_carta_6v-21.jpg',
-  '7r':  'CNMD0000428772_-00016_carta_7r-22.jpg',
-  '7v':  'CNMD0000428772_-00017_carta_7v-23.jpg',
-  '8r':  'CNMD0000428772_-00018_carta_8r-24.jpg',
-  '8v':  'CNMD0000428772_-00019_carta_8v-25.jpg',
-  '9r':  'CNMD0000428772_-00020_carta_9r-26.jpg',
-  '9v':  'CNMD0000428772_-00021_carta_9v-27.jpg',
-  '10r': 'CNMD0000428772_-00022_carta_10r-28.jpg',
-  '10v': 'CNMD0000428772_-00023_carta_10v-29.jpg',
-  '11r': 'CNMD0000428772_-00024_carta_11r-5.jpg',
-  '11v': 'CNMD0000428772_-00025_carta_11v-6.jpg',
+  '2r': 'CNMD0000428772_00006_carta002r.jpg',
+  '2v': 'CNMD0000428772_00007_carta002v.jpg',
+  '3r': 'CNMD0000428772_00008_carta003r.jpg',
+  '3v': 'CNMD0000428772_00009_carta003v.jpg',
+  '4r': 'CNMD0000428772_00010_carta004r.jpg',
+  '4v': 'CNMD0000428772_00011_carta004v.jpg',
+  '5r': 'CNMD0000428772_00012_carta005r.jpg',
+  '5v': 'CNMD0000428772_00013_carta005v.jpg',
+  '6r': 'CNMD0000428772_00014_carta006r.jpg',
+  '6v': 'CNMD0000428772_00015_carta006v.jpg',
+  '7r': 'CNMD0000428772_00016_carta007r.jpg',
+  '7v': 'CNMD0000428772_00017_carta007v.jpg',
+  '8r': 'CNMD0000428772_00018_carta008r.jpg',
+  '8v': 'CNMD0000428772_00019_carta008v.jpg',
+  '9r': 'CNMD0000428772_00020_carta009r.jpg',
+  '9v': 'CNMD0000428772_00021_carta009v.jpg',
+  '10r': 'CNMD0000428772_00022_carta010r.jpg',
+  '10v': 'CNMD0000428772_00023_carta010v.jpg',
+  '11r': 'CNMD0000428772_00024_carta011r.jpg',
+  '11v': 'CNMD0000428772_00025_carta011v.jpg',
 };
 
 /* Ordered folio list */
-const FOLIO_ORDER = ['2r','2v','3r','3v','4r','4v','5r','5v','6r','6v','7r','7v','8r','8v','9r','9v','10r','10v','11r','11v'];
+const FOLIO_ORDER = ['2r', '2v', '3r', '3v', '4r', '4v', '5r', '5v', '6r', '6v', '7r', '7v', '8r', '8v', '9r', '9v', '10r', '10v', '11r', '11v'];
 
 /* --- DOM refs --- */
 const $ = (sel) => document.querySelector(sel);
@@ -193,20 +193,38 @@ function renderInlineElement(el) {
   const localName = el.localName;
 
   if (localName === 'choice') {
+    const sic = qsaTEI(el, 'sic')[0];
+    const corr = qsaTEI(el, 'corr')[0];
     const orig = qsaTEI(el, 'orig')[0];
     const reg = qsaTEI(el, 'reg')[0];
+
+    // Errore del manoscritto + correzione editoriale
+    if (sic && corr) {
+      const sicContent = renderLineContent(sic);
+      const corrContent = renderLineContent(corr);
+      const type = el.getAttribute('type') || 'correzione editoriale';
+
+      return `<span class="choice-reg choice-corr"
+      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}"
+      title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}">${corrContent}</span><span class="choice-orig choice-sic" title="Forma del manoscritto">${sicContent}</span>`;
+    }
+    // Forma originale + forma regolarizzata
     if (orig && reg) {
       const origContent = renderLineContent(orig);
       const regContent = renderLineContent(reg);
-      return `<span class="choice-reg" title="Lezione regolarizzata">${regContent}</span><span class="choice-orig" title="Lezione originale">${origContent}</span>`;
+
+      return `<span class="choice-reg"
+      data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}"
+      title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span>`;
     }
+
     return renderLineContent(el);
   }
 
   if (localName === 'g') {
     const ref = el.getAttribute('ref');
     if (ref === '#middle_dot') return '·';
-    if (ref === '#piedimosca') return '⸿';
+    if (ref === '#piedimosca') return '<span class="piedimosca">${CAPITULUM}</span>';
     return el.textContent;
   }
 
@@ -240,6 +258,14 @@ function renderInlineElement(el) {
 
 function escapeHTML(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function escapeAttr(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 /* ==========================================================================
@@ -365,7 +391,7 @@ function renderCommentaryNode(node) {
       const noteId = `note-${Date.now()}-${state.noteCounter}`;
       const noteContent = escapeHTML(node.textContent.trim());
       const label = type === 'bibliographical-ref' ? 'Rif. bibliografico' :
-                    type === 'philological-commentary' ? 'Nota filologica' : 'Nota filologica';
+        type === 'philological-commentary' ? 'Nota filologica' : 'Nota filologica';
       return `<span class="note-indicator" data-note-id="${noteId}" data-note-title="${label}" data-note-content="${noteContent.replace(/"/g, '&quot;')}" title="${label}">${state.noteCounter}</span>`;
     }
     return renderCommentaryChildren(node);
@@ -390,15 +416,37 @@ function renderCommentaryNode(node) {
   }
 
   if (name === 'choice') {
+    const sic = qsaTEI(node, 'sic')[0];
+    const corr = qsaTEI(node, 'corr')[0];
     const orig = qsaTEI(node, 'orig')[0];
     const reg = qsaTEI(node, 'reg')[0];
+
+    // Caso sic/corr: errore materiale + correzione editoriale
+    if (sic && corr) {
+      const sicContent = renderCommentaryChildren(sic);
+      const corrContent = renderCommentaryChildren(corr);
+      const type = node.getAttribute('type') || 'correzione editoriale';
+
+      return `<span class="choice-reg choice-corr"
+      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}"
+      title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}">${corrContent}</span><span class="choice-orig choice-sic" title="Forma del manoscritto">${sicContent}</span>`;
+    }
+
+    // Caso orig/reg: forma originale + forma regolarizzata
     if (orig && reg) {
       const origContent = renderCommentaryChildren(orig);
       const regContent = renderCommentaryChildren(reg);
-      return `<span class="choice-reg" title="Lezione emendata">${regContent}</span><span class="choice-orig" title="Lezione originale">${origContent}</span>`;
+
+      return `<span class="choice-reg"
+      data-tooltip="${escapeAttr(stripHTML(origContent))}"
+      title="${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig" title="Forma originale">${origContent}</span>`;
     }
+
+    if (corr) return renderCommentaryChildren(corr);
     if (reg) return renderCommentaryChildren(reg);
+    if (sic) return renderCommentaryChildren(sic);
     if (orig) return renderCommentaryChildren(orig);
+
     return renderCommentaryChildren(node);
   }
 
@@ -422,7 +470,7 @@ function renderCommentaryNode(node) {
   if (name === 'g') {
     const ref = node.getAttribute('ref');
     if (ref === '#middle_dot') return '·';
-    if (ref === '#piedimosca') return '⸿';
+    if (ref === '#piedimosca') return '<span class="piedimosca">${CAPITULUM}</span>';
     return node.textContent;
   }
 
@@ -714,7 +762,7 @@ function renderColumnBadges() {
   } else if (hasCommento) {
     summaryHtml = `<span class="content-legend"><span class="legend-dot dot-commento"></span> Carta interamente di commento</span>`;
   } else if (hasTesto) {
-    summaryHtml = `<span class="content-legend"><span class="legend-dot dot-testo"></span> Carta di testo poetico</span>`;
+    summaryHtml = `<span class="content-legend"><span class="legend-dot dot-testo"></span> Carta di solo testo</span>`;
   }
   summaryEl.innerHTML = summaryHtml;
 }
@@ -845,8 +893,8 @@ function renderTerzina(el) {
     let marginHtml = '';
     for (const m of margins) {
       if (m.type === 'non_verbal') {
-        const symbol = m.content.trim() || '⸿';
-        marginHtml += `<span class="margin-indicator nonverbal" data-margin-type="non_verbal" data-margin-content="${escapeHTML(symbol)}" data-margin-place="${m.place}" title="Segno marginale non verbale">⸿</span>`;
+        const symbol = m.content.trim() || '⁋ capitulum';
+        marginHtml += `<span class="margin-indicator nonverbal" data-margin-type="non_verbal" data-margin-content="${escapeHTML(symbol)}" data-margin-place="${m.place}" title="Segno marginale non verbale">⁋</span>`;
       } else {
         marginHtml += `<span class="margin-indicator" data-margin-type="verbal" data-margin-content="${escapeHTML(m.content)}" data-margin-place="${m.place}" title="Annotazione al margine">m</span>`;
       }
@@ -1121,8 +1169,8 @@ function highlightMatch(text, query) {
   const matchIdx = excerpt.toLowerCase().indexOf(query);
   if (matchIdx >= 0) {
     return escapeHTML(excerpt.substring(0, matchIdx)) +
-           `<mark>${escapeHTML(excerpt.substring(matchIdx, matchIdx + query.length))}</mark>` +
-           escapeHTML(excerpt.substring(matchIdx + query.length));
+      `<mark>${escapeHTML(excerpt.substring(matchIdx, matchIdx + query.length))}</mark>` +
+      escapeHTML(excerpt.substring(matchIdx + query.length));
   }
   return escapeHTML(excerpt);
 }

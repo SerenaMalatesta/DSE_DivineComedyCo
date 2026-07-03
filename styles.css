@@ -849,6 +849,48 @@ body.dark .choice-orig:hover {
   background: rgba(212, 120, 74, 0.18);
 }
 
+/* choice sic/corr: estensione del sistema orig/reg */
+.choice-corr {
+  position: relative;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+}
+
+.choice-corr:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  bottom: 1.8em;
+  z-index: 500;
+
+  min-width: 220px;
+  max-width: 360px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+
+  background: var(--popup-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px var(--popup-shadow);
+
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-style: normal;
+  font-weight: 400;
+  white-space: normal;
+}
+
+.choice-sic::after {
+  content: " [sic.]";
+  font-family: var(--font-sans);
+  font-size: 0.68em;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
 /* scribal corrections in text */
 .scribal-del {
   text-decoration: line-through;
@@ -1259,4 +1301,13 @@ body.dark .choice-orig:hover {
   .toggle-switch { width: 32px; height: 18px; }
   .toggle-thumb { width: 12px; height: 12px; }
   .toggle-switch.active .toggle-thumb { transform: translateX(14px); }
+}
+
+
+.piedimosca,
+.margin-indicator.nonverbal {
+  font-family: "Apple Symbols", "Lucida Grande", Georgia, "Times New Roman", serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1;
 }

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
-	schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<teiCorpus xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<?xml-model 
+  href="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" 
+  type="application/xml" 
+  schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<teiCorpus xmlns="http://www.tei-c.org/ns/1.0"
+           xmlns:xi="http://www.w3.org/2001/XInclude"
+           xml:id="Harley3459_Inferno_corpus">
+
    <teiHeader>
       <fileDesc>
          <titleStmt>
             <title>TEI Corpus: Dante Alighieri, Commedia - Inferno (BL, MS Harley 3459)</title>
-            <editor resp="transcription, encoding, scholarly editing">Serena Malatesta</editor>
+            <editor resp="transcription encoding scholarly-editing">Serena Malatesta</editor>
          </titleStmt>
          <publicationStmt>
             <publisher>University of Padua – Fontegaia</publisher>
@@ -19,7 +25,9 @@
          </sourceDesc>
       </fileDesc>
    </teiHeader>
-   <xi:include href="commedia_inferno.xml"/>
-   <xi:include href="commento_inferno.xml"/>
-   <xi:include href="margini_inferno.xml"/>
+
+   <xi:include href="commedia_inferno.xml" parse="xml"/>
+   <xi:include href="commento_inferno.xml" parse="xml"/>
+   <xi:include href="margini_inferno.xml" parse="xml"/>
+
 </teiCorpus>

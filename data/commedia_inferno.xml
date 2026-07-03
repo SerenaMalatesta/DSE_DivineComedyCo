@@ -81,6 +81,7 @@
           <unicodeProp name="Name" value="CAPITULUM"/>
           <unicodeProp name="Block" value="Supplemental_Punctuation"/>
           <mapping type="unicode">U+2E3F</mapping>
+          <mapping type="display-fallback">U+204B</mapping>
           <desc>Medieval capitulum sign.</desc>
         </char>
 
@@ -973,7 +974,7 @@
 
       <!--Canto iv-->
       <div n="4" type="canto" xml:id="Inferno_4">
-        <pb n="6r" facs="#c6r" corresp="#carta_006r"/>
+        <pb n="6v" facs="#c6v" corresp="#carta_006v"/>
         <cb n="a"/>
         <head>Quarto Capitolo Inferno</head>
         <lg type="terzina">
@@ -1127,9 +1128,11 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.04.082">Po’ che la boce fu ristata e queta, </l>
+        </lg>
           <!-- Carta 7ra -->
           <pb n="7r" facs="#7r" corresp="#carta_007"/>
           <cb n="a"/>
+        <lg type="terzina">  
           <l xml:id="Inf.04.083">vidi quattro ’mbre grandi a nno’ venire: </l>
           <l xml:id="Inf.04.084">sembianza avevano né ttrista né llieta. </l>
         </lg>
@@ -1200,8 +1203,7 @@
         </lg>
 
         <!-- Carta 7rb -->
-        <pb n="7r" facs="#c7r" corresp="#carta_007r"/>
-        <cb n="a"/>
+        <cb n="b"/>
         <lg type="terzina">
           <l xml:id="Inf.04.124">Vidi Cammilla e la Pantasilea; </l>
           <l xml:id="Inf.04.125">dall’altra parte vidi el re Latino </l>
@@ -1244,6 +1246,270 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.04.151">E vegno in parte ove non è che lluca. </l>
+        </lg>
+      </div>
+       <!--Canto v-->
+      <div n="5" type="canto" xml:id="Inferno_5">
+       <pb n="7v" facs="#c7v" corresp="#carta_007v"/>
+        <cb n="a"/>
+        <head>Quinto capitolo Infernii</head>
+        <lg type="terzina">
+          <l xml:id="Inf.05.001">Così discesi del cerchio primaio</l>
+          <l xml:id="Inf.05.002">giù nel secondo, che men loco avinghia</l>
+          <l xml:id="Inf.05.003">e ttanto più dolore, che punge in guaio.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.004">Stavi Minos oribile e ringhia:</l>
+          <l xml:id="Inf.05.005">esamina le colpe ne l’entrata;</l>
+          <l xml:id="Inf.05.006">giudica e manda sicondo ch’avinghia.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.007">Dico che quando l’anima mal nata</l>
+          <l xml:id="Inf.05.008">gli va davanti, tutta si confessa; </l>
+          <l xml:id="Inf.05.009">e quel conoscittore di lo pecata</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.010">vede qua' luogo d’inferno è da essa; </l>
+          <l xml:id="Inf.05.011">cingesi co·la coda tante volte </l>
+          <l xml:id="Inf.05.012">quantunque gradi vuol che giù si è messa.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.013">Sempre dinanzi a llui ne stano molte:</l>
+          <l xml:id="Inf.05.014">vanno a vicenda ciascuno al giudizio, </l>
+          <l xml:id="Inf.05.015">dicono e odono e po’ son giù volte.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.016">« Oh tu che vieni al doloroso ospizio », </l>
+          <l xml:id="Inf.05.017">disse Minòs allor quando mi vide,</l>
+          <l xml:id="Inf.05.018">lasciando il loco di cotanto ofizio,</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.019">« guarda com’entri e di cu' tu tti fidi;</l>
+          <l xml:id="Inf.05.020">non t’inganni l’empiezza dell’entrare! ».</l>
+          <l xml:id="Inf.05.021">E ’l duca mio a llui: « Perché pur gride ? </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.022">Non impedire lo suo fatale andare:</l>
+          <l xml:id="Inf.05.023">vuolsi così colà dove si puote</l>
+          <l xml:id="Inf.05.024">ciò che si vuole, e ppiù non domandare ». </l>
+        </lg>
+      <pb n="8r" facs="#c8r" corresp="#carta_008r"/>
+        <cb n="a"/>
+        <lg type="terzina">
+          <l xml:id="Inf.05.025">Ora comincino le dolenti note</l>
+          <l xml:id="Inf.05.026">a ffarmisi sentire; or son venuto</l>
+          <l xml:id="Inf.05.027">là dove molto piato mi percuote.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.028">E venni a lluogo d’ogni luce muto,</l>
+          <l xml:id="Inf.05.029">che muglia come fa 'l mar per tempesta,</l>
+          <l xml:id="Inf.05.030">se da contrari venti è combattuto.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.031">La bufera infernal, che ma' non resta,</l>
+          <l xml:id="Inf.05.032">mena li spiriti co·la sua rapina;</l>
+          <l xml:id="Inf.05.033">voltando e percotendo li molesta.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.034">Quando giungono davanti a la riuina, </l>
+          <l xml:id="Inf.05.035">vivi le strida e ’l pianto e il lamento;</l>
+          <l xml:id="Inf.05.036">bestegnan quivi la vertù divina.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.037">Intesi ch’a così ffatto tormento</l>
+          <l xml:id="Inf.05.038">enno dannati e pecatori carnali, </l>
+          <l xml:id="Inf.05.039">che 'a ragion sommetton al talento.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.040">E come li stornelli ne portan l’ali </l>
+          <l xml:id="Inf.05.041">nel fredo tempo, a schiera larga e piena,</l>
+          <l xml:id="Inf.05.042">così quel fiato gi spiriti mali </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.043">di qua, di là, di sú, di giù li mena;</l>
+          <l xml:id="Inf.05.044">nulla speranza li conforta mai,</l>
+          <l xml:id="Inf.05.045">non che di posa, ma di minor pena.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.046">E come e grui van cantando lor lai,</l>
+          <l xml:id="Inf.05.047">per l’aire facendo di sé lunga riga,</l>
+          <l xml:id="Inf.05.048">così vid’io venire, traendo guai,</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.049">Ombre portate da la detta briga; </l>
+          <l xml:id="Inf.05.050">per ch’io diss’al maestro: « Chi son quelle</l>
+          <l xml:id="Inf.05.051">genti che l’aria nera sí gastiga? ».</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.052">« La prima di coloro di cui novelle </l>
+          <l xml:id="Inf.05.053">tu voli sapere », mi disse quegli allotta, </l>
+          <l xml:id="Inf.05.054">fu imperadrice di molte favelle.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.055">A vizio di luxuria fu sí rotta,</l>
+          <l xml:id="Inf.05.056">che <choice><orig>labito</orig><reg>libito</reg></choice> lecito fece in suo legge, </l>
+          <l xml:id="Inf.05.057">per torre el biasimo in che era condotta.</l> 
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.058">Ell’è Semiramis, di cui si legge </l>
+          <l xml:id="Inf.05.059">che soccedette a <choice><orig>nNino</orig><reg>Nino</reg></choice> e ffu suo sposa:</l>
+          <l xml:id="Inf.05.060">tene la terra che ’l Soldano corregge. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.061">L’altr’è cole’ che s’ancise amorosa,</l>
+          <l xml:id="Inf.05.062">che ruppe fede al cenere di Sicheo;</l>
+          <l xml:id="Inf.05.063">po’è Creopatras luxurïosa.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.064">Elena vidi, per cu’tanto reo</l>
+        </lg>
+        <cb n="b"/>
+        <lg type="terzina">
+          <l xml:id="Inf.05.065">tempo si volse, e vidi el grande Achille, </l>
+          <l xml:id="Inf.05.066">che per amore al fine combatteo.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.067">Vidi París, Tristano »; e più di mille</l>
+          <l xml:id="Inf.05.068">ombre mostrammi e nominommi a dito, </l>
+          <l xml:id="Inf.05.069">che amor di questa vita di partille.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.070">Da ppoi ch’io ebbi el mio dottore udito</l>
+          <l xml:id="Inf.05.071">nomar le donne antiche e cavalieri, </l>
+          <l xml:id="Inf.05.072">pietà mi vinse, e ffui quasi conquiso.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.073">E cominciai: « Poeta, volontieri </l>
+          <l xml:id="Inf.05.074">parlerei a que’due che insieme vanno, </l>
+          <l xml:id="Inf.05.075">che paion sí al vento essere leggieri ».</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.076">Et e’ risposte a me: « Quando saranno</l>
+          <l xml:id="Inf.05.077">giunti più ppresso a nnoi e ttu gli priega </l>
+          <l xml:id="Inf.05.078">per l’amor <choice><orig>che 
+                    <del rend="strikethrought" type="erasure">gdli</del>
+                  </orig><reg>che</reg></choice>gli mena, 
+                  <choice><orig>reverano</orig><reg>reveranno</reg></choice>.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.079">Sí ttosto come ’l vento a noi li piega</l>
+          <l xml:id="Inf.05.080">muovi la boce: “ O anime affannate</l>
+          <l xml:id="Inf.05.081">venite a nnoi parlare, s’altri nol nega!”».</l> 
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.082">Quali colombe dal disio chiamate </l>
+          <l xml:id="Inf.05.083">co·ll ale aperte e ferme al dolce nido </l>
+          <l xml:id="Inf.05.084">così quell’ombre dal disio portate;</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.085">Tal si fe ne la schiera dov’è Dido,</l>
+          <l xml:id="Inf.05.086">venien ver noi per l’aire maligno,</l>
+          <l xml:id="Inf.05.087">sí forte fu l’effettüoso grido. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.088">« O animal grazioso e benigno</l>
+          <l xml:id="Inf.05.089">che vicitando vai per l’aire perso</l>
+          <l xml:id="Inf.05.090">noi che ttingemo el mondo di sanguigno,</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.091">se ffusse amico el re de l’universo </l>
+          <l xml:id="Inf.05.092">noi pregheremo lui de la tua pace,</l>
+          <l xml:id="Inf.05.093">po’ c’hai piatà del nostro male perverso.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.094">Di quel ch’udire e che parlare ti piace, </l>
+          <l xml:id="Inf.05.095">noi udiremo e parleremo a voi, </l>
+          <l xml:id="Inf.05.096">mentre che ’l vento, come fa, si tace. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.097">Siede la terra dove nata fui </l>
+          <l xml:id="Inf.05.098">su la marina dove ’l Po descende</l>
+          <l xml:id="Inf.05.099">per aver pace co’ seguaci suoi.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.100">Amor, che al cor gentile ratto s’apprende, </l>
+          <l xml:id="Inf.05.101">prese costui de la bella persona </l>
+          <l xml:id="Inf.05.102">che, come vedi, ’l modo ancor n’offende.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.103">Amor, ch’a nullo amato amar perdona, </l>
+          <l xml:id="Inf.05.104">mi prese del costui piacer sí fforte, </l>
+          <l xml:id="Inf.05.105">che, come vedi, ancor non m’abandona.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.106">Amor, condusse noi a una forte </l>
+          <l xml:id="Inf.05.107">Chino attende che vita ci spense». </l>
+        </lg>
+      <pb n="8v" facs="#c8v" corresp="#carta_008v"/>
+        <lg type="terzina">
+          <l xml:id="Inf.05.108">Queste parole da llor ci fur porte.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.109">Quando intesi quell’<choice><orig>ame</orig><reg>anime</reg></choice> offense, </l>
+          <l xml:id="Inf.05.110">chinai el viso, e ffiso el tenni basso, </l>
+          <l xml:id="Inf.05.111">fin che ’l maestro mi disse: « Che pense? ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.112">Quando lo ’ntesi, i’ cominciai: « Oh lasso,  </l>
+          <l xml:id="Inf.05.113">quanti dolci pensieri, quanto disio </l>
+          <l xml:id="Inf.05.114">menò costoro
+                <choice>
+                  <sic>al dolo questo doloroso</sic>
+                  <corr>questo doloroso</corr>
+                </choice>
+                <choice>
+                  <orig>paso</orig>
+                  <reg>passo</reg>
+                </choice>».
+          </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.115">Po’ mi rivolsi a lloro e parlai io, </l>
+          <l xml:id="Inf.05.116">e cominciai: « Francescha, e’ tuoi martiri  </l>
+          <l xml:id="Inf.05.117">a lagrimar mi fanno tristo e ppio. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.118">Ma dimmi: al tempo de’ dolci sospiri,</l>
+          <l xml:id="Inf.05.119">a che e come concedette amore </l>
+          <l xml:id="Inf.05.120">che conoscessi e’ dubiosi disiri? ».</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.121">E elli a mme: « Nessun maggior dolore  </l>
+          <l xml:id="Inf.05.122">che ricordarsi del tempo filice  </l>
+          <l xml:id="Inf.05.123">ne la miseria; e cciò sa ’l tuo dottore.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.124">Ma ss'a conoscere la prima radice </l>
+          <l xml:id="Inf.05.125">del nostro amore tu hai cotanto effetto, </l>
+          <l xml:id="Inf.05.126">dirò come colui che piange e dice.  </l> 
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.127">Noi leggiavamo un giorno pe' diletto</l>
+          <l xml:id="Inf.05.128">di Lancilotto come amore lo strinse; </l>
+          <l xml:id="Inf.05.129">soli eravano e sanz’alcun sospetto.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.130">Per due fïate gli occhi ci sospinse </l>
+          <l xml:id="Inf.05.131">quella lettura, e scolorocci el viso; </l>
+          <l xml:id="Inf.05.132">ma ssolo un punto fu quel che ci vinse. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.133">Quando leggemo el disïato riso</l>
+          <l xml:id="Inf.05.134">esser baciato da cotanto amante,</l>
+          <l xml:id="Inf.05.135">questi, che mai da me non fia diviso, </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.136">la bocca mi baciò tutto tremante.  </l>
+          <l xml:id="Inf.05.137">Galeotto fu ’l libro e chi llo scrisse: </l>
+          <l xml:id="Inf.05.138">nnoi non leggiemo il giorno più avante ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.139">Mentre che ll’uno spirito questo disse, </l>
+          <l xml:id="Inf.05.140">l'altro piangeva; sí che di pietade</l>
+          <l xml:id="Inf.05.141">io venni meno come se io morisse. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.05.142">E cadi come corpo morto cade.</l>
         </lg>
       </div>
 

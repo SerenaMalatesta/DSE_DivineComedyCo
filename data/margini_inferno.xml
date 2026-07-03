@@ -35,6 +35,7 @@
                <unicodeProp name="Name" value="CAPITULUM"/>
                <unicodeProp name="Block" value="Supplemental_Punctuation"/>
                <mapping type="unicode">U+2E3F</mapping>
+               <mapping type="display-fallback">U+204B</mapping>
                <desc>Segno (capitulum / piedimosca) usato nei commenti medievali.</desc>
             </char>
          </charDecl>
@@ -53,9 +54,7 @@
 
 
    <text>
-      <body>
-
-         <xi:include href="commedia_inferno.xml" xpointer="Inferno"/>
+      <body xml:id="margin_inferno">
          <!-- MARGINE INF.1 -->
          <!-- Carta 2r -->
          <div type="canto" n="1">
@@ -266,8 +265,7 @@
                         avevono la groria e dice <ref type="verbal" target="#Inf.04.083"
                            xml:id="Ha-An-Ma-Inf.04.083"><quote> [83]
                            <emph>grandi</emph></quote></ref> per istudio, per vertù, per iscienzia.
-                           <ref type="verbal" target="#Inf.04.088" xml:id="Ha-An-Ma-Inf.04.088"
-                              ><quote> [88] <emph>Homero pone co la spada</emph></quote> per un de’
+                           <ref type="verbal" target="#Inf.04.088" xml:id="Ha-An-Ma-Inf.04.088b"> <quote> [88] <emph>Homero pone co la spada</emph></quote> per un de’
                            primi singulari poeti, e dice che tutti a quattro gli fano onore perché
                            studiò e’ loro libri e nella loro gentilezza di scienza e sapienza, onde
                            ne li resurge grande onore.</ref> Per <ref type="verbal"

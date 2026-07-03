@@ -107,24 +107,6 @@
     </profileDesc>
   </teiHeader>
 
-  <facsimile>
-    <surface xml:id="fol_1r">
-      <label>f. 1r</label>
-      <graphic url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Dante_Alighieri%27s_Divine_Comedy_-_Inferno_-_manuscript.jpg/800px-Dante_Alighieri%27s_Divine_Comedy_-_Inferno_-_manuscript.jpg" width="800" height="1100"/>
-      <zone xml:id="zone_1r_text" ulx="100" uly="120" lrx="650" lry="950"/>
-      <zone xml:id="zone_1r_gloss1" ulx="660" uly="120" lrx="790" lry="400"/>
-      <zone xml:id="zone_1r_gloss2" ulx="660" uly="410" lrx="790" lry="700"/>
-    </surface>
-    <surface xml:id="fol_1v">
-      <label>f. 1v</label>
-      <graphic url="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Inferno_Canto_1_verses_1-3.jpg/800px-Inferno_Canto_1_verses_1-3.jpg" width="800" height="1100"/>
-    </surface>
-    <surface xml:id="fol_2r">
-      <label>f. 2r</label>
-      <graphic url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Divina_Commedia_-_Inferno_-_Canto_I_-_miniatura.jpg/800px-Divina_Commedia_-_Inferno_-_Canto_I_-_miniatura.jpg" width="800" height="1100"/>
-    </surface>
-  </facsimile>
-
   <text>
     <front>
       <div type="preface">
