@@ -30,22 +30,7 @@
                / maniculae) are encoded as custom characters declared in &lt;charDecl&gt;. </p>
          </projectDesc>
 
-         <charDecl>
-            <char xml:id="piedimosca">
-               <unicodeProp name="Name" value="CAPITULUM"/>
-               <unicodeProp name="Block" value="Supplemental_Punctuation"/>
-               <mapping type="unicode">U+2E3F</mapping>
-               <mapping type="display-fallback">U+204B</mapping>
-               <desc>Segno (capitulum / piedimosca) usato nei commenti medievali.</desc>
-            </char>
-
-            <char xml:id="middle_dot">
-               <unicodeProp name="Name" value="MIDDLE DOT"/>
-               <unicodeProp name="Block" value="Latin-1 Supplement"/>
-               <mapping type="unicode">U+00B7</mapping>
-               <desc>Editorial phonosyntactic marker.</desc>
-            </char>
-         </charDecl>
+         
       </encodingDesc>
       <profileDesc>
          <langUsage>
@@ -135,21 +120,21 @@
                   <pb n="4v" facs="#c4v"/>
                   <cb n="A"/>
                   <note place="internal_margin">
-                     <ref type="verbal" target="#Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094">Per questa
-                        cosa</ref>
+                     <ref type="verbal" target="#Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094a">[94] <emph>Per questa
+                        cosa</emph></ref>
                      <ref type="non_verbal" target="#Inf.02.103" xml:id="Ha-An-Ma-Inf.02.103"><g
                            ref="#piedimosca"/></ref>
                   </note>
                   <note place="inferior_margin">
-                     <ref type="verbal" target="#Ha-An-Ma-Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094_2"
-                        >Per questa cosa dice essere uscito di 'nferno questa donna è solamente la
+                     <ref type="verbal" target="#Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094b"
+                        >Per questa cosa dice essere uscito di ’nferno questa donna è solamente la
                         carità <add place="supralinear">divina</add> la quale è fondamento di nostra
                         salute <choice>
                            <orig><subst>
                                  <del rend="erased">la prima</del>
                                  <add>dellalmetre</add>
                               </subst></orig>
-                           <reg>dell'altre tre</reg>
+                           <reg>dell’altre tre</reg>
                         </choice>, la quale è fondamento di nostra salute. Dell’altre tre sì è la
                         divina grazia, sentimento e scienzia, lume di teologia: queste utime sono le
                         tre donne benedette che parlano di lui ne la corte del cielo. Per Lucia la

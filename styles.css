@@ -1,66 +1,70 @@
 /* ==========================================================================
-   Dante Commedia · Inferno — MS Harley 3459
-   Digital Scholarly Edition — Styles
+   Dante Commedia Â· Inferno â€” MS Harley 3459
+   Digital Scholarly Edition â€” Styles
    ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap');
 
 /* --- Custom Properties (Light) --- */
 :root {
-  --bg: #F5F0E8;
-  --bg-surface: #EDE8DD;
-  --bg-panel: #FAF8F4;
-  --bg-panel-alt: #F0ECE3;
-  --border: #D4CCBA;
-  --border-light: #E2DACE;
-  --text: #3B2F1E;
-  --text-muted: #7A6E5D;
-  --text-faint: #A89E8E;
-  --accent: #8B2500;
-  --accent-hover: #6E1D00;
-  --accent-bg: rgba(139,37,0,0.06);
-  --highlight: rgba(139,37,0,0.08);
-  --highlight-active: rgba(139,37,0,0.14);
-  --header-bg: #3B2F1E;
-  --header-text: #F5F0E8;
-  --header-muted: #C4B8A4;
-  --nav-bg: #EDE8DD;
-  --tab-active-bg: #3B2F1E;
-  --tab-active-text: #F5F0E8;
-  --popup-bg: #FAF8F4;
-  --popup-shadow: rgba(59,47,30,0.18);
-  --scrollbar-thumb: #C4B8A4;
+  /* Modern refresh: base chiara/carta, accenti rossi per la palette Padova/ERC */
+  --bg: #F8F5F0;
+  --bg-surface: #F0EBE3;
+  --bg-panel: #FFFCF8;
+  --bg-panel-alt: #F4EFE7;
+  --border: #DED5CA;
+  --border-light: #EAE2D8;
+  --text: #2A211D;
+  --text-muted: #6F625C;
+  --text-faint: #AA9E97;
+  --accent: #A3192F;
+  --accent-hover: #7E1023;
+  --accent-bg: rgba(163,25,47,0.07);
+  --highlight: rgba(163,25,47,0.08);
+  --highlight-active: rgba(163,25,47,0.16);
+  --header-bg: linear-gradient(135deg, #2B1714 0%, #5C1720 54%, #8F182B 100%);
+  --header-text: #FFF9F3;
+  --header-muted: #E8D3CB;
+  --nav-bg: #F0EBE3;
+  --tab-active-bg: #A3192F;
+  --tab-active-text: #FFF9F3;
+  --popup-bg: #FFFCF8;
+  --popup-shadow: rgba(74,22,28,0.16);
+  --scrollbar-thumb: #CBB9B3;
   --scrollbar-track: transparent;
-  --font-family: 'Nunito', sans-serif;
-  --font-sans: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
-  --radius: 6px;
-  --radius-lg: 10px;
-  --transition: 0.2s ease;
+  --font-family: 'Inter', 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-sans: 'Inter', 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-serif: 'Source Serif 4', 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --transition: 0.18s ease;
 }
 
 /* --- Dark Mode --- */
 body.dark {
-  --bg: #1A1612;
-  --bg-surface: #211D17;
-  --bg-panel: #262118;
-  --bg-panel-alt: #2A251C;
-  --border: #3D3628;
-  --border-light: #332D22;
-  --text: #DDD5C5;
-  --text-muted: #9E9484;
-  --text-faint: #6B6155;
-  --accent: #D4784A;
-  --accent-hover: #E8925E;
-  --accent-bg: rgba(212,120,74,0.08);
-  --highlight: rgba(212,120,74,0.1);
-  --highlight-active: rgba(212,120,74,0.18);
-  --header-bg: #141210;
-  --header-text: #DDD5C5;
-  --header-muted: #9E9484;
-  --nav-bg: #1E1A15;
-  --tab-active-bg: #D4784A;
-  --tab-active-text: #1A1612;
-  --popup-bg: #2A251C;
-  --popup-shadow: rgba(0,0,0,0.4);
-  --scrollbar-thumb: #4A4236;
+  --bg: #161111;
+  --bg-surface: #1E1515;
+  --bg-panel: #241919;
+  --bg-panel-alt: #2C2020;
+  --border: #493137;
+  --border-light: #37262A;
+  --text: #F0E4DD;
+  --text-muted: #BEAAA2;
+  --text-faint: #7F6965;
+  --accent: #E06B77;
+  --accent-hover: #F08A92;
+  --accent-bg: rgba(224,107,119,0.10);
+  --highlight: rgba(224,107,119,0.10);
+  --highlight-active: rgba(224,107,119,0.18);
+  --header-bg: linear-gradient(135deg, #140E0E 0%, #41151C 100%);
+  --header-text: #F0E4DD;
+  --header-muted: #D6B8B1;
+  --nav-bg: #1B1313;
+  --tab-active-bg: #E06B77;
+  --tab-active-text: #1A1011;
+  --popup-bg: #241919;
+  --popup-shadow: rgba(0,0,0,0.44);
+  --scrollbar-thumb: #5E3A41;
 }
 
 /* --- Reset & Base --- */
@@ -337,7 +341,7 @@ body.dark .dark-icon { display: none; }
   color: var(--text);
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%237A6E5D' stroke-width='2'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%235D7477' stroke-width='2'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
 }
@@ -403,7 +407,7 @@ body.show-orig #toggleLabelReg:not(.active) {
 }
 
 .toggle-switch.active {
-  background: rgba(139, 37, 0, 0.1);
+  background: rgba(163, 25, 47, 0.10);
   border-color: var(--accent);
 }
 
@@ -413,7 +417,7 @@ body.show-orig #toggleLabelReg:not(.active) {
 }
 
 body.dark .toggle-switch.active {
-  background: rgba(212, 120, 74, 0.12);
+  background: rgba(224, 107, 119, 0.12);
 }
 
 /* --- Loading --- */
@@ -552,7 +556,7 @@ body.dark .toggle-switch.active {
   padding: 16px;
   cursor: grab;
   background:
-    radial-gradient(circle at 20% 30%, rgba(139,37,0,0.02) 0%, transparent 50%),
+    radial-gradient(circle at 20% 30%, rgba(163,25,47,0.025) 0%, transparent 50%),
     var(--bg-surface);
 }
 .facsimile-viewer:active { cursor: grabbing; }
@@ -641,27 +645,27 @@ body.dark .facsimile-img {
 
 /* Commento badge */
 .col-badge.badge-commento {
-  background: rgba(139, 37, 0, 0.85);
-  color: #FAF8F4;
-  border: 1px solid rgba(139, 37, 0, 0.6);
+  background: rgba(163, 25, 47, 0.88);
+  color: #FFF9F3;
+  border: 1px solid rgba(163, 25, 47, 0.65);
 }
 .col-badge.badge-commento .col-badge-dot {
-  background: #FAF8F4;
+  background: #FFF9F3;
 }
 
 /* Misto badge (testo + commento nella stessa colonna) */
 .col-badge.badge-misto {
-  background: rgba(139, 37, 0, 0.7);
-  color: #FAF8F4;
-  border: 1px solid rgba(139, 37, 0, 0.5);
+  background: rgba(163, 25, 47, 0.74);
+  color: #FFF9F3;
+  border: 1px solid rgba(163, 25, 47, 0.55);
 }
 .col-badge.badge-misto .col-badge-dot {
-  background: linear-gradient(135deg, #FAF8F4 50%, rgba(139,37,0,0.9) 50%);
+  background: linear-gradient(135deg, #FFF9F3 50%, rgba(163,25,47,0.9) 50%);
 }
 
 /* Dark mode badges */
 body.dark .col-badge.badge-testo {
-  background: rgba(26, 22, 18, 0.88);
+  background: rgba(22, 17, 17, 0.90);
   color: var(--text);
   border-color: var(--border);
 }
@@ -669,17 +673,17 @@ body.dark .col-badge.badge-testo .col-badge-dot {
   background: var(--text-muted);
 }
 body.dark .col-badge.badge-commento {
-  background: rgba(212, 120, 74, 0.85);
-  color: #1A1612;
-  border-color: rgba(212, 120, 74, 0.6);
+  background: rgba(224, 107, 119, 0.85);
+  color: #1A1011;
+  border-color: rgba(224, 107, 119, 0.6);
 }
 body.dark .col-badge.badge-commento .col-badge-dot {
-  background: #1A1612;
+  background: #1A1011;
 }
 body.dark .col-badge.badge-misto {
-  background: rgba(212, 120, 74, 0.7);
-  color: #1A1612;
-  border-color: rgba(212, 120, 74, 0.5);
+  background: rgba(224, 107, 119, 0.7);
+  color: #1A1011;
+  border-color: rgba(224, 107, 119, 0.5);
 }
 
 /* Folio content summary below image */
@@ -807,19 +811,19 @@ body.dark .col-badge.badge-misto {
 
 /* choice orig/reg */
 .choice-reg {
-  background: rgba(139, 37, 0, 0.06);
+  background: rgba(163, 25, 47, 0.06);
   border-radius: 2px;
   padding: 0 1px;
   cursor: help;
   transition: background 0.2s;
 }
 .choice-reg:hover {
-  background: rgba(139, 37, 0, 0.12);
+  background: rgba(163, 25, 47, 0.12);
 }
 .choice-orig {
   display: none;
   color: var(--accent);
-  background: rgba(139, 37, 0, 0.08);
+  background: rgba(163, 25, 47, 0.08);
   border-radius: 2px;
   padding: 0 1px;
   text-decoration: underline;
@@ -830,23 +834,23 @@ body.dark .col-badge.badge-misto {
   transition: background 0.2s;
 }
 .choice-orig:hover {
-  background: rgba(139, 37, 0, 0.15);
+  background: rgba(163, 25, 47, 0.15);
 }
 body.show-orig .choice-reg { display: none; }
 body.show-orig .choice-orig { display: inline; }
 
 /* Dark mode choice adjustments */
 body.dark .choice-reg {
-  background: rgba(212, 120, 74, 0.08);
+  background: rgba(224, 107, 119, 0.08);
 }
 body.dark .choice-reg:hover {
-  background: rgba(212, 120, 74, 0.15);
+  background: rgba(224, 107, 119, 0.15);
 }
 body.dark .choice-orig {
-  background: rgba(212, 120, 74, 0.1);
+  background: rgba(224, 107, 119, 0.10);
 }
 body.dark .choice-orig:hover {
-  background: rgba(212, 120, 74, 0.18);
+  background: rgba(224, 107, 119, 0.18);
 }
 
 /* choice sic/corr: estensione del sistema orig/reg */
@@ -1310,4 +1314,63 @@ body.dark .choice-orig:hover {
   font-size: 0.95rem;
   font-weight: 400;
   line-height: 1;
+}
+
+/* ==========================================================================
+   Modern refresh tweaks â€” no structural changes
+   ========================================================================== */
+body {
+  letter-spacing: -0.005em;
+}
+
+.site-header {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 10px 30px rgba(74,22,28,0.10);
+}
+
+.main-nav {
+  box-shadow: 0 1px 0 var(--border-light);
+}
+
+.search-input,
+.canto-select,
+.icon-btn,
+.icon-btn-sm,
+.folio-btn,
+.toggle-switch,
+.folio-marker,
+.lemma-ref,
+.note-indicator,
+.note-indicator.app-indicator {
+  border-radius: 999px;
+}
+
+.panel-header,
+.note-popup-header {
+  background: linear-gradient(180deg, var(--bg-panel-alt), var(--bg-panel));
+}
+
+.search-results,
+.note-popup,
+.modal,
+.margin-tooltip,
+.choice-corr:hover::after {
+  box-shadow: 0 18px 48px var(--popup-shadow);
+}
+
+.facsimile-img {
+  border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgba(74,22,28,0.13);
+}
+
+.view-tab {
+  letter-spacing: 0.01em;
+}
+
+.view-tab.active {
+  background: var(--accent-bg);
+  border-radius: 999px 999px 0 0;
+}
+
+.commentary-entry {
+  border-bottom-color: var(--border-light);
 }

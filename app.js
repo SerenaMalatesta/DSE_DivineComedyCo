@@ -19,6 +19,7 @@ const state = {
   cantos: [],
   commentary: {},
   marginalia: {},
+  marginNotes: {},
   folioContentMap: {},
   currentView: 'facsimile',
   currentCanto: 1,
@@ -27,6 +28,7 @@ const state = {
   isDark: false,
   showOrig: false,
   noteCounter: 0,
+  marginNoteCounter: 0,
   isSyncingText: false,
   syncTimeout: null
 };
@@ -97,11 +99,26 @@ function parseCommedia(doc) {
     .filter(d => d.getAttribute('type') === 'canto')
     .map(cantoDiv => {
       const n = parseInt(cantoDiv.getAttribute('n'));
-      const heading = qsTEI(cantoDiv, 'head')?.textContent.trim() ?? `Canto ${toRoman(n)}`;
+      const headEl = qsTEI(cantoDiv, 'head');
+
+      const heading = headEl
+        ? headEl.textContent.trim()
+        : `Canto ${toRoman(n)}`;
+
+      const headingHtml = headEl
+        ? renderLineContent(headEl).trim()
+        : escapeHTML(`Canto ${toRoman(n)}`);
+
       const elements = [];
       walkCantoChildren(cantoDiv, elements);
 
-      return { n, xmlId: getAttr(cantoDiv, 'xml:id'), heading, elements };
+      return {
+        n,
+        xmlId: getAttr(cantoDiv, 'xml:id'),
+        heading,
+        headingHtml,
+        elements
+      };
     });
 }
 
@@ -196,7 +213,7 @@ function renderInlineElement(el) {
 }
 
 /* --- HTML Security --- */
-const escapeHTML = str => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const escapeHTML = str => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '’');
 const escapeAttr = str => String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const stripHTML = html => Object.assign(document.createElement('div'), { innerHTML: html }).textContent || '';
 
@@ -345,13 +362,27 @@ function renderCommentaryChildren(node) {
    ========================================================================== */
 function parseMarginalia(doc) {
   const marginalia = {};
+  state.marginNotes = {};
+  state.marginNoteCounter = 0;
 
   const pushMarginalia = (lineId, item) => {
     if (!lineId) return;
+
+    const contentHtml = (item.contentHtml || escapeHTML(item.content || '')).trim();
+    const content = (item.content || stripHTML(contentHtml)).trim();
+    const place = item.place || '';
+
     marginalia[lineId] = marginalia[lineId] || [];
-    if (!marginalia[lineId].some(e => e.type === item.type && e.content === item.content && e.place === item.place)) {
-      marginalia[lineId].push(item);
-    }
+
+    // Evita duplicati reali, ma preserva comunque l'HTML strutturato.
+    if (marginalia[lineId].some(e => e.type === item.type && e.contentHtml === contentHtml && e.place === place)) return;
+
+    state.marginNoteCounter++;
+    const id = item.id || `margin-${lineId}-${state.marginNoteCounter}`;
+    const fullItem = { ...item, id, content, contentHtml, place };
+
+    marginalia[lineId].push(fullItem);
+    state.marginNotes[id] = fullItem;
   };
 
   qsaTEI(doc, 'div').filter(d => d.getAttribute('type') === 'canto').forEach(cantoDiv => {
@@ -359,21 +390,148 @@ function parseMarginalia(doc) {
       const place = note.getAttribute('place');
       const type = note.getAttribute('type');
 
+      // Caso 1: nota marginale direttamente collegata al verso.
       if (['verbal', 'non_verbal'].includes(type)) {
+        const html = renderMarginaliaBody(note);
         pushMarginalia(note.getAttribute('target')?.replace('#', ''), {
-          type, content: note.textContent.trim(), place: place || getParentPlace(note)
+          type,
+          content: stripHTML(html),
+          contentHtml: html,
+          place: place || getParentPlace(note)
         });
+
+        // Caso 2: contenitore di margine con ref/note interne collegate ai versi.
       } else if (place) {
-        qsaTEI(note, 'ref').forEach(ref => pushMarginalia(ref.getAttribute('target')?.replace('#', ''), {
-          type: ref.getAttribute('type') || 'verbal', content: ref.textContent.trim(), place
-        }));
-        [...note.children].filter(c => c.localName === 'note').forEach(cn => pushMarginalia(cn.getAttribute('target')?.replace('#', ''), {
-          type: cn.getAttribute('type') || 'verbal', content: cn.textContent.trim(), place
-        }));
+        qsaTEI(note, 'ref').forEach(ref => {
+          const html = renderMarginaliaBody(ref);
+          pushMarginalia(ref.getAttribute('target')?.replace('#', ''), {
+            type: ref.getAttribute('type') || 'verbal',
+            content: stripHTML(html),
+            contentHtml: html,
+            place
+          });
+        });
+
+        [...note.children].filter(c => c.localName === 'note').forEach(cn => {
+          const html = renderMarginaliaBody(cn);
+          pushMarginalia(cn.getAttribute('target')?.replace('#', ''), {
+            type: cn.getAttribute('type') || 'verbal',
+            content: stripHTML(html),
+            contentHtml: html,
+            place
+          });
+        });
       }
     });
   });
+
   return marginalia;
+}
+
+function renderMarginaliaBody(el) {
+  return [...el.childNodes]
+    .reduce((html, child) => html + renderMarginaliaNode(child), '')
+    .trim();
+}
+
+function renderMarginaliaChildren(node) {
+  return [...node.childNodes].reduce((html, child) => html + renderMarginaliaNode(child), '');
+}
+
+function renderMarginaliaNode(node) {
+  if (node.nodeType === Node.TEXT_NODE) return escapeHTML(node.textContent);
+  if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+  const name = node.localName;
+
+  switch (name) {
+    case 'ref':
+      return renderMarginaliaChildren(node);
+
+    case 'emph':
+    case 'mentioned':
+      return `<em class="mentioned">${renderMarginaliaChildren(node)}</em>`;
+
+    case 'quote':
+      return `«${renderMarginaliaChildren(node)}»`;
+
+    case 'note': {
+      // Le note annidate dentro una nota marginale diventano cliccabili.
+      state.noteCounter++;
+      const label = noteTypeLabel(node.getAttribute('type'));
+      const content = renderMarginaliaChildren(node);
+      return `<span class="note-indicator" data-note-id="margin-note-${Date.now()}-${state.noteCounter}" data-note-title="${escapeAttr(label)}" data-note-content="${escapeAttr(content)}" title="${escapeAttr(label)}">${state.noteCounter}</span>`;
+    }
+
+    case 'app':
+      if (node.getAttribute('type') === 'philological') {
+        const lem = qsTEI(node, 'lem');
+        const rdg = qsTEI(node, 'rdg');
+        if (lem && rdg) {
+          state.noteCounter++;
+          const content = `Lem.: ${renderMarginaliaChildren(lem)} | Var.: ${renderMarginaliaChildren(rdg)}`;
+          return `${renderMarginaliaChildren(lem)}<span class="note-indicator app-indicator" data-note-id="margin-app-${Date.now()}-${state.noteCounter}" data-note-title="Apparato" data-note-content="${escapeAttr(content)}" title="Apparato filologico">🔍</span>`;
+        }
+      }
+      return renderMarginaliaChildren(qsTEI(node, 'lem') || node);
+
+    case 'choice': {
+      const sic = qsTEI(node, 'sic');
+      const corr = qsTEI(node, 'corr');
+      const orig = qsTEI(node, 'orig');
+      const reg = qsTEI(node, 'reg');
+
+      if (sic && corr) {
+        const cType = node.getAttribute('type') || 'correzione editoriale';
+        const sicContent = renderMarginaliaChildren(sic);
+        const corrContent = renderMarginaliaChildren(corr);
+        return `<span class="choice-reg choice-corr" data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}" title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}">${corrContent}</span><span class="choice-orig choice-sic" title="Forma del manoscritto">${sicContent}</span>`;
+      }
+
+      if (orig && reg) {
+        const origContent = renderMarginaliaChildren(orig);
+        const regContent = renderMarginaliaChildren(reg);
+        return `<span class="choice-reg" data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}" title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig" title="Forma originale">${origContent}</span>`;
+      }
+
+      return renderMarginaliaChildren(corr || reg || sic || orig || node);
+    }
+
+    case 'g': {
+      const refAttr = node.getAttribute('ref');
+      if (refAttr === '#middle_dot') return GLYPHS.MIDDLE_DOT;
+      if (refAttr === '#piedimosca') return `<span class="piedimosca">${GLYPHS.PIEDIMOSCA}</span>`;
+      return escapeHTML(node.textContent);
+    }
+
+    case 'subst': {
+      const delSub = qsTEI(node, 'del');
+      const addSub = qsTEI(node, 'add');
+      return `${delSub ? `<span class="scribal-del">${renderMarginaliaChildren(delSub)}</span>` : ''}${addSub ? `<span class="scribal-add">${renderMarginaliaChildren(addSub)}</span>` : ''}`;
+    }
+
+    case 'del': return `<span class="scribal-del">${renderMarginaliaChildren(node)}</span>`;
+    case 'add': return `<span class="scribal-add">${renderMarginaliaChildren(node)}</span>`;
+    case 'supplied': return `[${renderMarginaliaChildren(node)}]`;
+    case 'lb': return '<br>';
+    case 'pb':
+    case 'cb': return '';
+
+    default:
+      return renderMarginaliaChildren(node);
+  }
+}
+
+function noteTypeLabel(type) {
+  const labels = {
+    'philological-note': 'Nota filologica',
+    'bibliographical-ref': 'Rif. bibliografico',
+    'philological-commentary': 'Nota filologica',
+    'editorial': 'Nota editoriale',
+    'translation': 'Nota di traduzione',
+    'source': 'Fonte'
+  };
+  return labels[type] || 'Nota';
 }
 
 function getParentPlace(el) {
@@ -497,7 +655,7 @@ function renderFacsimileView() {
 function renderTextForCanto(canto) {
   els.textPanelTitle.textContent = `Testo poetico — Canto ${toRoman(canto.n)}`;
 
-  let html = `<div class="canto-heading">${escapeHTML(canto.heading)}</div>` + canto.elements.reduce((html, el) => {
+  let html = `<div class="canto-heading">${canto.headingHtml || escapeHTML(canto.heading)}</div>` + canto.elements.reduce((html, el) => {
     if (el.type === 'pb') return html + `<div class="folio-marker" data-folio="${el.n}" title="Vai al facsimile della carta ${el.n}">[c. ${el.n}]</div>`;
     if (el.type === 'cb') return html + `<span class="column-marker">col. ${el.n}</span>`;
     if (el.type === 'terzina') return html + renderTerzina(el);
@@ -505,8 +663,8 @@ function renderTextForCanto(canto) {
   }, '');
 
   html += `
-    <div class="end-of-canto-actions" style="margin-top: 50px; padding: 30px 0; border-top: 1px solid var(--border-color); text-align: center;">
-      <button id="goToCommentaryBtn" style="padding: 12px 24px; background: var(--accent); color: var(--bg); border: none; border-radius: 4px; cursor: pointer; font-family: var(--font-sans); font-weight: 500; font-size: 1rem; display: inline-flex; align-items: center; gap: 8px;">
+    <div class="end-of-canto-actions" style="margin-top: 50px; padding: 30px 0; border-top: 1px solid var(--border-light); text-align: center;">
+      <button id="goToCommentaryBtn" class="icon-btn" style="width: auto; padding: 12px 24px; background: var(--bg-surface); color: var(--accent); border: 1px solid var(--border); font-family: var(--font-sans); font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px;">
         <span style="font-size: 1.2rem;">${GLYPHS.PIEDIMOSCA}</span> Passa al Commento
       </button>
     </div>
@@ -539,19 +697,35 @@ function renderTextForCanto(canto) {
   els.textContent.querySelectorAll('.margin-indicator').forEach(ind => {
     ind.onmouseenter = e => showMarginTooltip(e, ind);
     ind.onmouseleave = hideMarginTooltip;
+    ind.onclick = e => {
+      e.stopPropagation();
+      hideMarginTooltip();
+      showMarginNotePopup(e, ind);
+    };
   });
+
+  bindNoteIndicators(els.textContent);
 }
 
 function renderTerzina(el) {
   return '<div class="terzina">' + el.lines.map(line => {
     const margins = (state.marginalia[line.xmlId] || []).map(m =>
       m.type === 'non_verbal'
-        ? `<span class="margin-indicator nonverbal" data-margin-type="non_verbal" data-margin-content="${escapeHTML(m.content.trim() || '⁋ capitulum')}" data-margin-place="${m.place}">⁋</span>`
-        : `<span class="margin-indicator" data-margin-type="verbal" data-margin-content="${escapeHTML(m.content)}" data-margin-place="${m.place}">m</span>`
+        ? `<span class="margin-indicator nonverbal" data-margin-id="${escapeAttr(m.id)}" data-margin-type="non_verbal" data-margin-content="${escapeAttr(m.content.trim() || '⁋ capitulum')}" data-margin-place="${escapeAttr(m.place || '')}">⁋</span>`
+        : `<span class="margin-indicator" data-margin-id="${escapeAttr(m.id)}" data-margin-type="verbal" data-margin-content="${escapeAttr(m.content)}" data-margin-place="${escapeAttr(m.place || '')}">m</span>`
     ).join('');
 
     return `<div class="verse-line" data-line-id="${line.xmlId}"><span class="line-number">${line.lineNum}</span><span class="verse-text">${line.html}</span>${margins}</div>`;
   }).join('') + '</div>';
+}
+
+function bindNoteIndicators(container) {
+  container?.querySelectorAll('.note-indicator').forEach(ind => {
+    ind.onclick = e => {
+      e.stopPropagation();
+      showNotePopup(e, ind);
+    };
+  });
 }
 
 function renderCommentoView() {
@@ -562,7 +736,7 @@ function renderCommentoView() {
     ? '<p style="color:var(--text-muted);text-align:center;padding:40px;">Nessun commento disponibile.</p>'
     : entries.map(e => `<div class="commentary-entry" data-line-ref="${e.lineRef}"><div class="commentary-lemma">${e.refLabel ? `<span class="lemma-ref">${escapeHTML(e.refLabel)}</span>` : ''}${e.lemmaText ? `<span class="lemma-text">${escapeHTML(e.lemmaText)}</span>` : ''}</div><div class="commentary-body">${e.bodyHtml}</div></div>`).join('');
 
-  els.commentoContent.querySelectorAll('.note-indicator').forEach(ind => ind.onclick = e => { e.stopPropagation(); showNotePopup(e, ind); });
+  bindNoteIndicators(els.commentoContent);
 }
 
 /* ==========================================================================
@@ -630,22 +804,69 @@ const applyZoom = () => {
    ========================================================================== */
 function showNotePopup(e, indicator) {
   const { noteTitle: title = 'Nota', noteContent: content = '' } = indicator.dataset;
+  const body = els.notePopup.querySelector('.note-popup-body');
+
+  els.notePopup.style.width = '380px';
   els.notePopup.querySelector('.note-popup-title').textContent = title;
-  els.notePopup.querySelector('.note-popup-body').innerHTML = `<p>${content}</p>`;
+  body.innerHTML = `<p>${content}</p>`;
   els.notePopup.classList.add('visible');
 
+  positionNotePopup(indicator, 380);
+  bindNoteIndicators(body);
+}
+
+function showMarginNotePopup(e, indicator) {
+  const item = getMarginItem(indicator);
+  const { marginPlace: place = '' } = indicator.dataset;
+  const placeLabels = {
+    'external_margin': 'Margine esterno',
+    'internal_margin': 'Margine interno',
+    'intercolumn': 'Intercolumnio',
+    'inferior_margin': 'Margine inferiore'
+  };
+
+  const title = placeLabels[item?.place || place] || item?.place || place || 'Nota marginale';
+  const body = els.notePopup.querySelector('.note-popup-body');
+
+  els.notePopup.style.width = 'min(560px, calc(100vw - 32px))';
+  els.notePopup.querySelector('.note-popup-title').textContent = title;
+  body.innerHTML = item?.contentHtml || escapeHTML(indicator.dataset.marginContent || '');
+  els.notePopup.classList.add('visible');
+
+  positionNotePopup(indicator, 560);
+  bindNoteIndicators(body);
+}
+
+function positionNotePopup(indicator, preferredWidth = 380) {
   const rect = indicator.getBoundingClientRect();
-  els.notePopup.style.top = `${Math.min(rect.bottom + 8, window.innerHeight - els.notePopup.offsetHeight - 8)}px`;
-  els.notePopup.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - 380 - 16))}px`;
+  const popupWidth = Math.min(preferredWidth, window.innerWidth - 32);
+  const popupHeight = els.notePopup.offsetHeight || 320;
+
+  els.notePopup.style.top = `${Math.min(rect.bottom + 8, window.innerHeight - popupHeight - 8)}px`;
+  els.notePopup.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - popupWidth - 16))}px`;
 }
 
 const hideNotePopup = () => els.notePopup.classList.remove('visible');
 
-function showMarginTooltip(e, indicator) {
-  const { marginType: type, marginContent: content, marginPlace: place = '' } = indicator.dataset;
-  const placeLabels = { 'external_margin': 'Margine esterno', 'internal_margin': 'Margine interno', 'intercolumn': 'Intercolumnio', 'inferior_margin': 'Margine inferiore' };
+function getMarginItem(indicator) {
+  const id = indicator.dataset.marginId;
+  return id ? state.marginNotes[id] : null;
+}
 
-  els.marginTooltip.innerHTML = `${place ? `<span class="margin-ref">${placeLabels[place] || place}</span>` : ''}${escapeHTML(content)}`;
+function showMarginTooltip(e, indicator) {
+  const item = getMarginItem(indicator);
+  const { marginContent: content, marginPlace: place = '' } = indicator.dataset;
+  const placeLabels = {
+    'external_margin': 'Margine esterno',
+    'internal_margin': 'Margine interno',
+    'intercolumn': 'Intercolumnio',
+    'inferior_margin': 'Margine inferiore'
+  };
+
+  const title = item?.place || place;
+  const bodyHtml = item?.contentHtml || escapeHTML(content || '');
+
+  els.marginTooltip.innerHTML = `${title ? `<span class="margin-ref">${placeLabels[title] || title}</span>` : ''}${bodyHtml}`;
   els.marginTooltip.classList.add('visible');
 
   const rect = indicator.getBoundingClientRect();
@@ -665,7 +886,7 @@ function performSearch(query) {
   }
 
   const results = [];
-  const lowerQ = query.toLowerCase();
+  const lowerQ = query.toLowerCase().replace(/'/g, '’');
 
   for (const canto of state.cantos) {
     for (const el of canto.elements) {
@@ -699,7 +920,7 @@ function renderSearchResults(results, query) {
     return;
   }
 
-  const lowerQ = query.toLowerCase();
+  const lowerQ = query.toLowerCase().replace(/'/g, '’');
   els.searchResults.innerHTML = results.map(r => `
     <div class="search-result-item" data-canto="${r.cantoN}" data-type="${r.type}" data-line="${r.lineId || r.lineRef || ''}">
       <div class="search-result-ref">${r.type === 'commento' ? 'Commento' : 'Testo'} · ${escapeHTML(r.ref)}</div>
@@ -749,20 +970,21 @@ function renderSearchResults(results, query) {
 }
 
 function highlightMatch(text, query) {
-  const idx = text.toLowerCase().indexOf(query);
+  const normalizedQuery = query.toLowerCase().replace(/'/g, '’');
+  const idx = text.toLowerCase().indexOf(normalizedQuery);
   if (idx < 0) return escapeHTML(text);
 
   const start = Math.max(0, idx - 40);
-  const end = Math.min(text.length, idx + query.length + 60);
+  const end = Math.min(text.length, idx + normalizedQuery.length + 60);
   let excerpt = text.substring(start, end);
   if (start > 0) excerpt = '…' + excerpt;
   if (end < text.length) excerpt += '…';
 
-  const matchIdx = excerpt.toLowerCase().indexOf(query);
+  const matchIdx = excerpt.toLowerCase().indexOf(normalizedQuery);
   if (matchIdx >= 0) {
     return escapeHTML(excerpt.substring(0, matchIdx)) +
-      `<mark>${escapeHTML(excerpt.substring(matchIdx, matchIdx + query.length))}</mark>` +
-      escapeHTML(excerpt.substring(matchIdx + query.length));
+      `<mark>${escapeHTML(excerpt.substring(matchIdx, matchIdx + normalizedQuery.length))}</mark>` +
+      escapeHTML(excerpt.substring(matchIdx + normalizedQuery.length));
   }
   return escapeHTML(excerpt);
 }
@@ -846,7 +1068,7 @@ function bindEvents() {
 
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.search-container')) els.searchResults?.classList.remove('visible');
-    if (!e.target.closest('.note-popup') && !e.target.closest('.note-indicator')) hideNotePopup();
+    if (!e.target.closest('.note-popup') && !e.target.closest('.note-indicator') && !e.target.closest('.margin-indicator')) hideNotePopup();
   });
 
   let isPan = false, sX, sY, sL, sT;
@@ -884,16 +1106,16 @@ function bindEvents() {
       if (!markers.length) return;
 
       const containerRect = els.textContent.getBoundingClientRect();
-      const offset = containerRect.top + 150; 
+      const offset = containerRect.top + 150;
 
       let currentMarker = markers[0];
 
       for (let i = 0; i < markers.length; i++) {
         const rect = markers[i].getBoundingClientRect();
         if (rect.top <= offset) {
-          currentMarker = markers[i]; 
+          currentMarker = markers[i];
         } else {
-          break; 
+          break;
         }
       }
 
@@ -902,12 +1124,11 @@ function bindEvents() {
 
       if (idx >= 0 && state.currentFolioIdx !== idx) {
         state.currentFolioIdx = idx;
-        updateFacsimile(true); 
+        updateFacsimile(true);
       }
     });
   }
 }
-
 /* ==========================================================================
    Init
    ========================================================================== */
