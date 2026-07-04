@@ -1534,7 +1534,30 @@
           <l xml:id="Inf.06.008">etterna, maladetta, freda e grieve; </l>
           <l xml:id="Inf.06.009">regola e qualità mai no·gli è nova. </l>
         </lg>
-      
+        <lg type="terzina">
+          <l xml:id="Inf.06.010">Grandine grossa, acqua tinta e neve </l>
+          <l xml:id="Inf.06.011">per l’aire tenebrosa si riversa; </l>
+          <l xml:id="Inf.06.012">pute la terra che questo riceve. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.06.013">Cerbero, fiera crudele e diversa,  </l>
+          <l xml:id="Inf.06.014">con tre gole caninamente latra </l>
+          <l xml:id="Inf.06.015">sopra la gente che quivi somersa. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.06.016"><choice><sic>gi ochi</sic><corr>Gli occhi</corr></choice> ha vermigli, la boca onta  e atra </l>
+          <l xml:id="Inf.06.017">larga il ventre e unghianta le mani; </l>
+          <l xml:id="Inf.06.018">graffia li spiriti, ingoia et isquarta.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.06.019"> Urlar li fa la pioggia come cani </l>
+        </lg>
+        <pb n="9v" facs="#c9v" corresp="#carta_009v"/>
+        <cb n="a"/>
+        <lg type="terzina">
+          <l xml:id="Inf.06.020">dell’un de’ lati fano all’altro schermo; </l>
+          <l xml:id="Inf.06.021">voglionsi spesso e miseri prefani.</l>
+        </lg>
       </div>
 
     </body>
