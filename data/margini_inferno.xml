@@ -38,6 +38,13 @@
                <mapping type="display-fallback">U+204B</mapping>
                <desc>Segno (capitulum / piedimosca) usato nei commenti medievali.</desc>
             </char>
+
+            <char xml:id="middle_dot">
+               <unicodeProp name="Name" value="MIDDLE DOT"/>
+               <unicodeProp name="Block" value="Latin-1 Supplement"/>
+               <mapping type="unicode">U+00B7</mapping>
+               <desc>Editorial phonosyntactic marker.</desc>
+            </char>
          </charDecl>
       </encodingDesc>
       <profileDesc>
@@ -284,6 +291,46 @@
                   </p>
                </div>
             </div>
+
+             <!-- MARGINE INF.5 -->
+          <div n="4" type="canto">
+            <div type="margin" xml:id="Ha_Marg_Inf.05">
+               <div type="margin" xml:id="Ha_Marg_Inf.05.025">
+               <pb n="8r" facs="#c8r" corresp="#carta_008r"/>
+                  <p>
+                     <note place="external_margin">
+                        <ref type="verbal" target="#Inf.05.025" xml:id="Ha-An-Ma-Inf.05.025">
+                              Ogni volontà è appetito e non ogni appetito volontà. </ref>
+                     </note>
+                  </p>
+               </div>
+               <div type="margin" xml:id="Ha_Marg_Inf.05.025a">
+                  <p>
+                     <note place="external_margin">
+                        <ref type="verbal" target="#Inf.05.025" xml:id="Ha-An-Ma-Inf.05.025a">
+                        Tre amicizie ha dio co<g ref="#middle_dot">·</g>la natura: 1) naturalmente 2) moralmente 3) spiritualmente. <lb/>
+                        E però perché non pigli errore dico che Dio fu loro amico: prima in dar loro l’essere; 1/2 in dar loro la inteligenzia del libero albitrio e senno naturale; 1/3 e ll’amicizia de la grolia sua e questa nel nostro albitrio che chi la vuole l’ha. <lb/>
+                        E però dice se Dio ci fuste amico cioè a l’ utima parte e no ’sendo amico Idio loro non Esau direbe e loro prieghi. E qui fa parlare la donna: perché tra atti di parlare a la donna più conderenti a lloro *
+                        </ref>
+                        
+                     </note>
+                     <note place="inferior_margin">
+                     <ref type="verbal" target="#Inf.05.025" xml:id="Ha-An-Ma-Inf.05.025b">
+                     *quando si truovano i·miseria. Primo sono più ppronte nel parlare e piutosto rispondono che l’uomo; lo ij che nel parlare sanno meglio conferire piatà e ttenerezza che subito piangono, lo iij si è che trovandosi i·miseria come qui finge essere più sfacciata che l’uomo e meno si vergogna.</ref></note>
+                  </p>
+               </div>
+               <div type="margin" xml:id="Ha_Marg_Inf.05.019">
+                  <p>
+                     <note place="inferior_margin">
+                        <ref type="verbal" target="#Inf.05.019" xml:id="Ha-An-Ma-Inf.05.019">
+                        <emph>Guarda com’entri </emph>ecc. cioè com’entri nel peccato che ttu non ti confidi in limosine, che ttu ffaccia tu o altri per te che non ti vale nulla se al fine muori dannato.
+                        </ref>
+                     </note>                  
+                  </p>
+               </div>
+               </div>
+            </div>
+
          </div>
       </body>
    </text>
