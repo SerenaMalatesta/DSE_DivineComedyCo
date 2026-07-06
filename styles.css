@@ -1400,3 +1400,35 @@ body.show-orig .choice-orig {
 body.show-orig .choice-reg {
   display: none;
 }
+
+/* Tooltip label sui bottoni della toolbar */
+.icon-btn,
+.icon-btn-sm,
+.folio-btn {
+  position: relative;
+  overflow: visible;
+}
+
+/* etichetta */
+.icon-btn::after,
+.icon-btn-sm::after,
+.folio-btn::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: var(--text-main);
+  color: var(--bg-surface);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
