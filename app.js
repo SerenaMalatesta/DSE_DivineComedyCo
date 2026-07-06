@@ -357,123 +357,214 @@ function renderCommentaryChildren(node) {
   return [...node.childNodes].reduce((html, child) => html + renderCommentaryNode(child), '');
 }
 
+function parseTargets(value) {
+  return (value || '')
+    .trim()
+    .split(/\s+/)
+    .map(target => target.replace(/^#/, ''))
+    .filter(Boolean);
+}
+
+function getCantoNumberFromLineId(lineId) {
+  const match = /^Inf\.(\d+)\.\d+/.exec(lineId || '');
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function isNestedNoteWithin(note, rootDiv) {
+  let parent = note.parentElement;
+
+  while (parent && parent !== rootDiv) {
+    if (parent.localName === 'note') return true;
+    parent = parent.parentElement;
+  }
+
+  return false;
+}
+
+function pickAnchorTarget(targets, cantoN) {
+  return (
+    targets.find(target => getCantoNumberFromLineId(target) === cantoN) ||
+    targets[0] ||
+    ''
+  );
+}
+
+
 /* ==========================================================================
    Parse Marginalia
    ========================================================================== */
+/* ==========================================================================
+   Parse Marginalia
+   ========================================================================== */
+
 function parseMarginalia(doc) {
   const marginalia = {};
   state.marginNotes = {};
-  state.marginNoteCounter = 0;
 
   const pushMarginalia = (lineId, item) => {
     if (!lineId) return;
 
-    const contentHtml = (item.contentHtml || escapeHTML(item.content || '')).trim();
-    const content = (item.content || stripHTML(contentHtml)).trim();
-    const place = item.place || '';
-
     marginalia[lineId] = marginalia[lineId] || [];
 
-    // Evita duplicati reali, ma preserva comunque l'HTML strutturato.
-    if (marginalia[lineId].some(e => e.type === item.type && e.contentHtml === contentHtml && e.place === place)) return;
+    const itemKey = item.id || item.xmlId || `${item.type}|${item.content}|${item.place}`;
 
-    state.marginNoteCounter++;
-    const id = item.id || `margin-${lineId}-${state.marginNoteCounter}`;
-    const fullItem = { ...item, id, content, contentHtml, place };
-
-    marginalia[lineId].push(fullItem);
-    state.marginNotes[id] = fullItem;
+    if (!marginalia[lineId].some(e => {
+      const existingKey = e.id || e.xmlId || `${e.type}|${e.content}|${e.place}`;
+      return existingKey === itemKey;
+    })) {
+      marginalia[lineId].push(item);
+    }
   };
 
-  qsaTEI(doc, 'div').filter(d => d.getAttribute('type') === 'canto').forEach(cantoDiv => {
-    qsaTEI(cantoDiv, 'note').forEach(note => {
-      const place = note.getAttribute('place');
-      const type = note.getAttribute('type');
+  qsaTEI(doc, 'div')
+    .filter(d => d.getAttribute('type') === 'canto')
+    .forEach(cantoDiv => {
+      const cantoN = parseInt(cantoDiv.getAttribute('n'), 10);
 
-      // Caso 1: nota marginale direttamente collegata al verso.
-      if (['verbal', 'non_verbal'].includes(type)) {
-        const html = renderMarginaliaBody(note);
-        pushMarginalia(note.getAttribute('target')?.replace('#', ''), {
-          type,
-          content: stripHTML(html),
-          contentHtml: html,
-          place: place || getParentPlace(note)
-        });
+      qsaTEI(cantoDiv, 'note')
+        .filter(note => !isNestedNoteWithin(note, cantoDiv))
+        .forEach(note => {
+          const place = note.getAttribute('place') || getParentPlace(note);
+          const directType = note.getAttribute('type');
 
-        // Caso 2: contenitore di margine con ref/note interne collegate ai versi.
-      } else if (place) {
-        qsaTEI(note, 'ref').forEach(ref => {
-          const html = renderMarginaliaBody(ref);
-          pushMarginalia(ref.getAttribute('target')?.replace('#', ''), {
-            type: ref.getAttribute('type') || 'verbal',
-            content: stripHTML(html),
-            contentHtml: html,
-            place
-          });
-        });
+          const directTargets = parseTargets(note.getAttribute('target'));
 
-        [...note.children].filter(c => c.localName === 'note').forEach(cn => {
-          const html = renderMarginaliaBody(cn);
-          pushMarginalia(cn.getAttribute('target')?.replace('#', ''), {
-            type: cn.getAttribute('type') || 'verbal',
-            content: stripHTML(html),
-            contentHtml: html,
-            place
-          });
+          const refTargets = qsaTEI(note, 'ref')
+            .flatMap(ref => parseTargets(ref.getAttribute('target')));
+
+          const childNoteTargets = qsaTEI(note, 'note')
+            .flatMap(childNote => parseTargets(childNote.getAttribute('target')));
+
+          const allTargets = unique([
+            ...directTargets,
+            ...refTargets,
+            ...childNoteTargets
+          ]);
+
+          const anchorTarget = pickAnchorTarget(allTargets, cantoN);
+
+          if (!anchorTarget) return;
+
+          const xmlId =
+            getAttr(note, 'xml:id') ||
+            `margin-${cantoN}-${anchorTarget}-${Object.keys(state.marginNotes).length + 1}`;
+
+          const id = xmlId;
+
+          const type = directType === 'non_verbal' ? 'non_verbal' : 'verbal';
+
+          const item = {
+            id,
+            xmlId,
+            type,
+            content: note.textContent.trim(),
+            contentHtml: renderMarginaliaBody(note, anchorTarget),
+            place: place || '',
+            targets: allTargets,
+            anchorTarget
+          };
+
+          state.marginNotes[id] = item;
+
+          pushMarginalia(anchorTarget, item);
         });
-      }
     });
-  });
 
   return marginalia;
 }
 
-function renderMarginaliaBody(el) {
+function renderMarginaliaBody(el, anchorTarget = '') {
   return [...el.childNodes]
-    .reduce((html, child) => html + renderMarginaliaNode(child), '')
+    .reduce((html, child) => html + renderMarginaliaNode(child, anchorTarget), '')
     .trim();
 }
 
-function renderMarginaliaChildren(node) {
-  return [...node.childNodes].reduce((html, child) => html + renderMarginaliaNode(child), '');
+function renderMarginaliaChildren(node, anchorTarget = '') {
+  return [...node.childNodes]
+    .reduce((html, child) => html + renderMarginaliaNode(child, anchorTarget), '');
 }
 
-function renderMarginaliaNode(node) {
+function renderMarginaliaNode(node, anchorTarget = '') {
   if (node.nodeType === Node.TEXT_NODE) return escapeHTML(node.textContent);
   if (node.nodeType !== Node.ELEMENT_NODE) return '';
 
   const name = node.localName;
 
   switch (name) {
-    case 'ref':
-      return renderMarginaliaChildren(node);
+    case 'ref': {
+      const content = renderMarginaliaChildren(node, anchorTarget);
+
+      const targets = parseTargets(node.getAttribute('target'))
+        .filter(isLineTarget);
+
+      /*
+        Regola:
+        - se il ref punta solo al luogo materiale della nota, non faccio nulla;
+        - se il ref contiene anche altri luoghi, mostro solo il/i rimando/i diversi;
+        - non trasformo tutto il testo in bottone.
+      */
+      const crossTargets = targets.filter(target => target !== anchorTarget);
+
+      if (!crossTargets.length) {
+        return content;
+      }
+
+      const links = crossTargets.map(target => `
+        <button type="button"
+                class="tei-ref-jump"
+                data-target="${escapeAttr(target)}"
+                title="Vai a ${escapeAttr(formatLineRef(target))}">
+          ↗ ${escapeHTML(formatLineRef(target))}
+        </button>
+      `).join('');
+
+      return `${content} ${links}`;
+    }
 
     case 'emph':
     case 'mentioned':
-      return `<em class="mentioned">${renderMarginaliaChildren(node)}</em>`;
+      return `<em class="mentioned">${renderMarginaliaChildren(node, anchorTarget)}</em>`;
 
     case 'quote':
-      return `«${renderMarginaliaChildren(node)}»`;
+      return `«${renderMarginaliaChildren(node, anchorTarget)}»`;
 
     case 'note': {
-      // Le note annidate dentro una nota marginale diventano cliccabili.
       state.noteCounter++;
+
       const label = noteTypeLabel(node.getAttribute('type'));
-      const content = renderMarginaliaChildren(node);
-      return `<span class="note-indicator" data-note-id="margin-note-${Date.now()}-${state.noteCounter}" data-note-title="${escapeAttr(label)}" data-note-content="${escapeAttr(content)}" title="${escapeAttr(label)}">${state.noteCounter}</span>`;
+      const content = renderMarginaliaChildren(node, anchorTarget);
+
+      return `<span class="note-indicator"
+                    data-note-id="margin-note-${Date.now()}-${state.noteCounter}"
+                    data-note-title="${escapeAttr(label)}"
+                    data-note-content="${escapeAttr(content)}"
+                    title="${escapeAttr(label)}">${state.noteCounter}</span>`;
     }
 
-    case 'app':
+    case 'app': {
       if (node.getAttribute('type') === 'philological') {
         const lem = qsTEI(node, 'lem');
         const rdg = qsTEI(node, 'rdg');
+
         if (lem && rdg) {
           state.noteCounter++;
-          const content = `Lem.: ${renderMarginaliaChildren(lem)} | Var.: ${renderMarginaliaChildren(rdg)}`;
-          return `${renderMarginaliaChildren(lem)}<span class="note-indicator app-indicator" data-note-id="margin-app-${Date.now()}-${state.noteCounter}" data-note-title="Apparato" data-note-content="${escapeAttr(content)}" title="Apparato filologico">🔍</span>`;
+
+          const content = `Lem.: ${renderMarginaliaChildren(lem, anchorTarget)} | Var.: ${renderMarginaliaChildren(rdg, anchorTarget)}`;
+
+          return `${renderMarginaliaChildren(lem, anchorTarget)}<span class="note-indicator app-indicator"
+                    data-note-id="margin-app-${Date.now()}-${state.noteCounter}"
+                    data-note-title="Apparato"
+                    data-note-content="${escapeAttr(content)}"
+                    title="Apparato filologico">🔍</span>`;
         }
       }
-      return renderMarginaliaChildren(qsTEI(node, 'lem') || node);
+
+      return renderMarginaliaChildren(qsTEI(node, 'lem') || node, anchorTarget);
+    }
 
     case 'choice': {
       const sic = qsTEI(node, 'sic');
@@ -483,42 +574,62 @@ function renderMarginaliaNode(node) {
 
       if (sic && corr) {
         const cType = node.getAttribute('type') || 'correzione editoriale';
-        const sicContent = renderMarginaliaChildren(sic);
-        const corrContent = renderMarginaliaChildren(corr);
-        return `<span class="choice-reg choice-corr" data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}" title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}">${corrContent}</span><span class="choice-orig choice-sic" title="Forma del manoscritto">${sicContent}</span>`;
+        const sicContent = renderMarginaliaChildren(sic, anchorTarget);
+        const corrContent = renderMarginaliaChildren(corr, anchorTarget);
+
+        return `<span class="choice-reg choice-corr"
+                      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}"
+                      title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}">${corrContent}</span><span class="choice-orig choice-sic"
+                      title="Forma del manoscritto">${sicContent}</span>`;
       }
 
       if (orig && reg) {
-        const origContent = renderMarginaliaChildren(orig);
-        const regContent = renderMarginaliaChildren(reg);
-        return `<span class="choice-reg" data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}" title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig" title="Forma originale">${origContent}</span>`;
+        const origContent = renderMarginaliaChildren(orig, anchorTarget);
+        const regContent = renderMarginaliaChildren(reg, anchorTarget);
+
+        return `<span class="choice-reg"
+                      data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}"
+                      title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
+                      title="Forma originale">${origContent}</span>`;
       }
 
-      return renderMarginaliaChildren(corr || reg || sic || orig || node);
+      return renderMarginaliaChildren(corr || reg || sic || orig || node, anchorTarget);
     }
 
     case 'g': {
       const refAttr = node.getAttribute('ref');
+
       if (refAttr === '#middle_dot') return GLYPHS.MIDDLE_DOT;
       if (refAttr === '#piedimosca') return `<span class="piedimosca">${GLYPHS.PIEDIMOSCA}</span>`;
+
       return escapeHTML(node.textContent);
     }
 
     case 'subst': {
       const delSub = qsTEI(node, 'del');
       const addSub = qsTEI(node, 'add');
-      return `${delSub ? `<span class="scribal-del">${renderMarginaliaChildren(delSub)}</span>` : ''}${addSub ? `<span class="scribal-add">${renderMarginaliaChildren(addSub)}</span>` : ''}`;
+
+      return `${delSub ? `<span class="scribal-del">${renderMarginaliaChildren(delSub, anchorTarget)}</span>` : ''}${addSub ? `<span class="scribal-add">${renderMarginaliaChildren(addSub, anchorTarget)}</span>` : ''}`;
     }
 
-    case 'del': return `<span class="scribal-del">${renderMarginaliaChildren(node)}</span>`;
-    case 'add': return `<span class="scribal-add">${renderMarginaliaChildren(node)}</span>`;
-    case 'supplied': return `[${renderMarginaliaChildren(node)}]`;
-    case 'lb': return '<br>';
+    case 'del':
+      return `<span class="scribal-del">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
+
+    case 'add':
+      return `<span class="scribal-add">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
+
+    case 'supplied':
+      return `[${renderMarginaliaChildren(node, anchorTarget)}]`;
+
+    case 'lb':
+      return '<br>';
+
     case 'pb':
-    case 'cb': return '';
+    case 'cb':
+      return '';
 
     default:
-      return renderMarginaliaChildren(node);
+      return renderMarginaliaChildren(node, anchorTarget);
   }
 }
 
@@ -531,16 +642,84 @@ function noteTypeLabel(type) {
     'translation': 'Nota di traduzione',
     'source': 'Fonte'
   };
+
   return labels[type] || 'Nota';
 }
 
 function getParentPlace(el) {
   let parent = el.parentNode;
+
   while (parent) {
-    if (parent.localName === 'note' && parent.getAttribute('place')) return parent.getAttribute('place');
+    if (parent.localName === 'note' && parent.getAttribute('place')) {
+      return parent.getAttribute('place');
+    }
+
     parent = parent.parentNode;
   }
+
   return '';
+}
+
+function isNestedNoteWithin(note, rootDiv) {
+  let parent = note.parentElement;
+
+  while (parent && parent !== rootDiv) {
+    if (parent.localName === 'note') return true;
+    parent = parent.parentElement;
+  }
+
+  return false;
+}
+
+function isLineTarget(target) {
+  return /^Inf\.\d+\.\d+$/.test(target || '');
+}
+
+function formatLineRef(lineId) {
+  const match = /^Inf\.(\d+)\.(\d+)$/.exec(lineId || '');
+
+  if (!match) return lineId || '';
+
+  const canto = parseInt(match[1], 10);
+  const line = parseInt(match[2], 10);
+
+  return `Inf. ${toRoman(canto)}, ${line}`;
+}
+
+function goToLine(lineId) {
+  const cantoN = getCantoNumberFromLineId(lineId);
+
+  if (!cantoN) return;
+
+  hideNotePopup();
+  hideMarginTooltip();
+
+  state.currentCanto = cantoN;
+  els.cantoSelect.value = cantoN;
+
+  state.currentView = 'facsimile';
+
+  $$('.view-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.view === 'facsimile');
+  });
+
+  els.viewFacsimile.classList.add('active');
+  els.viewCommento.classList.remove('active');
+
+  renderFacsimileView();
+
+  setTimeout(() => {
+    const lineEl = els.textContent.querySelector(`[data-line-id="${lineId}"]`);
+
+    if (!lineEl) return;
+
+    els.textContent.querySelectorAll('.verse-line.active').forEach(l => {
+      l.classList.remove('active');
+    });
+
+    lineEl.classList.add('active');
+    lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 120);
 }
 
 /* ==========================================================================
@@ -720,13 +899,51 @@ function renderTerzina(el) {
 }
 
 function bindNoteIndicators(container) {
+  // Gestione note standard
   container?.querySelectorAll('.note-indicator').forEach(ind => {
     ind.onclick = e => {
       e.stopPropagation();
       showNotePopup(e, ind);
     };
   });
+
+  // Gestione link incrociati
+  container?.querySelectorAll('.tei-ref-jump').forEach(link => {
+    link.onclick = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const target = link.dataset.target;
+      if (target) goToLine(target);
+    };
+  });
+
+  // NUOVO: Gestione click sui Choice (Varianti/Correzioni)
+  container?.querySelectorAll('.choice-reg').forEach(choice => {
+    choice.onclick = e => {
+      e.stopPropagation();
+      
+      // Recupera il testo originale (che è il nodo HTML subito dopo)
+      const origNode = choice.nextElementSibling;
+      const origText = origNode ? origNode.innerHTML : 'Variante non disponibile';
+      
+      // Scegli il titolo del popup in base al tipo di intervento
+      const isCorr = choice.classList.contains('choice-corr');
+      const title = isCorr ? 'Forma del manoscritto (sic)' : 'Forma originale';
+      
+      // Costruisci e mostra il popup
+      const body = els.notePopup.querySelector('.note-popup-body');
+      els.notePopup.style.width = '320px';
+      els.notePopup.querySelector('.note-popup-title').textContent = title;
+      
+      // Mostra la parola originale in grande nel popup
+      body.innerHTML = `<div style="text-align: center; font-size: 1.2rem; padding: 10px 0; font-family: serif;">${origText}</div>`;
+      
+      els.notePopup.classList.add('visible');
+      positionNotePopup(choice, 320);
+    };
+  });
 }
+
 
 function renderCommentoView() {
   const entries = state.commentary[state.currentCanto] || [];
@@ -774,8 +991,8 @@ function syncTextWithFolio(folioN) {
 function updateFacsimile(silent = false) {
   const folioN = FOLIO_ORDER[state.currentFolioIdx];
   if (els.facsimileImg) {
-    els.facsimileImg.src = FACSIMILE_MAP[folioN] ? `assets/facsimile/${FACSIMILE_MAP[folioN]}` : '';
-    els.facsimileImg.alt = FACSIMILE_MAP[folioN] ? `Facsimile carta ${folioN}` : 'Immagine non disponibile';
+els.facsimileImg.src = FACSIMILE_MAP[folioN] ? `assets/facsimile/${FACSIMILE_MAP[folioN]}` : '';
+els.facsimileImg.alt = FACSIMILE_MAP[folioN] ? `Facsimile carta ${folioN}` : 'Immagine non disponibile';
   }
   if (els.folioLabel) els.folioLabel.textContent = `c. ${folioN}`;
 

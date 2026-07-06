@@ -1374,3 +1374,29 @@ body {
 .commentary-entry {
   border-bottom-color: var(--border-light);
 }
+
+/* Nascondi la forma originale (manoscritto) di default */
+.choice-orig {
+  display: none;
+}
+
+/* Fai capire che la parola regolarizzata/corretta è cliccabile */
+.choice-reg {
+  cursor: pointer;
+  border-bottom: 1px dashed #999; /* Puoi cambiare il colore se preferisci */
+  transition: color 0.2s;
+}
+
+.choice-reg:hover {
+  color: var(--accent); /* Usa il colore del tuo tema se definito */
+}
+
+/* (Opzionale) Se usi il bottone globale "Mostra Originale", inverte la visualizzazione */
+body.show-orig .choice-orig {
+  display: inline;
+  cursor: pointer;
+  border-bottom: 1px dashed #999;
+}
+body.show-orig .choice-reg {
+  display: none;
+}
