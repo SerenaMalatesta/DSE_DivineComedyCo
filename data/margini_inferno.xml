@@ -280,7 +280,7 @@
             </div>
 
              <!-- MARGINE INF.5 -->
-          <div n="4" type="canto">
+          <div n="5" type="canto">
             <div type="margin" xml:id="Ha_Marg_Inf.05">
                <div type="margin" xml:id="Ha_Marg_Inf.05.025">
                <pb n="8r" facs="#c8r" corresp="#carta_008r"/>
@@ -316,8 +316,32 @@
                   </p>
                </div>
                </div>
-            </div>
+         </div>
 
+                  <!-- MARGINE INF.6 -->
+          <div n="6" type="canto">
+            <div type="margin" xml:id="Ha_Marg_Inf.06">
+               <div type="margin" xml:id="Ha_Marg_Inf.06.025">
+               <pb n="9v" facs="#c9v" corresp="#carta_009v"/>
+                  <p>
+                     <note place="inferior_margin">
+                        <ref type="verbal" target="#Inf.06.065" xml:id="Ha-An-Ma-Inf.06.065">
+                              <emph>Benvenuto da Imola]</emph>
+                             Messer Vieri de’ Cerchi fu capo di parte bianca e messer Corso Donati di parte nera. Pervenono al sangue, finché messer Corso fittivamente pregava papa Bonifacio, suo grande amico, che ponesse legge a Firenza aciò che discordia non fusse; e questo faceva per farsi ser e allirivsti ché messer Veri co molta uccisione cacciorono messer Corso e suoi selvaggi da perché di poco tempo inanzi eran venuti; e’ Cerchi dil Pivieri da Cone; e dice <emph><choice><orig>selvaggi <del rend="erased">ai</del></orig><reg>selvaggi</reg></choice> </emph> a rispetto de la casa de’ Donati. Di nuovo messer Corso mosse papa Bonifazio, e mandocci Carlo Sanzaterra franzese, sí che potesse tornare e stare in Firenza in pace. E ttornato in Firenza, a tutti mostrava gra’ benignità; e ’n tempo di 3 anni cacciò messer Veri e ’ suoi fuori, e ne la cacciata fu morto messer Veri.</ref>
+                     </note>
+                  </p>
+               </div>
+               <div type="margin" xml:id="Ha_Marg_Inf.06.073">
+               <pb n="10r" facs="#c10r" corresp="#carta_010r"/>
+                  <p>
+                     <note place="inferior_margin">
+                        <ref type="verbal" target="#Inf.06.073" xml:id="Ha-An-Ma-Inf.06.073">
+                              Dice Benvenuto che per que’ due giusti non entesi Dante volse dire di se e di messer Guido di messer Cavalcante Cavalcanti e ben che noi voglian dire che più assai ve ne fusse non di meno e luulgo metteva questi due innanzi a tutti. </ref>
+                     </note>
+                  </p>
+               </div>
+               </div>
+            </div>
          </div>
       </body>
    </text>

@@ -626,11 +626,40 @@
 
             <!--Canto VI -->
             <div n="6" type="commentary" xml:id="Ha_An_Inf.06">
-               <!-- Carta 8va -->
-               <pb n="8v" facs="#c8v"/>
+               <!-- Carta 10ra -->
+               <pb n="10r" facs="#c10r"/>
                <cb n="a"/>
                <div type="commentary" xml:id="Ha_An_Inf.06.001"> 
-                  <p><ref target="Inf.06.001"><quote>[1]<emph> -- </emph></quote></ref>. lorem ipsum</p>
+                  <p><ref target="Inf.06.001"><quote>[1]<emph> Al tornar de la mente che si chiuse </emph></quote></ref>. </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.06.013"> 
+               <p><ref target="Inf.06.013"><quote>[13] <emph>Cerbero fiera  <choice><orig><del rend="erased">crd</del> crudele</orig> <reg>crudele</reg></choice> e diversa</emph></quote></ref>. In questa parte dice che Cerbero è un demonio, e ’l quale ha ttre capi canini. </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.06.052"> 
+                  <p><ref target="Inf.06.052"><quote>[52]<emph> Voi cittadini mi chiamaste Ciaco </emph></quote></ref>. Questo Ciaco fu fiorentino <choice><orig>lecatore</orig><reg>leccatore</reg></choice> e goloso. <note type="philological-note">Qui Parisi riporta solo AT per v. 1 e v. 13 dove: Et est sciendum quod iste Cerberus est canis infernalis sive demon habens tria capita. Non riporta neanche in appendice di canto Mü: Al tornar de la mente che si chiuse: usque ibi. Cerbero fera crudele a diversa: Dicit auctor quod iste Cerberius est demon habens tria capita canina.  e Gu:</note>
+                  </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.06.065"> 
+                  <p><ref target="Inf.06.065"><quote>[65]<emph> Veranno al sangue e la parte selvaggia </emph></quote></ref>. L’autore intende per <emph>parte selvaggia</emph> parte guelfa, e appella e’ guelfi selvaggi per ché son contra lo ’mperadore, al qual di ragione doverebono ubidire. 
+                  </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.06.068"> 
+                  <p><ref target="Inf.06.068"><quote>[68]<emph> In fra tre soli e che l’altra sormonti </emph></quote></ref>. Cioè infra ’l tempo perfetto. Intende per lo <emph>sole</emph> tempo, per <emph>tre</emph> intende perfezzione del tempo, imperò che lo ternario numero si dice perfetto che è primo numero lo quale si chiama longitudine.  
+                  </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.06.069"> 
+                  <p><ref target="Inf.06.069"><quote>[69]<emph> Co la forza </emph></quote></ref>. Cioè co<g ref="#middle_dot"/>ll’aiuto di Dio, el quale elli dice ora dormire parere e a nessuna de le parti s’acosta.  
+                  </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.06.095"> 
+                  <p><ref target="Inf.06.095"><quote>[95]<emph> Di qua dal suono de l’angelica tromba</emph></quote></ref>. In questa parte dice l’autore che non sarà quell’anima escitata infino al dì del giudicio, quando vedrà Cristo ni
+               <cb n="b"/>
+                  mico <choice><orig>de<add rend="supralinear">i</add></orig><reg>dei</reg></choice> malvagi, il quale darà a llor la etternale sentenza e allora ciascheduna anima sarà unita col corpo suo. 
+                  </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.06.111"> 
+                  <p><ref target="Inf.06.111"><quote>[111]<emph> Di là più che di qua essere aspetta</emph></quote></ref>. In questa parte vuol dire che queste cotali anime, dappo’ la etternal sentenza, molto maggiormente saranno tormentate insieme co corpi loro e allora sarano perfetti li dannati in lor danno e i maggior tormento e li giusti saranno perfetti nell’etterna gloria.
+                  </p>
                </div>
             </div>
 

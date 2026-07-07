@@ -91,6 +91,47 @@ function getAttr(el, name) {
   return el.getAttribute(name);
 }
 
+function getDirectTEIChild(el, tagName) {
+  if (!el) return null;
+
+  return [...el.childNodes].find(child =>
+    child.nodeType === Node.ELEMENT_NODE &&
+    child.namespaceURI === TEI_NS &&
+    child.localName === tagName
+  ) || null;
+}
+
+function getAncestorTEIDivByType(el, type) {
+  let current = el?.parentElement || null;
+
+  while (current) {
+    if (
+      current.namespaceURI === TEI_NS &&
+      current.localName === 'div' &&
+      current.getAttribute('type') === type
+    ) {
+      return current;
+    }
+
+    current = current.parentElement;
+  }
+
+  return null;
+}
+
+function isLastCantoInCantica(cantoDiv, canticaDiv) {
+  if (!cantoDiv || !canticaDiv) return false;
+
+  const cantos = [...canticaDiv.childNodes].filter(child =>
+    child.nodeType === Node.ELEMENT_NODE &&
+    child.namespaceURI === TEI_NS &&
+    child.localName === 'div' &&
+    child.getAttribute('type') === 'canto'
+  );
+
+  return cantos.length > 0 && cantos[cantos.length - 1] === cantoDiv;
+}
+
 /* ==========================================================================
    Parse Commedia
    ========================================================================== */
@@ -99,7 +140,14 @@ function parseCommedia(doc) {
     .filter(d => d.getAttribute('type') === 'canto')
     .map(cantoDiv => {
       const n = parseInt(cantoDiv.getAttribute('n'));
-      const headEl = qsTEI(cantoDiv, 'head');
+      const headEl = getDirectTEIChild(cantoDiv, 'head');
+      const canticaDiv = getAncestorTEIDivByType(cantoDiv, 'cantica');
+      const canticaHeadEl = getDirectTEIChild(canticaDiv, 'head');
+      const cantoExplicitEl = getDirectTEIChild(cantoDiv, 'explicit');
+      const canticaExplicitEl = isLastCantoInCantica(cantoDiv, canticaDiv)
+        ? getDirectTEIChild(canticaDiv, 'explicit')
+        : null;
+      const explicitEl = cantoExplicitEl || canticaExplicitEl;
 
       const heading = headEl
         ? headEl.textContent.trim()
@@ -109,6 +157,16 @@ function parseCommedia(doc) {
         ? renderLineContent(headEl).trim()
         : escapeHTML(`Canto ${toRoman(n)}`);
 
+      const canticaTitle = canticaHeadEl?.textContent.trim() || '';
+      const canticaTitleHtml = canticaHeadEl
+        ? renderLineContent(canticaHeadEl).trim()
+        : '';
+
+      const explicitText = explicitEl?.textContent.trim() || '';
+      const explicitHtml = explicitEl
+        ? renderLineContent(explicitEl).trim()
+        : '';
+
       const elements = [];
       walkCantoChildren(cantoDiv, elements);
 
@@ -117,6 +175,10 @@ function parseCommedia(doc) {
         xmlId: getAttr(cantoDiv, 'xml:id'),
         heading,
         headingHtml,
+        canticaTitle,
+        canticaTitleHtml,
+        explicitText,
+        explicitHtml,
         elements
       };
     });
@@ -245,12 +307,18 @@ function parseCommentaryEntry(div, xmlId) {
   const pEl = qsTEI(div, 'p');
   if (!pEl) return null;
 
-  let lemmaText = '', lineRef = '', refLabel = '';
+  let lemmaText = '', lemmaHtml = '', lineRef = '', refLabel = '';
   const firstRef = qsTEI(div, 'ref');
 
   if (firstRef) {
     lineRef = firstRef.getAttribute('target')?.replace('#', '') || '';
-    lemmaText = qsTEI(firstRef, 'emph')?.textContent.trim() || qsTEI(firstRef, 'quote')?.textContent.trim() || '';
+
+    const quoteEl = qsTEI(firstRef, 'quote');
+    const emphEl = qsTEI(firstRef, 'emph');
+    const lemmaEl = quoteEl || emphEl || firstRef;
+
+    lemmaText = lemmaEl.textContent.trim();
+    lemmaHtml = renderCommentaryChildren(lemmaEl).trim();
   }
 
   if (lineRef) {
@@ -258,7 +326,7 @@ function parseCommentaryEntry(div, xmlId) {
     if (parts.length >= 3) refLabel = `Inf. ${toRoman(parseInt(parts[1]))}, ${parseInt(parts[2])}`;
   }
 
-  return { xmlId, lineRef, refLabel, lemmaText, bodyHtml: renderCommentaryBody(pEl) };
+  return { xmlId, lineRef, refLabel, lemmaText, lemmaHtml, bodyHtml: renderCommentaryBody(pEl) };
 }
 
 function renderCommentaryBody(pEl) {
@@ -283,8 +351,11 @@ function renderCommentaryNode(node) {
   switch (name) {
     case 'ref':
       if (node.getAttribute('target')) {
-        const text = qsTEI(node, 'emph')?.textContent || qsTEI(node, 'quote')?.textContent || '';
-        return text ? `<em class="mentioned">${escapeHTML(text.trim())}</em>` : renderCommentaryChildren(node);
+        const quoteEl = qsTEI(node, 'quote');
+        const emphEl = qsTEI(node, 'emph');
+
+        if (quoteEl) return `<em class="mentioned">${renderCommentaryChildren(quoteEl)}</em>`;
+        if (emphEl) return `<em class="mentioned">${renderCommentaryChildren(emphEl)}</em>`;
       }
       return renderCommentaryChildren(node);
 
@@ -374,6 +445,42 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+
+function normalizeMarginaliaTypeValue(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw) return null;
+
+  const compact = raw.replace(/[\s_-]+/g, '');
+
+  if (compact === 'nonverbal' || compact === 'nonverbale') return 'non_verbal';
+  if (compact === 'verbal' || compact === 'verbale') return 'verbal';
+
+  return null;
+}
+
+function detectMarginaliaType(note) {
+  const directType = normalizeMarginaliaTypeValue(note.getAttribute('type'));
+  if (directType) return directType;
+
+  const extraSignals = [
+    note.getAttribute('subtype'),
+    note.getAttribute('ana'),
+    note.getAttribute('rend'),
+    note.getAttribute('class')
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  if (/non[\s_-]*verbal(e)?/.test(extraSignals)) return 'non_verbal';
+  if (/capitulum|piedimosca|pilcrow|paragraph|paragrafo/.test(extraSignals)) return 'non_verbal';
+
+  const hasNonVerbalGlyph = qsaTEI(note, 'g').some(g => {
+    const ref = (g.getAttribute('ref') || '').toLowerCase();
+    const text = (g.textContent || '').toLowerCase();
+    return /piedimosca|capitulum|pilcrow|paragraph|paragrafo/.test(ref + ' ' + text);
+  });
+
+  return hasNonVerbalGlyph ? 'non_verbal' : 'verbal';
+}
+
 function isNestedNoteWithin(note, rootDiv) {
   let parent = note.parentElement;
 
@@ -429,7 +536,8 @@ function parseMarginalia(doc) {
         .filter(note => !isNestedNoteWithin(note, cantoDiv))
         .forEach(note => {
           const place = note.getAttribute('place') || getParentPlace(note);
-          const directType = note.getAttribute('type');
+          // Il tipo dei marginalia può comparire come non_verbal, non-verbal, non verbal,
+          // nonVerbale ecc.: normalizzo prima di decidere quale icona mostrare.
 
           const directTargets = parseTargets(note.getAttribute('target'));
 
@@ -455,7 +563,7 @@ function parseMarginalia(doc) {
 
           const id = xmlId;
 
-          const type = directType === 'non_verbal' ? 'non_verbal' : 'verbal';
+          const type = detectMarginaliaType(note);
 
           const item = {
             id,
@@ -834,7 +942,11 @@ function renderFacsimileView() {
 function renderTextForCanto(canto) {
   els.textPanelTitle.textContent = `Testo poetico — Canto ${toRoman(canto.n)}`;
 
-  let html = `<div class="canto-heading">${canto.headingHtml || escapeHTML(canto.heading)}</div>` + canto.elements.reduce((html, el) => {
+  const paratextHtml = (canto.canticaTitleHtml || canto.explicitHtml)
+    ? `<div class="canto-paratext-row">${canto.canticaTitleHtml ? `<div class="cantica-title">${canto.canticaTitleHtml}</div>` : '<div></div>'}${canto.explicitHtml ? `<div class="cantica-explicit">${canto.explicitHtml}</div>` : ''}</div>`
+    : '';
+
+  let html = `${paratextHtml}<div class="canto-heading">${canto.headingHtml || escapeHTML(canto.heading)}</div>` + canto.elements.reduce((html, el) => {
     if (el.type === 'pb') return html + `<div class="folio-marker" data-folio="${el.n}" title="Vai al facsimile della carta ${el.n}">[c. ${el.n}]</div>`;
     if (el.type === 'cb') return html + `<span class="column-marker">col. ${el.n}</span>`;
     if (el.type === 'terzina') return html + renderTerzina(el);
@@ -951,7 +1063,7 @@ function renderCommentoView() {
 
   els.commentoContent.innerHTML = entries.length === 0
     ? '<p style="color:var(--text-muted);text-align:center;padding:40px;">Nessun commento disponibile.</p>'
-    : entries.map(e => `<div class="commentary-entry" data-line-ref="${e.lineRef}"><div class="commentary-lemma">${e.refLabel ? `<span class="lemma-ref">${escapeHTML(e.refLabel)}</span>` : ''}${e.lemmaText ? `<span class="lemma-text">${escapeHTML(e.lemmaText)}</span>` : ''}</div><div class="commentary-body">${e.bodyHtml}</div></div>`).join('');
+    : entries.map(e => `<div class="commentary-entry" data-line-ref="${e.lineRef}"><div class="commentary-lemma">${e.refLabel ? `<span class="lemma-ref">${escapeHTML(e.refLabel)}</span>` : ''}${e.lemmaHtml ? `<span class="lemma-text">${e.lemmaHtml}</span>` : ''}</div><div class="commentary-body">${e.bodyHtml}</div></div>`).join('');
 
   bindNoteIndicators(els.commentoContent);
 }

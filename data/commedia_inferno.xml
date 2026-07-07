@@ -95,22 +95,6 @@
     </encodingDesc>
   </teiHeader>
 
-  <facsimile xml:id="ms_harley">
-    <!-- Carta 2r -->
-    <surface xml:id="c2r" n="2r">
-      <graphic url="CNMD0000428772_Pagina_0002.jpg" width="1922px" height="2749px"/>
-
-      <!-- Zona del titolo -->
-      <zone xml:id="c2r_title" ulx="135" uly="185" lrx="752" lry="375"/>
-
-      <!-- Zona del testo principale -->
-      <zone xml:id="c2rA" ulx="127" uly="319" lrx="733" lry="2331"/>
-
-      <zone xml:id="c2rB" ulx="812" uly="349" lrx="1390" lry="2342"/>
-
-    </surface>
-  </facsimile>
-
 
 
   <text>
@@ -1698,8 +1682,29 @@
           <l xml:id="Inf.06.101"> dell’ombra e de la piaggia, a ppassi lenti, </l>
           <l xml:id="Inf.06.102"> tocando un poco la vita futura; </l>
         </lg>
-
-
+        <lg type="terzina">
+          <l xml:id="Inf.06.103"> io li dissi: « Maestro, questi tormenti </l> 
+          <l xml:id="Inf.06.104"> crescerano e lli di poi la gran sentenza, </l>
+          <l xml:id="Inf.06.105"> o fie’ minori, o saran sí cocenti? ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.06.106"> Et elli a mme: « Ritorna a ttua scienza, </l>
+          <l xml:id="Inf.06.107"> che vuol, quanto la cossa è ppiù perfetta, </l>
+          <l xml:id="Inf.06.108"> più senta el bene, e così la doglienza. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.06.109"> Tutto che questa gente maladetta </l>
+          <l xml:id="Inf.06.110"> in vera perfezzion già mai non vada, </l>
+          <l xml:id="Inf.06.111"> di là più che di qua essere aspetta ». </l>
+        </lg>
+        <lg type="terzina">
+        <l xml:id="Inf.06.112"> Noi aggiramo a ttorno quella strada, </l>
+        <l xml:id="Inf.06.113"> assai parlando più ch’i’ non ridico; </l>
+        <l xml:id="Inf.06.114"> vemimo al punto dove si digrada: </l>
+        </lg>
+        <lg type="terzina">
+        <l xml:id="Inf.06.115"> E quivi trovamo Pruto, el gran nemico. </l>
+        </lg>
       </div>
 
     </body>
