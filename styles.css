@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Dante Commedia Â· Inferno â€” MS Harley 3459
-   Digital Scholarly Edition â€” Styles
+   Dante Commedia Ã‚Â· Inferno Ã¢â‚¬â€ MS Harley 3459
+   Digital Scholarly Edition Ã¢â‚¬â€ Styles
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap');
@@ -458,26 +458,46 @@ body.dark .toggle-switch.active {
 .view.active { display: flex; }
 
 /* ==========================================================================
-   VIEW 1: Facsimile e Testo
+   VIEW 1: Visualizzazione completa
    ========================================================================== */
 .view-facsimile {
   height: calc(100vh - 92px);
   overflow: hidden;
 }
 
+.view-facsimile.active {
+  display: grid;
+  grid-template-columns:
+    minmax(280px, 0.95fr)
+    minmax(300px, 1.05fr)
+    minmax(340px, 1.15fr);
+}
+
+.complete-panel,
+.text-panel,
+.complete-commento-panel,
 .facsimile-panel {
-  width: 50%;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border);
-  background: var(--bg-surface);
 }
 
 .text-panel {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
+  width: auto;
   background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+}
+
+.complete-commento-panel {
+  width: auto;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+}
+
+.facsimile-panel {
+  width: auto;
+  background: var(--bg-surface);
 }
 
 .panel-header {
@@ -939,6 +959,75 @@ body.dark .choice-orig:hover {
   border: 1px solid var(--border);
 }
 
+
+/* Complete view: three readable, independently scrollable panels */
+.view-completa .text-content {
+  padding: 18px 22px 36px;
+}
+
+.view-completa .canto-heading {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.view-completa .terzina {
+  margin-bottom: 12px;
+  padding-left: 34px;
+}
+
+.view-completa .verse-line {
+  font-size: 1rem;
+  line-height: 1.68;
+  padding-right: 4px;
+}
+
+.view-completa .line-number {
+  left: -34px;
+}
+
+.complete-commento-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px 40px;
+}
+
+.complete-commento-panel .commentary-entry {
+  margin-bottom: 22px;
+  padding-bottom: 20px;
+  cursor: pointer;
+}
+
+.complete-commento-panel .commentary-entry:hover {
+  background: var(--highlight);
+  border-radius: var(--radius);
+}
+
+.complete-commento-panel .commentary-entry.active {
+  background: var(--highlight-active);
+  border-radius: var(--radius);
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.complete-commento-panel .commentary-lemma {
+  font-size: 0.98rem;
+  margin-bottom: 6px;
+}
+
+.complete-commento-panel .commentary-body {
+  font-size: 0.95rem;
+  line-height: 1.66;
+}
+
+.view-completa .facsimile-viewer {
+  padding: 14px;
+}
+
+.view-completa .facsimile-img {
+  max-width: none;
+  width: min(100%, 760px);
+}
+
 /* ==========================================================================
    VIEW 2: Commento
    ========================================================================== */
@@ -1271,19 +1360,39 @@ body.dark .choice-orig:hover {
 /* ==========================================================================
    Responsive
    ========================================================================== */
+@media (max-width: 1100px) {
+  .view-facsimile.active {
+    grid-template-columns: minmax(260px, 1fr) minmax(300px, 1fr);
+    height: auto;
+    min-height: calc(100vh - 92px);
+    overflow: visible;
+  }
+
+  .facsimile-panel {
+    grid-column: 1 / -1;
+    height: 62vh;
+    border-top: 1px solid var(--border);
+  }
+}
+
 @media (max-width: 900px) {
-  .view-facsimile {
+  .view-facsimile.active {
+    display: flex;
     flex-direction: column;
     height: auto;
     min-height: calc(100vh - 92px);
+    overflow: visible;
   }
-  .facsimile-panel, .text-panel {
+  .facsimile-panel, .text-panel, .complete-commento-panel {
     width: 100%;
     border-right: none;
+    border-bottom: 1px solid var(--border);
   }
   .facsimile-panel {
-    height: 50vh;
-    border-bottom: 1px solid var(--border);
+    height: 55vh;
+  }
+  .complete-commento-panel {
+    height: 55vh;
   }
   .text-panel {
     height: auto;
@@ -1317,7 +1426,7 @@ body.dark .choice-orig:hover {
 }
 
 /* ==========================================================================
-   Modern refresh tweaks â€” no structural changes
+   Modern refresh tweaks Ã¢â‚¬â€ no structural changes
    ========================================================================== */
 body {
   letter-spacing: -0.005em;
@@ -1380,7 +1489,7 @@ body {
   display: none;
 }
 
-/* Fai capire che la parola regolarizzata/corretta è cliccabile */
+/* Fai capire che la parola regolarizzata/corretta Ã¨ cliccabile */
 .choice-reg {
   cursor: pointer;
   border-bottom: 1px dashed #999; /* Puoi cambiare il colore se preferisci */
@@ -1468,4 +1577,647 @@ body.show-orig .choice-reg {
     justify-self: start;
     text-align: left;
   }
+}
+/* Stato vuoto nella colonna Commento della Visualizzazione completa */
+.empty-commentary-message {
+  margin: 18px auto;
+  max-width: 320px;
+  padding: 24px 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.lemma-folio {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border-light);
+  padding: 1px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.complete-commento-panel .commentary-lemma {
+  flex-wrap: wrap;
+}
+
+/* Collegamento dinamico carta â†” testo â†” commento nella Visualizzazione completa */
+.complete-commento-panel .commentary-entry.same-folio {
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+}
+
+.complete-commento-panel .commentary-entry.same-folio:not(.active) {
+  background: var(--accent-bg);
+  border-radius: var(--radius);
+}
+
+.complete-commento-panel .empty-commentary-message[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   Marcatori materiali interni al commento: <pb>/<cb>
+   ========================================================================== */
+.commentary-folio-marker,
+.commentary-column-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.commentary-folio-marker {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid rgba(163, 25, 47, 0.18);
+}
+
+.commentary-column-marker {
+  color: var(--text-muted);
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border-light);
+}
+
+.complete-commento-panel .commentary-entry.same-folio .commentary-folio-marker {
+  background: var(--accent);
+  color: var(--header-text);
+  border-color: var(--accent);
+}
+
+body.dark .commentary-folio-marker {
+  border-color: rgba(224, 107, 119, 0.24);
+}
+
+/* ==========================================================================
+   Home e selezione visualizzazioni
+   ========================================================================== */
+.view-home {
+  min-height: calc(100vh - 92px);
+  padding: 48px 24px 72px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 32px;
+  background:
+    radial-gradient(circle at 15% 10%, var(--accent-bg) 0%, transparent 38%),
+    var(--bg);
+}
+
+.home-hero {
+  max-width: 860px;
+  text-align: center;
+}
+
+.home-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.home-hero h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.08;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.home-hero p {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.home-view-grid {
+  width: min(1040px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.home-view-card {
+  appearance: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  color: var(--text);
+  text-align: left;
+  padding: 22px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 230px;
+  box-shadow: 0 10px 30px rgba(74,22,28,0.08);
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.home-view-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 18px 44px rgba(74,22,28,0.14);
+}
+
+.home-view-card.primary {
+  background: linear-gradient(180deg, var(--bg-panel), var(--accent-bg));
+  border-color: rgba(163, 25, 47, 0.28);
+}
+
+.home-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-card-icon svg,
+.home-card-icon i {
+  width: 20px;
+  height: 20px;
+}
+
+.home-card-title {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.home-card-text {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.home-card-text code {
+  font-family: var(--font-sans);
+  font-size: .85em;
+  background: var(--bg-panel-alt);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Controlli pannelli: testo/commento nascondibili, facsimile sempre presente
+   ========================================================================== */
+.complete-layout-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.layout-controls-label {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.layout-toggle {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.layout-toggle.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: rgba(163, 25, 47, 0.28);
+}
+
+.view-facsimile.active.hide-text-panel {
+  grid-template-columns: minmax(340px, 1fr) minmax(380px, 1.15fr);
+}
+
+.view-facsimile.active.hide-commento-panel {
+  grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.15fr);
+}
+
+.view-facsimile.active.hide-text-panel.hide-commento-panel {
+  grid-template-columns: minmax(420px, 1fr);
+}
+
+.view-facsimile.hide-text-panel .text-panel,
+.view-facsimile.hide-commento-panel .complete-commento-panel {
+  display: none;
+}
+
+/* ==========================================================================
+   View confronto Harley / Petrocchi
+   ========================================================================== */
+.view-confronto {
+  min-height: calc(100vh - 92px);
+  justify-content: center;
+  background: var(--bg);
+}
+
+.confronto-container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.confronto-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  margin: 0 -24px;
+  padding: 12px 24px;
+}
+
+.confronto-content {
+  padding-top: 22px;
+  overflow-x: auto;
+}
+
+.comparison-placeholder {
+  max-width: 760px;
+  margin: 32px auto;
+  padding: 28px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  font-family: var(--font-serif);
+  line-height: 1.65;
+}
+
+.comparison-placeholder h3 {
+  font-family: var(--font-sans);
+  color: var(--accent);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.comparison-placeholder code {
+  font-family: var(--font-sans);
+  font-size: .85em;
+  background: var(--bg-panel-alt);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.comparison-grid {
+  min-width: 920px;
+  display: grid;
+  grid-template-columns: 90px minmax(280px, 1fr) minmax(280px, 1fr) 130px;
+  gap: 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.comparison-grid > div {
+  padding: 10px 12px;
+  border-right: 1px solid var(--border-light);
+}
+
+.comparison-grid > div:last-child {
+  border-right: none;
+}
+
+.comparison-grid-head {
+  position: sticky;
+  top: 42px;
+  z-index: 5;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.comparison-row {
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.comparison-row.different {
+  background: var(--accent-bg);
+}
+
+.comparison-ref,
+.comparison-status {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.comparison-text {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.muted {
+  color: var(--text-faint);
+}
+
+@media (max-width: 900px) {
+  .home-view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .complete-layout-controls {
+    order: 4;
+    width: 100%;
+    justify-content: center;
+    padding: 6px 0;
+  }
+}
+
+/* ==========================================================================
+   Confronto token-per-token Harley / Petrocchi
+   ========================================================================== */
+.comparison-toolbar {
+  min-width: 920px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+}
+
+.comparison-filter {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.comparison-filter:hover,
+.comparison-filter.active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.comparison-row {
+  position: relative;
+}
+
+.comparison-detail-cell {
+  grid-column: 2 / 5;
+  padding-top: 0 !important;
+  border-top: 1px dashed var(--border-light);
+  background: rgba(255,255,255,0.18);
+}
+
+.comparison-details {
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.comparison-details summary {
+  cursor: pointer;
+  padding: 7px 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.token-detail-table {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) 150px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-panel);
+  margin: 4px 0 10px;
+}
+
+.token-detail-table > div {
+  padding: 7px 9px;
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+}
+
+.token-detail-table > div:nth-child(3n) {
+  border-right: none;
+}
+
+.token-detail-table > div:nth-last-child(-n+3) {
+  border-bottom: none;
+}
+
+.token-detail-head {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+}
+
+.comparison-token {
+  display: inline-block;
+  margin: 1px 1px 3px 0;
+  padding: 0 3px;
+  border-radius: 4px;
+  border-bottom: 1px solid transparent;
+}
+
+.comparison-token.uguale {
+  color: inherit;
+}
+
+.comparison-token.formale {
+  background: rgba(55, 126, 184, 0.12);
+  border-bottom-color: rgba(55, 126, 184, 0.5);
+}
+
+.comparison-token.morfologica {
+  background: rgba(246, 194, 62, 0.18);
+  border-bottom-color: rgba(178, 126, 0, 0.45);
+}
+
+.comparison-token.sostanziale {
+  background: rgba(163, 25, 47, 0.16);
+  border-bottom-color: var(--accent);
+}
+
+.comparison-token.aggiunta-harley,
+.comparison-token.omissione-harley,
+.comparison-token.gap {
+  background: rgba(126, 87, 194, 0.13);
+  border-bottom-color: rgba(126, 87, 194, 0.55);
+}
+
+.comparison-token.gap {
+  color: var(--text-faint);
+  font-family: var(--font-sans);
+}
+
+.variant-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.variant-badge.uguale {
+  border-color: var(--border-light);
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+}
+
+.variant-badge.formale {
+  border-color: rgba(55, 126, 184, 0.45);
+  background: rgba(55, 126, 184, 0.12);
+  color: #2d638f;
+}
+
+.variant-badge.morfologica {
+  border-color: rgba(178, 126, 0, 0.45);
+  background: rgba(246, 194, 62, 0.20);
+  color: #806000;
+}
+
+.variant-badge.sostanziale {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.variant-badge.aggiunta-omissione,
+.variant-badge.aggiunta-harley,
+.variant-badge.omissione-harley {
+  border-color: rgba(126, 87, 194, 0.45);
+  background: rgba(126, 87, 194, 0.13);
+  color: #6442a4;
+}
+
+.variant-badge.da-verificare {
+  border-color: var(--border);
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+}
+
+.comparison-row.variant-formale {
+  background: rgba(55, 126, 184, 0.055);
+}
+
+.comparison-row.variant-morfologica {
+  background: rgba(246, 194, 62, 0.07);
+}
+
+.comparison-row.variant-sostanziale {
+  background: var(--accent-bg);
+}
+
+.comparison-row.variant-aggiunta-omissione {
+  background: rgba(126, 87, 194, 0.06);
+}
+
+body.dark .variant-badge.formale { color: #9bc7ea; }
+body.dark .variant-badge.morfologica { color: #f3d37a; }
+body.dark .variant-badge.aggiunta-omissione,
+body.dark .variant-badge.aggiunta-harley,
+body.dark .variant-badge.omissione-harley { color: #c8b4f2; }
+
+/* ==========================================================================
+   Confronto Harley/Petrocchi · selezione Reg/Orig
+   ========================================================================== */
+.comparison-mode-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.comparison-mode-note code {
+  font-size: 0.72rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  padding: 1px 6px;
+  color: var(--accent);
+}
+
+.comparison-mode-pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid rgba(163,25,47,0.18);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }

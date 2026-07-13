@@ -52,7 +52,7 @@
          <div type="canto" n="1">
             <pb n="2r" facs="#c2r" corresp="#carta_002r"/>
 
-            <div type="margin" xml:id="Ha_Marg_Inf.01">
+         <div type="margin" xml:id="Ha_Marg_Inf.01">
                <p>
                   <note place="internal_margin">
                      <ref type="non_verbal" target="#Inf.01.001" corresp="#piedimosca"
@@ -70,21 +70,29 @@
                      <ref type="non_verbal" target="#Inf.01.049" corresp="#piedimosca"><g
                            ref="#piedimosca"/></ref>
                   </note>
-                  <note place="external_margin">
-                     <note type="verbal" target="#Inf.01.041" xml:id="Ha-An-Ma-Inf.01.041"> [41]
-                        Pone se per buono ingiunge per la buona sensualità regolata dalla dritta
-                        ragione</note>
-                     <note type="verbal" target="#Inf.01.045" xml:id="Ha-An-Ma-Inf.01.045"> [45 -
-                        Leone] La superbia </note>
-                     <note type="verbal" target="#Inf.01.049" xml:id="Ha-An-Ma-Inf.01.049"> [49 –
-                        Lupa] L’avarizia </note>
-                     <note type="verbal" target="#Inf.01.052" xml:id="Ha-An-Ma-Inf.01.052"> [52]
-                        Pone per la selva questo mondo e la scurità per li peccati </note>
-                     <note type="verbal" target="#Inf.01.079" xml:id="Ha-An-Ma-Inf.01.079"> [79 -
-                        Virgilio] Cioè la ragione filosofica e naturale quanta per uomo umano e per
-                        istudio se ne può avere</note>
-                  </note>
                </p>
+          
+                 <div type="margin" xml:id="Ha_Marg_Inf.01.041"> <p>
+                 <note place="external_margin">
+                     <ref type="verbal" target="#Inf.01.041" xml:id="Ha-An-Ma-Inf.01.041"> [41]
+                        Pone se per buono ingiunge per la buona sensualità regolata dalla dritta
+                        ragione</ref>
+                  </note> </p>
+                  </div>
+               
+                 <div type="margin" xml:id="Ha_Marg_Inf.01.045"> <p><note place="external_margin">
+                     <ref type="verbal" target="#Inf.01.045" xml:id="Ha-An-Ma-Inf.01.045"> [45 - Leone] </ref> La superbia 
+                  </note></p></div>
+                 <div type="margin" xml:id="Ha_Marg_Inf.01.049"> <p><note place="external_margin">   
+                     <ref type="verbal" target="#Inf.01.049" xml:id="Ha-An-Ma-Inf.01.049"> [49 – Lupa]</ref> L’avarizia 
+                  </note></p></div>
+                  <div type="margin" xml:id="Ha_Marg_Inf.01.052"><p><note place="external_margin">
+                     <ref type="verbal" target="#Inf.01.052" xml:id="Ha-An-Ma-Inf.01.052"> [52] </ref> Pone per la selva questo mondo e la scurità per li peccati 
+                  </note></p></div>
+                <div type="margin" xml:id="Ha_Marg_Inf.01.079"> <p> <note place="external_margin">   
+                     <ref type="verbal" target="#Inf.01.079" xml:id="Ha-An-Ma-Inf.01.079"> [79 - Virgilio] </ref> Cioè la ragione filosofica e naturale quanta per uomo umano e per istudio se ne può avere
+                  </note>
+               </p></div>
             </div>
          </div>
 
@@ -171,11 +179,7 @@
                <div type="margin" xml:id="Ha_Marg_Inf.03.109">
                   <p>
                      <note place="internal_margin">
-                        <ref type="verbal" xml:id="Ha-An-Ma-Inf.03.109">Lo dimonio dimostra al
-                           peccatore vivo in Dio molta misericordia e poca giustizia per farlo
-                           pecare; ma quand’è morto, li fa tutto l’opposito e vagli col vero e dice:
-                           « Tu sse’ pessima persona, e però meriti lo ’nferno e non sperar mai
-                           vedere el cielo nella faccia di Dio ». <quote>[109] <emph>Caron
+                        <ref type="verbal" xml:id="Ha-An-Ma-Inf.03.109">Lo dimonio dimostra al peccatore vivo in Dio molta misericordia e poca giustizia per farlo pecare; ma quand’è morto, li fa tutto l’opposito e vagli col vero e dice: « Tu sse’ pessima persona, e però meriti lo ’nferno e non sperar mai vedere el cielo nella faccia di Dio ». <quote>[109] <emph>Caron
                                  dimonio</emph></quote>: è interpetrato Caron razionem, cioè per
                            ragione; per nave: cioè non essere il peccatore in penitenza di suoi
                            pecati a la morte finale.</ref></note>
@@ -343,6 +347,22 @@
                </div>
             </div>
          </div>
+
+
+
+  <!-- MARGINE INF.7 -->
+          <div n="7" type="canto">
+            <div type="margin" xml:id="Ha_Marg_Inf.07">
+               <div type="margin" xml:id="Ha_Marg_Inf.07.001">
+               <pb n="10v" facs="#c10r" corresp="#carta_010r"/>
+                  <p>
+
+                  </p>
+               </div>
+            </div>
+         </div>
+
+
       </body>
    </text>
 </TEI>

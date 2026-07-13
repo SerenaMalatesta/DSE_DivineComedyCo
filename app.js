@@ -16,12 +16,14 @@ const state = {
   commediaDoc: null,
   commentoDoc: null,
   marginiDoc: null,
+  petrocchiDoc: null,
   cantos: [],
+  petrocchiCantos: [],
   commentary: {},
   marginalia: {},
   marginNotes: {},
   folioContentMap: {},
-  currentView: 'facsimile',
+  currentView: 'home',
   currentCanto: 1,
   currentFolioIdx: 0,
   zoom: 1,
@@ -30,7 +32,11 @@ const state = {
   noteCounter: 0,
   marginNoteCounter: 0,
   isSyncingText: false,
-  syncTimeout: null
+  isSyncingCommento: false,
+  syncTimeout: null,
+  commentoSyncTimeout: null,
+  showTextPanel: true,
+  showCommentoPanel: true
 };
 
 /* --- Facsimile file mapping (Dynamically Generated) --- */
@@ -52,12 +58,20 @@ const els = {};
 function cacheDom() {
   Object.assign(els, {
     loadingOverlay: $('#loadingOverlay'),
+    viewHome: $('#viewHome'),
     viewFacsimile: $('#viewFacsimile'),
     viewCommento: $('#viewCommento'),
+    viewConfronto: $('#viewConfronto'),
     cantoSelect: $('#cantoSelect'),
     textContent: $('#textContent'),
     commentoContent: $('#commentoContent'),
+    completeCommentoContent: $('#completeCommentoContent'),
     commentoPanelTitle: $('#commentoPanelTitle'),
+    completeCommentoPanelTitle: $('#completeCommentoPanelTitle'),
+    confrontoContent: $('#confrontoContent'),
+    confrontoPanelTitle: $('#confrontoPanelTitle'),
+    toggleTextPanel: $('#toggleTextPanel'),
+    toggleCommentoPanel: $('#toggleCommentoPanel'),
     textPanelTitle: $('#textPanelTitle'),
     facsimileImg: $('#facsimileImg'),
     facsimileImageWrap: $('#facsimileImageWrap'),
@@ -80,7 +94,17 @@ function cacheDom() {
 
 async function loadXML(url) {
   const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Impossibile caricare ${url}`);
   return new DOMParser().parseFromString(await resp.text(), 'application/xml');
+}
+
+async function loadOptionalXML(url) {
+  try {
+    return await loadXML(url);
+  } catch (err) {
+    console.warn(`File opzionale non caricato: ${url}`, err);
+    return null;
+  }
 }
 
 const qsaTEI = (el, tag) => [...el.getElementsByTagNameNS(TEI_NS, tag)];
@@ -130,6 +154,91 @@ function isLastCantoInCantica(cantoDiv, canticaDiv) {
   );
 
   return cantos.length > 0 && cantos[cantos.length - 1] === cantoDiv;
+}
+
+function getNextTEIElementSibling(el) {
+  let current = el?.nextSibling || null;
+
+  while (current) {
+    if (current.nodeType === Node.ELEMENT_NODE && current.namespaceURI === TEI_NS) {
+      return current;
+    }
+
+    current = current.nextSibling;
+  }
+
+  return null;
+}
+
+function getPreviousTEIElementSibling(el) {
+  let current = el?.previousSibling || null;
+
+  while (current) {
+    if (current.nodeType === Node.ELEMENT_NODE && current.namespaceURI === TEI_NS) {
+      return current;
+    }
+
+    current = current.previousSibling;
+  }
+
+  return null;
+}
+
+function isChoiceEmendationNoteType(noteEl) {
+  if (!noteEl || noteEl.localName !== 'note') return false;
+
+  const rawType = String(noteEl.getAttribute('type') || '').trim().toLowerCase();
+  const compactType = rawType.replace(/[\s_-]+/g, '');
+
+  return (
+    compactType === 'emendation' ||
+    compactType === 'emendatio' ||
+    compactType === 'emendamento' ||
+    compactType === 'editorialemendation' ||
+    compactType === 'notaemendazione' ||
+    compactType.includes('emend')
+  );
+}
+
+function isChoiceEmendationNote(noteEl) {
+  if (!isChoiceEmendationNoteType(noteEl)) return false;
+
+  const parent = noteEl.parentElement;
+  if (parent?.namespaceURI === TEI_NS && parent.localName === 'choice') {
+    return true;
+  }
+
+  const previous = getPreviousTEIElementSibling(noteEl);
+  return previous?.namespaceURI === TEI_NS && previous.localName === 'choice';
+}
+
+function getChoiceEmendationNote(choiceEl) {
+  if (!choiceEl) return null;
+
+  const directNote = [...choiceEl.childNodes].find(child =>
+    child.nodeType === Node.ELEMENT_NODE &&
+    child.namespaceURI === TEI_NS &&
+    child.localName === 'note' &&
+    isChoiceEmendationNoteType(child)
+  );
+
+  if (directNote) return directNote;
+
+  const next = getNextTEIElementSibling(choiceEl);
+  if (next?.localName === 'note' && isChoiceEmendationNoteType(next)) {
+    return next;
+  }
+
+  return null;
+}
+
+function renderChoiceNoteContent(noteEl, mode = 'line', anchorTarget = '') {
+  if (!noteEl) return '';
+
+  if (mode === 'commentary') return renderCommentaryChildren(noteEl).trim();
+  if (mode === 'marginalia') return renderMarginaliaChildren(noteEl, anchorTarget).trim();
+
+  return renderLineContent(noteEl).trim();
 }
 
 /* ==========================================================================
@@ -213,7 +322,12 @@ function parseTerzina(lgEl, elements) {
       }
       if (child.localName === 'l') {
         const xmlId = getAttr(child, 'xml:id');
-        return { xmlId, lineNum: extractLineNum(xmlId), html: renderLineContent(child) };
+        return {
+          xmlId,
+          lineNum: extractLineNum(xmlId),
+          html: renderLineContent(child),
+          sourceEl: child
+        };
       }
     })
     .filter(Boolean);
@@ -244,12 +358,30 @@ function renderInlineElement(el) {
         const sicContent = renderLineContent(sic);
         const corrContent = renderLineContent(corr);
         const type = el.getAttribute('type') || 'correzione editoriale';
-        return `<span class="choice-reg choice-corr" data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}" title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}">${corrContent}</span><span class="choice-orig choice-sic" title="Forma del manoscritto">${sicContent}</span>`;
+        const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(el), 'line');
+
+        return `<span class="choice-reg choice-corr"
+                      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}"
+                      data-choice-original-label="Lezione del manoscritto (sic)"
+                      data-choice-edited-label="Correzione editoriale (corr)"
+                      data-choice-edited="${escapeAttr(corrContent)}"
+                      data-choice-note="${escapeAttr(noteContent)}"
+                      title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}">${corrContent}</span><span class="choice-orig choice-sic"
+                      title="Apparato (sic)">${sicContent}</span>`;
       }
       if (orig && reg) {
         const origContent = renderLineContent(orig);
         const regContent = renderLineContent(reg);
-        return `<span class="choice-reg" data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}" title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig" title="Forma originale">${origContent}</span>`;
+        const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(el), 'line');
+
+        return `<span class="choice-reg"
+                      data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}"
+                      data-choice-original-label="Lezione attestata nel manoscritto (orig)"
+                      data-choice-edited-label="Lezione emendata (reg)"
+                      data-choice-edited="${escapeAttr(regContent)}"
+                      data-choice-note="${escapeAttr(noteContent)}"
+                      title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
+                      title="Apparato (orig)">${origContent}</span>`;
       }
       return renderLineContent(el);
 
@@ -267,6 +399,9 @@ function renderInlineElement(el) {
     case 'del': return `<span class="scribal-del">${renderLineContent(el)}</span>`;
     case 'add': return `<span class="scribal-add">${renderLineContent(el)}</span>`;
     case 'supplied': return `[${renderLineContent(el)}]`;
+    case 'note':
+      if (isChoiceEmendationNote(el)) return '';
+      return renderLineContent(el);
     case 'pb':
     case 'cb': return '';
 
@@ -284,25 +419,125 @@ const stripHTML = html => Object.assign(document.createElement('div'), { innerHT
    ========================================================================== */
 function parseCommentary(doc) {
   const commentary = {};
+  const normCol = c => c?.toUpperCase() === 'B' ? 'B' : 'A';
 
   qsaTEI(doc, 'div')
     .filter(d => d.getAttribute('type') === 'commentary' && d.getAttribute('n'))
     .forEach(topDiv => {
-      const cantoN = parseInt(topDiv.getAttribute('n'));
+      const cantoN = parseInt(topDiv.getAttribute('n'), 10);
       commentary[cantoN] = commentary[cantoN] || [];
 
-      qsaTEI(topDiv, 'div')
-        .filter(d => d.getAttribute('type') === 'commentary')
-        .forEach(innerDiv => {
-          const entry = parseCommentaryEntry(innerDiv, getAttr(innerDiv, 'xml:id'));
-          if (entry) commentary[cantoN].push(entry);
-        });
+      let currentFolio = null;
+      let currentColumn = 'A';
+
+      const walk = node => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+        if (node.namespaceURI === TEI_NS && node.localName === 'pb') {
+          currentFolio = node.getAttribute('n') || currentFolio;
+          currentColumn = 'A';
+          return;
+        }
+
+        if (node.namespaceURI === TEI_NS && node.localName === 'cb') {
+          currentColumn = normCol(node.getAttribute('n'));
+          return;
+        }
+
+        if (
+          node !== topDiv &&
+          node.namespaceURI === TEI_NS &&
+          node.localName === 'div' &&
+          node.getAttribute('type') === 'commentary'
+        ) {
+          const entry = parseCommentaryEntry(node, getAttr(node, 'xml:id'), {
+            cantoN,
+            folio: currentFolio,
+            column: currentColumn
+          });
+
+          if (entry) {
+            commentary[cantoN].push(entry);
+            if (entry.lastFolio) currentFolio = entry.lastFolio;
+            if (entry.lastColumn) currentColumn = normalizeCommentaryColumn(entry.lastColumn);
+          }
+          return;
+        }
+
+        node.childNodes.forEach(walk);
+      };
+
+      topDiv.childNodes.forEach(walk);
     });
 
   return commentary;
 }
 
-function parseCommentaryEntry(div, xmlId) {
+function normalizeCommentaryColumn(value) {
+  const raw = String(value || '').trim().toUpperCase();
+  return raw === 'B' ? 'B' : 'A';
+}
+
+function collectCommentaryLocations(pEl, initialLocation = {}) {
+  const locations = [];
+  const current = {
+    folio: initialLocation.folio || '',
+    column: normalizeCommentaryColumn(initialLocation.column || 'A')
+  };
+
+  const pushLocation = () => {
+    if (!current.folio) return;
+
+    const key = `${current.folio}|${current.column}`;
+    if (!locations.some(loc => `${loc.folio}|${loc.column}` === key)) {
+      locations.push({ folio: current.folio, column: current.column });
+    }
+  };
+
+  const walk = node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent.trim()) pushLocation();
+      return;
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+    if (node.namespaceURI === TEI_NS && node.localName === 'pb') {
+      current.folio = node.getAttribute('n') || current.folio;
+      current.column = 'A';
+      pushLocation();
+      return;
+    }
+
+    if (node.namespaceURI === TEI_NS && node.localName === 'cb') {
+      current.column = normalizeCommentaryColumn(node.getAttribute('n'));
+      pushLocation();
+      return;
+    }
+
+    node.childNodes.forEach(walk);
+  };
+
+  let skippedFirstRef = false;
+  [...pEl.childNodes].forEach(child => {
+    if (
+      child.nodeType === Node.ELEMENT_NODE &&
+      child.namespaceURI === TEI_NS &&
+      child.localName === 'ref' &&
+      child.getAttribute('target') &&
+      !skippedFirstRef
+    ) {
+      skippedFirstRef = true;
+      return;
+    }
+
+    walk(child);
+  });
+
+  return locations;
+}
+
+function parseCommentaryEntry(div, xmlId, location = {}) {
   state.noteCounter = 0;
   const pEl = qsTEI(div, 'p');
   if (!pEl) return null;
@@ -326,23 +561,46 @@ function parseCommentaryEntry(div, xmlId) {
     if (parts.length >= 3) refLabel = `Inf. ${toRoman(parseInt(parts[1]))}, ${parseInt(parts[2])}`;
   }
 
-  return { xmlId, lineRef, refLabel, lemmaText, lemmaHtml, bodyHtml: renderCommentaryBody(pEl) };
+  const locations = collectCommentaryLocations(pEl, location);
+  const primaryLocation = locations[0] || location || {};
+  const lastLocation = locations[locations.length - 1] || primaryLocation || {};
+  const folios = unique(locations.map(loc => loc.folio));
+
+  return {
+    xmlId,
+    lineRef,
+    refLabel,
+    lemmaText,
+    lemmaHtml,
+    bodyHtml: renderCommentaryBody(pEl, location),
+    cantoN: location.cantoN,
+    folio: primaryLocation.folio || location.folio || '',
+    column: primaryLocation.column || location.column || '',
+    folios,
+    locations,
+    lastFolio: lastLocation.folio || location.folio || '',
+    lastColumn: lastLocation.column || location.column || ''
+  };
 }
 
-function renderCommentaryBody(pEl) {
+function renderCommentaryBody(pEl, initialLocation = {}) {
   state.noteCounter = 0;
   let skippedFirstRef = false;
+  const context = {
+    folio: initialLocation.folio || '',
+    column: normalizeCommentaryColumn(initialLocation.column || 'A')
+  };
 
   return [...pEl.childNodes].reduce((html, child) => {
     if (child.nodeType === Node.ELEMENT_NODE && child.localName === 'ref' && child.getAttribute('target') && !skippedFirstRef) {
       skippedFirstRef = true;
       return html;
     }
-    return html + renderCommentaryNode(child);
+    return html + renderCommentaryNode(child, context);
   }, '').replace(/^\s*\.\s*/, '').trim();
 }
 
-function renderCommentaryNode(node) {
+function renderCommentaryNode(node, context = { folio: '', column: 'A' }) {
   if (node.nodeType === Node.TEXT_NODE) return escapeHTML(node.textContent);
   if (node.nodeType !== Node.ELEMENT_NODE) return '';
 
@@ -354,28 +612,36 @@ function renderCommentaryNode(node) {
         const quoteEl = qsTEI(node, 'quote');
         const emphEl = qsTEI(node, 'emph');
 
-        if (quoteEl) return `<em class="mentioned">${renderCommentaryChildren(quoteEl)}</em>`;
-        if (emphEl) return `<em class="mentioned">${renderCommentaryChildren(emphEl)}</em>`;
+        if (quoteEl) return `<em class="mentioned">${renderCommentaryChildren(quoteEl, context)}</em>`;
+        if (emphEl) return `<em class="mentioned">${renderCommentaryChildren(emphEl, context)}</em>`;
       }
-      return renderCommentaryChildren(node);
+      return renderCommentaryChildren(node, context);
 
     case 'emph':
     case 'mentioned':
-      return `<em class="mentioned">${renderCommentaryChildren(node)}</em>`;
+      return `<em class="mentioned">${renderCommentaryChildren(node, context)}</em>`;
 
     case 'quote':
-      return node.parentNode?.localName === 'cit' ? `<span class="block-quote">${renderCommentaryChildren(node)}</span>` : `«${renderCommentaryChildren(node)}»`;
+      return node.parentNode?.localName === 'cit'
+        ? `<span class="block-quote">${renderCommentaryChildren(node, context)}</span>`
+        : `«${renderCommentaryChildren(node, context)}»`;
 
-    case 'cit': return renderCommentaryChildren(node);
+    case 'cit': return renderCommentaryChildren(node, context);
 
     case 'note':
+      if (isChoiceEmendationNote(node)) return '';
+
       const type = node.getAttribute('type');
-      if (['philological-note', 'bibliographical-ref', 'philological-commentary'].includes(type)) {
+      if (['philological-note', 'bibliographical-ref', 'philological-commentary', 'emendation'].includes(type)) {
         state.noteCounter++;
-        const label = type === 'bibliographical-ref' ? 'Rif. bibliografico' : 'Nota filologica';
+        const label = type === 'bibliographical-ref'
+          ? 'Rif. bibliografico'
+          : type === 'emendation'
+            ? 'Nota editoriale'
+            : 'Nota filologica';
         return `<span class="note-indicator" data-note-id="note-${Date.now()}-${state.noteCounter}" data-note-title="${label}" data-note-content="${escapeHTML(node.textContent.trim()).replace(/"/g, '&quot;')}" title="${label}">${state.noteCounter}</span>`;
       }
-      return renderCommentaryChildren(node);
+      return renderCommentaryChildren(node, context);
 
     case 'app':
       if (node.getAttribute('type') === 'philological') {
@@ -387,9 +653,9 @@ function renderCommentaryNode(node) {
           return `${escapeHTML(lem.textContent.trim())}<span class="note-indicator app-indicator" data-note-id="app-${Date.now()}-${state.noteCounter}" data-note-title="Apparato" data-note-content="${escapeHTML(content)}" title="Apparato filologico">🔍</span>`;
         }
       }
-      return renderCommentaryChildren(qsTEI(node, 'lem') || node);
+      return renderCommentaryChildren(qsTEI(node, 'lem') || node, context);
 
-    case 'choice':
+    case 'choice': {
       const sic = qsTEI(node, 'sic');
       const corr = qsTEI(node, 'corr');
       const orig = qsTEI(node, 'orig');
@@ -397,35 +663,71 @@ function renderCommentaryNode(node) {
 
       if (sic && corr) {
         const cType = node.getAttribute('type') || 'correzione editoriale';
-        return `<span class="choice-reg choice-corr" data-tooltip="${escapeAttr(stripHTML(renderCommentaryChildren(sic)))} — ${escapeAttr(cType)}">${renderCommentaryChildren(corr)}</span><span class="choice-orig choice-sic">${renderCommentaryChildren(sic)}</span>`;
+        const sicContent = renderCommentaryChildren(sic, context);
+        const corrContent = renderCommentaryChildren(corr, context);
+        const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'commentary');
+
+        return `<span class="choice-reg choice-corr"
+                      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}"
+                      data-choice-original-label="Lezione del manoscritto (sic)"
+                      data-choice-edited-label="Correzione editoriale (corr)"
+                      data-choice-edited="${escapeAttr(corrContent)}"
+                      data-choice-note="${escapeAttr(noteContent)}">${corrContent}</span><span class="choice-orig choice-sic"
+                      title="Apparato (sic)">${sicContent}</span>`;
       }
       if (orig && reg) {
-        return `<span class="choice-reg" data-tooltip="${escapeAttr(stripHTML(renderCommentaryChildren(orig)))}">${renderCommentaryChildren(reg)}</span><span class="choice-orig">${renderCommentaryChildren(orig)}</span>`;
-      }
-      return renderCommentaryChildren(corr || reg || sic || orig || node);
+        const origContent = renderCommentaryChildren(orig, context);
+        const regContent = renderCommentaryChildren(reg, context);
+        const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'commentary');
 
-    case 'g':
+        return `<span class="choice-reg"
+                      data-tooltip="${escapeAttr(stripHTML(origContent))}"
+                      data-choice-original-label="Lezione attestata nel manoscritto (orig)"
+                      data-choice-edited-label="Lezione emendata (reg)"
+                      data-choice-edited="${escapeAttr(regContent)}"
+                      data-choice-note="${escapeAttr(noteContent)}">${regContent}</span><span class="choice-orig"
+                      title="Apparato (orig)">${origContent}</span>`;
+      }
+      return renderCommentaryChildren(corr || reg || sic || orig || node, context);
+    }
+
+    case 'g': {
       const refAttr = node.getAttribute('ref');
       if (refAttr === '#middle_dot') return GLYPHS.MIDDLE_DOT;
       if (refAttr === '#piedimosca') return `<span class="piedimosca">${GLYPHS.PIEDIMOSCA}</span>`;
       return node.textContent;
+    }
 
-    case 'subst':
+    case 'subst': {
       const delSub = qsTEI(node, 'del'), addSub = qsTEI(node, 'add');
       return `${delSub ? `<span class="scribal-del">${escapeHTML(delSub.textContent)}</span>` : ''}${addSub ? `<span class="scribal-add">${escapeHTML(addSub.textContent)}</span>` : ''}`;
+    }
 
-    case 'del': return `<span class="scribal-del">${renderCommentaryChildren(node)}</span>`;
+    case 'del': return `<span class="scribal-del">${renderCommentaryChildren(node, context)}</span>`;
     case 'add': return `<span class="scribal-add">${escapeHTML(node.textContent)}</span>`;
-    case 'supplied': return `[${renderCommentaryChildren(node)}]`;
-    case 'pb':
-    case 'cb': return '';
+    case 'supplied': return `[${renderCommentaryChildren(node, context)}]`;
 
-    default: return renderCommentaryChildren(node);
+    case 'pb': {
+      const folio = node.getAttribute('n') || context.folio || '';
+      context.folio = folio;
+      context.column = 'A';
+      return folio
+        ? `<span class="commentary-folio-marker" data-folio="${escapeAttr(folio)}" data-column="A">c. ${escapeHTML(folio)}</span>`
+        : '';
+    }
+
+    case 'cb': {
+      const column = normalizeCommentaryColumn(node.getAttribute('n'));
+      context.column = column;
+      return `<span class="commentary-column-marker" data-column="${escapeAttr(column)}">col. ${escapeHTML(column)}</span>`;
+    }
+
+    default: return renderCommentaryChildren(node, context);
   }
 }
 
-function renderCommentaryChildren(node) {
-  return [...node.childNodes].reduce((html, child) => html + renderCommentaryNode(child), '');
+function renderCommentaryChildren(node, context = { folio: '', column: 'A' }) {
+  return [...node.childNodes].reduce((html, child) => html + renderCommentaryNode(child, context), '');
 }
 
 function parseTargets(value) {
@@ -641,6 +943,8 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       return `«${renderMarginaliaChildren(node, anchorTarget)}»`;
 
     case 'note': {
+      if (isChoiceEmendationNote(node)) return '';
+
       state.noteCounter++;
 
       const label = noteTypeLabel(node.getAttribute('type'));
@@ -684,21 +988,31 @@ function renderMarginaliaNode(node, anchorTarget = '') {
         const cType = node.getAttribute('type') || 'correzione editoriale';
         const sicContent = renderMarginaliaChildren(sic, anchorTarget);
         const corrContent = renderMarginaliaChildren(corr, anchorTarget);
+        const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'marginalia', anchorTarget);
 
         return `<span class="choice-reg choice-corr"
                       data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}"
+                      data-choice-original-label="Lezione del manoscritto (sic)"
+                      data-choice-edited-label="Correzione editoriale (corr)"
+                      data-choice-edited="${escapeAttr(corrContent)}"
+                      data-choice-note="${escapeAttr(noteContent)}"
                       title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}">${corrContent}</span><span class="choice-orig choice-sic"
-                      title="Forma del manoscritto">${sicContent}</span>`;
+                      title="Apparato (sic)">${sicContent}</span>`;
       }
 
       if (orig && reg) {
         const origContent = renderMarginaliaChildren(orig, anchorTarget);
         const regContent = renderMarginaliaChildren(reg, anchorTarget);
+        const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'marginalia', anchorTarget);
 
         return `<span class="choice-reg"
                       data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}"
+                      data-choice-original-label="Lezione attestata nel manoscritto (orig)"
+                      data-choice-edited-label="Lezione emendata (reg)"
+                      data-choice-edited="${escapeAttr(regContent)}"
+                      data-choice-note="${escapeAttr(noteContent)}"
                       title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
-                      title="Forma originale">${origContent}</span>`;
+                      title="Apparato (orig)">${origContent}</span>`;
       }
 
       return renderMarginaliaChildren(corr || reg || sic || orig || node, anchorTarget);
@@ -747,6 +1061,8 @@ function noteTypeLabel(type) {
     'bibliographical-ref': 'Rif. bibliografico',
     'philological-commentary': 'Nota filologica',
     'editorial': 'Nota editoriale',
+    'emendation': 'Nota editoriale',
+    'editorial-emendation': 'Nota editoriale',
     'translation': 'Nota di traduzione',
     'source': 'Fonte'
   };
@@ -805,28 +1121,14 @@ function goToLine(lineId) {
   state.currentCanto = cantoN;
   els.cantoSelect.value = cantoN;
 
-  state.currentView = 'facsimile';
-
-  $$('.view-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.view === 'facsimile');
-  });
-
-  els.viewFacsimile.classList.add('active');
-  els.viewCommento.classList.remove('active');
+  setCurrentView('facsimile');
 
   renderFacsimileView();
 
   setTimeout(() => {
-    const lineEl = els.textContent.querySelector(`[data-line-id="${lineId}"]`);
-
-    if (!lineEl) return;
-
-    els.textContent.querySelectorAll('.verse-line.active').forEach(l => {
-      l.classList.remove('active');
-    });
-
-    lineEl.classList.add('active');
-    lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    highlightVerse(lineId, true);
+    highlightCompleteCommentary(lineId, true);
+    setFolioFromLine(lineId);
   }, 120);
 }
 
@@ -876,20 +1178,47 @@ function buildFolioContentMap(commediaDoc, commentoDoc) {
   });
 
   // 2) Commento
-  let comPb = null, comCb = 'A';
+  let comPb = null, comCb = 'A', insideCommentary = false;
+
+  const markCommentaryContent = () => {
+    if (!comPb) return;
+
+    ensureFolio(comPb);
+    map[comPb][normCol(comCb)].commento = true;
+  };
+
   const walkCommentoNode = node => {
-    if (node.nodeType !== Node.ELEMENT_NODE) return;
-    if (node.localName === 'pb') { comPb = node.getAttribute('n'); comCb = 'A'; }
-    else if (node.localName === 'cb') comCb = normCol(node.getAttribute('n'));
-    else if (node.localName === 'div' && node.getAttribute('type') === 'commentary' && comPb) {
-      ensureFolio(comPb);
-      map[comPb][normCol(comCb)].commento = true;
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (insideCommentary && node.textContent.trim()) markCommentaryContent();
+      return;
     }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+    if (node.localName === 'pb') {
+      comPb = node.getAttribute('n') || comPb;
+      comCb = 'A';
+      return;
+    }
+
+    if (node.localName === 'cb') {
+      comCb = normCol(node.getAttribute('n'));
+      return;
+    }
+
+    const wasInside = insideCommentary;
+    if (node.localName === 'div' && node.getAttribute('type') === 'commentary') {
+      insideCommentary = true;
+      markCommentaryContent();
+    }
+
     node.childNodes.forEach(walkCommentoNode);
+    insideCommentary = wasInside;
   };
 
   const comBody = commentoDoc.getElementsByTagNameNS(TEI_NS, 'body')[0];
   if (comBody) walkCommentoNode(comBody);
+
 
   return map;
 }
@@ -936,6 +1265,7 @@ function renderFacsimileView() {
   if (idx >= 0) state.currentFolioIdx = idx;
 
   renderTextForCanto(canto);
+  renderCompleteCommentoPanel(FOLIO_ORDER[state.currentFolioIdx]);
   updateFacsimile();
 }
 
@@ -971,16 +1301,13 @@ function renderTextForCanto(canto) {
     }
     const line = e.target.closest('.verse-line');
     if (line) {
-      els.textContent.querySelectorAll('.verse-line.active').forEach(l => l.classList.remove('active'));
-      line.classList.add('active');
+      highlightVerse(line.dataset.lineId, false);
+      highlightCompleteCommentary(line.dataset.lineId, true);
+      setFolioFromLine(line.dataset.lineId);
     }
     const btnCommentary = e.target.closest('#goToCommentaryBtn');
     if (btnCommentary) {
-      state.currentView = 'commento';
-      $$('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'commento'));
-      els.viewFacsimile.classList.remove('active');
-      els.viewCommento.classList.add('active');
-      renderCommentoView();
+      setCurrentView('commento');
       els.commentoContent.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -1029,43 +1356,343 @@ function bindNoteIndicators(container) {
     };
   });
 
-  // NUOVO: Gestione click sui Choice (Varianti/Correzioni)
+  // Gestione click sui Choice (orig/reg · sic/corr)
   container?.querySelectorAll('.choice-reg').forEach(choice => {
     choice.onclick = e => {
       e.stopPropagation();
-      
-      // Recupera il testo originale (che è il nodo HTML subito dopo)
+
       const origNode = choice.nextElementSibling;
-      const origText = origNode ? origNode.innerHTML : 'Variante non disponibile';
-      
-      // Scegli il titolo del popup in base al tipo di intervento
+      const originalHtml = origNode ? origNode.innerHTML : 'Variante non disponibile';
+      const editedHtml = choice.dataset.choiceEdited || choice.innerHTML;
+      const noteHtml = choice.dataset.choiceNote || '';
+
       const isCorr = choice.classList.contains('choice-corr');
-      const title = isCorr ? 'Forma del manoscritto (sic)' : 'Forma originale';
-      
-      // Costruisci e mostra il popup
+      const originalLabel = choice.dataset.choiceOriginalLabel || (isCorr ? 'Lezione del manoscritto (sic)' : 'Lezione attestata nel manoscritto (orig)');
+      const editedLabel = choice.dataset.choiceEditedLabel || (isCorr ? 'Correzione editoriale (corr)' : 'Lezione regolarizzata (reg)');
+
       const body = els.notePopup.querySelector('.note-popup-body');
-      els.notePopup.style.width = '320px';
-      els.notePopup.querySelector('.note-popup-title').textContent = title;
-      
-      // Mostra la parola originale in grande nel popup
-      body.innerHTML = `<div style="text-align: center; font-size: 1.2rem; padding: 10px 0; font-family: serif;">${origText}</div>`;
-      
+      els.notePopup.style.width = 'min(520px, calc(100vw - 32px))';
+      els.notePopup.querySelector('.note-popup-title').textContent = originalLabel;
+
+      body.innerHTML = `
+        <div class="choice-popup-section" style="padding: 12px 0 16px;">
+          <div class="choice-popup-label" style="font-family: var(--font-sans); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+            ${escapeHTML(editedLabel)}
+          </div>
+          <div class="choice-popup-form" style="font-family: serif; font-size: 1.25rem; line-height: 1.5; text-align: center;">
+            ${editedHtml}
+          </div>
+        </div>
+
+        <div class="choice-popup-section" style="padding: 14px 0 16px; border-top: 1px solid var(--border-light);">
+          <div class="choice-popup-label" style="font-family: var(--font-sans); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+            ${escapeHTML(originalLabel)}
+          </div>
+          <div class="choice-popup-form" style="font-family: serif; font-size: 1.25rem; line-height: 1.5; text-align: center;">
+            ${originalHtml}
+          </div>
+        </div>
+
+        ${noteHtml ? `
+          <div class="choice-popup-note" style="padding: 14px 0 2px; border-top: 1px solid var(--border-light);">
+            <div class="choice-popup-label" style="font-family: var(--font-sans); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+              Nota editoriale
+            </div>
+            <div style="font-family: var(--font-serif); font-size: .98rem; line-height: 1.55;">
+              ${noteHtml}
+            </div>
+          </div>
+        ` : ''}
+      `;
+
       els.notePopup.classList.add('visible');
-      positionNotePopup(choice, 320);
+      positionNotePopup(choice, 520);
+      bindNoteIndicators(body);
     };
   });
 }
 
 
+function getEntryFolios(entry) {
+  return (entry?.dataset?.folios || entry?.folios?.join(' ') || entry?.folio || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function entryHasFolio(entry, folioN) {
+  if (!entry || !folioN) return false;
+  return getEntryFolios(entry).includes(folioN);
+}
+
+function renderCommentaryEntries(entries, emptyMessage = 'Nessun commento disponibile.') {
+  return entries.length === 0
+    ? `<div class="empty-commentary-message">${escapeHTML(emptyMessage)}</div>`
+    : entries.map(e => {
+      const folios = e.folios?.length ? e.folios : (e.folio ? [e.folio] : []);
+      const folioLabel = folios.length > 1 ? folios.join(', ') : (folios[0] || '');
+      return `<div class="commentary-entry" data-line-ref="${escapeAttr(e.lineRef || '')}" data-folio="${escapeAttr(e.folio || '')}" data-folios="${escapeAttr(folios.join(' '))}" data-column="${escapeAttr(e.column || '')}"><div class="commentary-lemma">${e.refLabel ? `<span class="lemma-ref">${escapeHTML(e.refLabel)}</span>` : ''}${e.lemmaHtml ? `<span class="lemma-text">${e.lemmaHtml}</span>` : ''}${folioLabel ? `<span class="lemma-folio">c. ${escapeHTML(folioLabel)}</span>` : ''}</div><div class="commentary-body">${e.bodyHtml}</div></div>`;
+    }).join('');
+}
+
+function getCommentaryEntriesForFolio(folioN) {
+  const entries = [];
+
+  Object.values(state.commentary).forEach(cantoEntries => {
+    cantoEntries.forEach(entry => {
+      const folios = entry.folios?.length ? entry.folios : (entry.folio ? [entry.folio] : []);
+      if (folios.includes(folioN)) entries.push(entry);
+    });
+  });
+
+  return entries;
+}
+
 function renderCommentoView() {
   const entries = state.commentary[state.currentCanto] || [];
   els.commentoPanelTitle.textContent = `Commento — Canto ${toRoman(state.currentCanto)}`;
-
-  els.commentoContent.innerHTML = entries.length === 0
-    ? '<p style="color:var(--text-muted);text-align:center;padding:40px;">Nessun commento disponibile.</p>'
-    : entries.map(e => `<div class="commentary-entry" data-line-ref="${e.lineRef}"><div class="commentary-lemma">${e.refLabel ? `<span class="lemma-ref">${escapeHTML(e.refLabel)}</span>` : ''}${e.lemmaHtml ? `<span class="lemma-text">${e.lemmaHtml}</span>` : ''}</div><div class="commentary-body">${e.bodyHtml}</div></div>`).join('');
+  els.commentoContent.innerHTML = renderCommentaryEntries(entries);
 
   bindNoteIndicators(els.commentoContent);
+}
+
+function getCompleteCommentaryEntriesForCurrentCanto() {
+  return state.commentary[state.currentCanto] || [];
+}
+
+function updateCompleteCommentoHeader(folioN = FOLIO_ORDER[state.currentFolioIdx]) {
+  if (!els.completeCommentoPanelTitle) return;
+
+  const entriesForFolio = getCommentaryEntriesForFolio(folioN)
+    .filter(entry => !entry.cantoN || entry.cantoN === state.currentCanto);
+
+  const cantoLabel = toRoman(state.currentCanto);
+  const suffix = entriesForFolio.length
+    ? ` · ${entriesForFolio.length} ${entriesForFolio.length === 1 ? 'voce' : 'voci'}`
+    : ' · commento non presente';
+
+  els.completeCommentoPanelTitle.textContent = `Commento — Canto ${cantoLabel} · c. ${folioN}${suffix}`;
+}
+
+function updateCompleteCommentoNotice(folioN = FOLIO_ORDER[state.currentFolioIdx]) {
+  if (!els.completeCommentoContent) return;
+
+  const notice = els.completeCommentoContent.querySelector('.empty-commentary-message');
+  if (!notice) return;
+
+  const entriesForFolio = getCommentaryEntriesForFolio(folioN)
+    .filter(entry => !entry.cantoN || entry.cantoN === state.currentCanto);
+
+  notice.hidden = entriesForFolio.length > 0;
+  notice.textContent = `Commento non presente in questa carta.`;
+}
+
+function markCommentaryEntriesForFolio(folioN = FOLIO_ORDER[state.currentFolioIdx]) {
+  if (!els.completeCommentoContent) return;
+
+  els.completeCommentoContent.querySelectorAll('.commentary-entry').forEach(entry => {
+    entry.classList.toggle('same-folio', entryHasFolio(entry, folioN));
+  });
+}
+
+function renderCompleteCommentoPanel(folioN = FOLIO_ORDER[state.currentFolioIdx]) {
+  if (!els.completeCommentoContent) return;
+
+  const entries = getCompleteCommentaryEntriesForCurrentCanto();
+  const listHtml = renderCommentaryEntries(entries);
+
+  els.completeCommentoContent.innerHTML = `
+    <div class="empty-commentary-message" hidden>Commento non presente in questa carta.</div>
+    <div class="complete-commentary-list">${listHtml}</div>
+  `;
+
+  updateCompleteCommentoHeader(folioN);
+  updateCompleteCommentoNotice(folioN);
+  markCommentaryEntriesForFolio(folioN);
+  highlightCompleteCommentaryForFolio(folioN, false);
+
+  bindNoteIndicators(els.completeCommentoContent);
+
+  els.completeCommentoContent.onclick = e => {
+    if (e.target.closest('.note-indicator, .choice-reg, .tei-ref-jump')) return;
+
+    const entry = e.target.closest('.commentary-entry');
+    if (entry) {
+      // Click sul commento = selezione, non cambio carta.
+      // Evita l'effetto "mare mosso": il facsimile torna a cambiare solo con
+      // scroll volontario del testo, scroll del commento o bottoni carta.
+      state.isSyncingCommento = true;
+      clearTimeout(state.commentoSyncTimeout);
+      syncFromCommentaryEntry(entry, {
+        scrollText: false,
+        scrollCommento: false,
+        updateFolio: false
+      });
+      state.commentoSyncTimeout = setTimeout(() => { state.isSyncingCommento = false; }, 450);
+    }
+  };
+}
+
+function getCurrentCommentaryLocationFromScroll() {
+  if (!els.completeCommentoContent) return null;
+
+  const anchors = Array.from(
+    els.completeCommentoContent.querySelectorAll('.commentary-entry, .commentary-folio-marker')
+  );
+
+  if (!anchors.length) return null;
+
+  const containerRect = els.completeCommentoContent.getBoundingClientRect();
+  const offset = containerRect.top + Math.min(180, containerRect.height * 0.35);
+
+  let current = anchors[0];
+
+  for (const anchor of anchors) {
+    const rect = anchor.getBoundingClientRect();
+    if (rect.top <= offset) current = anchor;
+    else break;
+  }
+
+  const entry = current.classList.contains('commentary-entry')
+    ? current
+    : current.closest('.commentary-entry');
+
+  if (!entry) return null;
+
+  const folio = current.dataset.folio || entry.dataset.folio || getEntryFolios(entry)[0] || '';
+  return { entry, folio };
+}
+
+function syncFromCommentaryEntry(entry, options = {}) {
+  if (!entry) return;
+
+  const { scrollText = true, scrollCommento = false, folioOverride = '', updateFolio = true } = options;
+  const lineRef = entry.dataset.lineRef;
+  const folioN = folioOverride || entry.dataset.folio || getEntryFolios(entry)[0] || findFolioForLine(lineRef);
+  const targetCanto = getCantoNumberFromLineId(lineRef);
+
+  if (targetCanto && targetCanto !== state.currentCanto) {
+    state.currentCanto = targetCanto;
+    if (els.cantoSelect) els.cantoSelect.value = targetCanto;
+    const canto = state.cantos.find(c => c.n === targetCanto);
+    if (canto) {
+      renderTextForCanto(canto);
+      renderCompleteCommentoPanel(folioN || FOLIO_ORDER[state.currentFolioIdx]);
+    }
+  }
+
+  if (folioN && updateFolio) {
+    const idx = FOLIO_ORDER.indexOf(folioN);
+    if (idx >= 0 && state.currentFolioIdx !== idx) {
+      state.currentFolioIdx = idx;
+      updateFacsimile(true);
+    } else {
+      updateCompleteCommentoHeader(folioN);
+      updateCompleteCommentoNotice(folioN);
+      markCommentaryEntriesForFolio(folioN);
+    }
+  }
+
+  if (lineRef) {
+    highlightCompleteCommentary(lineRef, scrollCommento);
+
+    if (scrollText) {
+      state.isSyncingText = true;
+      clearTimeout(state.syncTimeout);
+      highlightVerse(lineRef, true);
+      state.syncTimeout = setTimeout(() => { state.isSyncingText = false; }, 650);
+    } else {
+      highlightVerse(lineRef, false);
+    }
+  }
+}
+
+function highlightVerse(lineId, shouldScroll = true) {
+  if (!lineId || !els.textContent) return;
+
+  const lineEl = Array.from(els.textContent.querySelectorAll('.verse-line')).find(line => line.dataset.lineId === lineId);
+  if (!lineEl) return;
+
+  els.textContent.querySelectorAll('.verse-line.active').forEach(l => l.classList.remove('active'));
+  lineEl.classList.add('active');
+
+  if (shouldScroll) {
+    lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function highlightCompleteCommentary(lineId, shouldScroll = true) {
+  if (!lineId || !els.completeCommentoContent) return;
+
+  const entries = Array.from(els.completeCommentoContent.querySelectorAll('.commentary-entry'));
+  const entry = entries.find(e => e.dataset.lineRef === lineId);
+
+  entries.forEach(e => e.classList.remove('active'));
+
+  if (!entry) return;
+
+  entry.classList.add('active');
+
+  if (shouldScroll) {
+    state.isSyncingCommento = true;
+    clearTimeout(state.commentoSyncTimeout);
+    entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    state.commentoSyncTimeout = setTimeout(() => { state.isSyncingCommento = false; }, 650);
+  }
+}
+
+function highlightCompleteCommentaryForFolio(folioN, shouldScroll = true) {
+  if (!folioN || !els.completeCommentoContent) return;
+
+  const entries = Array.from(els.completeCommentoContent.querySelectorAll('.commentary-entry'));
+  const entry = entries.find(e => entryHasFolio(e, folioN));
+
+  entries.forEach(e => e.classList.remove('active'));
+
+  updateCompleteCommentoHeader(folioN);
+  updateCompleteCommentoNotice(folioN);
+  markCommentaryEntriesForFolio(folioN);
+
+  if (!entry) return;
+
+  entry.classList.add('active');
+
+  if (shouldScroll) {
+    state.isSyncingCommento = true;
+    clearTimeout(state.commentoSyncTimeout);
+    const marker = Array.from(entry.querySelectorAll('.commentary-folio-marker'))
+      .find(m => m.dataset.folio === folioN);
+    (marker || entry).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    state.commentoSyncTimeout = setTimeout(() => { state.isSyncingCommento = false; }, 650);
+  }
+}
+
+function findFolioForLine(lineId) {
+  let currentFolio = null;
+
+  for (const canto of state.cantos) {
+    for (const el of canto.elements) {
+      if (el.type === 'pb') currentFolio = el.n;
+
+      if (el.type === 'terzina') {
+        for (const line of el.lines) {
+          if (line.xmlId === lineId) return currentFolio;
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function setFolioFromLine(lineId) {
+  const folioN = findFolioForLine(lineId);
+  const idx = FOLIO_ORDER.indexOf(folioN);
+
+  if (idx < 0) return;
+
+  state.currentFolioIdx = idx;
+  updateFacsimile(true);
 }
 
 /* ==========================================================================
@@ -1114,11 +1741,21 @@ els.facsimileImg.alt = FACSIMILE_MAP[folioN] ? `Facsimile carta ${folioN}` : 'Im
   applyZoom();
   renderColumnBadges();
 
+  if (state.currentView === 'facsimile') {
+    if (!state.isSyncingCommento) {
+      renderCompleteCommentoPanel(folioN);
+    } else {
+      updateCompleteCommentoHeader(folioN);
+      updateCompleteCommentoNotice(folioN);
+      markCommentaryEntriesForFolio(folioN);
+    }
+  }
+
   if (!silent && state.currentView === 'facsimile') {
     syncTextWithFolio(folioN);
   } else if (silent) {
-    els.textContent.querySelectorAll('.folio-marker.active').forEach(m => m.classList.remove('active'));
-    const marker = els.textContent.querySelector(`.folio-marker[data-folio="${folioN}"]`);
+    els.textContent?.querySelectorAll('.folio-marker.active').forEach(m => m.classList.remove('active'));
+    const marker = els.textContent?.querySelector(`.folio-marker[data-folio="${folioN}"]`);
     if (marker) marker.classList.add('active');
   }
 }
@@ -1268,17 +1905,9 @@ function renderSearchResults(results, query) {
       els.cantoSelect.value = cantoN;
 
       if (type === 'commento') {
-        state.currentView = 'commento';
-        $$('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'commento'));
-        els.viewFacsimile.classList.remove('active');
-        els.viewCommento.classList.add('active');
-        renderCommentoView();
+        setCurrentView('commento');
       } else {
-        state.currentView = 'facsimile';
-        $$('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'facsimile'));
-        els.viewFacsimile.classList.add('active');
-        els.viewCommento.classList.remove('active');
-        renderFacsimileView();
+        setCurrentView('facsimile');
 
         setTimeout(() => {
           const lineId = item.dataset.line;
@@ -1323,21 +1952,636 @@ function toRoman(n) {
     .reduce((res, [v, l]) => { while (n >= v) { res += l; n -= v; } return res; }, '');
 }
 
+
+function updateCompletePanelVisibility() {
+  if (!els.viewFacsimile) return;
+
+  els.viewFacsimile.classList.toggle('hide-text-panel', !state.showTextPanel);
+  els.viewFacsimile.classList.toggle('hide-commento-panel', !state.showCommentoPanel);
+
+  if (els.toggleTextPanel) {
+    els.toggleTextPanel.classList.toggle('active', state.showTextPanel);
+    els.toggleTextPanel.setAttribute('aria-pressed', String(state.showTextPanel));
+  }
+
+  if (els.toggleCommentoPanel) {
+    els.toggleCommentoPanel.classList.toggle('active', state.showCommentoPanel);
+    els.toggleCommentoPanel.setAttribute('aria-pressed', String(state.showCommentoPanel));
+  }
+}
+
+function setCurrentView(view) {
+  state.currentView = view;
+
+  const viewMap = {
+    home: els.viewHome,
+    facsimile: els.viewFacsimile,
+    commento: els.viewCommento,
+    confronto: els.viewConfronto
+  };
+
+  Object.entries(viewMap).forEach(([key, el]) => {
+    el?.classList.toggle('active', key === view);
+  });
+
+  $$('.view-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.view === view);
+  });
+
+  if (view === 'facsimile') {
+    renderFacsimileView();
+    updateCompletePanelVisibility();
+  } else if (view === 'commento') {
+    renderCommentoView();
+  } else if (view === 'confronto') {
+    renderConfrontoView();
+  }
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function getLinesByIdFromCanto(canto) {
+  const lines = new Map();
+  if (!canto) return lines;
+
+  canto.elements.forEach(el => {
+    if (el.type === 'terzina') {
+      el.lines.forEach(line => lines.set(line.xmlId, line));
+    }
+  });
+
+  return lines;
+}
+
+function normalizeForComparison(html) {
+  return stripHTML(html || '')
+    .toLowerCase()
+    .replace(/[’']/g, "'")
+    .replace(/[·.,;:!?«»“”()\[\]]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function collapsePlainText(str) {
+  return String(str || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getElementTextForComparison(node, mode = 'reg') {
+  if (!node) return '';
+
+  if (node.nodeType === Node.TEXT_NODE) {
+    return node.textContent || '';
+  }
+
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return '';
+  }
+
+  if (node.namespaceURI === TEI_NS) {
+    switch (node.localName) {
+      case 'choice': {
+        const sic = qsTEI(node, 'sic');
+        const corr = qsTEI(node, 'corr');
+        const orig = qsTEI(node, 'orig');
+        const reg = qsTEI(node, 'reg');
+
+        const selected = mode === 'orig'
+          ? (orig || sic || reg || corr)
+          : (reg || corr || orig || sic);
+
+        return selected
+          ? getElementTextForComparison(selected, mode)
+          : getChildTextForComparison(node, mode);
+      }
+
+      case 'g': {
+        const ref = node.getAttribute('ref');
+        if (ref === '#middle_dot') return GLYPHS.MIDDLE_DOT;
+        if (ref === '#piedimosca') return GLYPHS.PIEDIMOSCA;
+        return node.textContent || '';
+      }
+
+      case 'subst': {
+        const delSub = qsTEI(node, 'del');
+        const addSub = qsTEI(node, 'add');
+        const selected = mode === 'orig'
+          ? (delSub || addSub)
+          : (addSub || delSub);
+        return selected ? getElementTextForComparison(selected, mode) : '';
+      }
+
+      case 'del':
+        return mode === 'orig' ? getChildTextForComparison(node, mode) : '';
+
+      case 'add':
+        return getChildTextForComparison(node, mode);
+
+      case 'supplied':
+        return getChildTextForComparison(node, mode);
+
+      case 'note':
+        return isChoiceEmendationNote(node) ? '' : getChildTextForComparison(node, mode);
+
+      case 'pb':
+      case 'cb':
+        return '';
+
+      default:
+        return getChildTextForComparison(node, mode);
+    }
+  }
+
+  return getChildTextForComparison(node, mode);
+}
+
+function getChildTextForComparison(node, mode = 'reg') {
+  return [...(node?.childNodes || [])]
+    .map(child => getElementTextForComparison(child, mode))
+    .join('');
+}
+
+function getLineTextForComparison(line, mode = 'reg') {
+  if (!line) return '';
+  if (line.sourceEl) {
+    return collapsePlainText(getElementTextForComparison(line.sourceEl, mode));
+  }
+
+  // Fallback per vecchie versioni già renderizzate in HTML: elimina la forma non attiva.
+  const tmp = document.createElement('div');
+  tmp.innerHTML = line.html || '';
+  tmp.querySelectorAll(mode === 'orig' ? '.choice-reg' : '.choice-orig').forEach(el => el.remove());
+  return collapsePlainText(tmp.textContent || '');
+}
+
+function getComparisonHarleyMode() {
+  return state.showOrig ? 'orig' : 'reg';
+}
+
+function getComparisonHarleyModeLabel() {
+  return state.showOrig ? 'Orig' : 'Reg';
+}
+
+/* ==========================================================================
+   Confronto Harley / Petrocchi: tokenizzazione, allineamento e classificazione
+   ========================================================================== */
+
+function plainComparisonText(html) {
+  return stripHTML(html || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeApostrophes(str) {
+  return String(str || '')
+    .replace(/[’‘`´]/g, "'")
+    .replace(/[“”]/g, '"');
+}
+
+function normalizeTokenLight(token) {
+  return normalizeApostrophes(token)
+    .toLowerCase()
+    .replace(/[«»"“”.,;:!?()\[\]{}]/g, '')
+    .replace(/^[-–—]+|[-–—]+$/g, '')
+    .replace(/\s+/g, '')
+    .trim();
+}
+
+function stripDiacritics(str) {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+function normalizeTokenFormal(token) {
+  let s = stripDiacritics(normalizeTokenLight(token));
+
+  const lexicalRules = new Map([
+    ['et', 'e'],
+    ['ed', 'e'],
+    ['ogne', 'ogni'],
+    ['om', 'uom'],
+    ['omo', 'uomo'],
+    ['ppiè', 'pie'],
+    ['ppie', 'pie'],
+    ['pie', 'pie'],
+    ['sprendori', 'splendori'],
+    ['sprendore', 'splendore'],
+    ['diritta', 'dritta']
+  ]);
+
+  if (lexicalRules.has(s)) return lexicalRules.get(s);
+
+  return s
+    // consonante iniziale rafforzata: ppoi/poi, ppiè/piè, ccammino/cammino
+    .replace(/^([bcdfglmnpqrstvxz])\1+/, '$1')
+    // oscillazioni grafiche frequenti
+    .replace(/spr/g, 'spl')
+    .replace(/j/g, 'i')
+    .replace(/y/g, 'i')
+    .replace(/ç/g, 'z')
+    .replace(/cha/g, 'ca')
+    .replace(/cho/g, 'co')
+    .replace(/chu/g, 'cu')
+    .replace(/gha/g, 'ga')
+    .replace(/gho/g, 'go')
+    .replace(/ghu/g, 'gu')
+    .replace(/h/g, '');
+}
+
+function tokenizeComparableText(text) {
+  const normalized = normalizeApostrophes(text || '')
+    .replace(/[«»"“”.,;:!?()\[\]{}]/g, ' ')
+    .replace(/[\n\r\t]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!normalized) return [];
+
+  return normalized.split(' ')
+    .map(token => ({
+      display: token,
+      light: normalizeTokenLight(token),
+      formal: normalizeTokenFormal(token)
+    }))
+    .filter(token => token.light);
+}
+
+function levenshteinDistance(a, b) {
+  a = String(a || '');
+  b = String(b || '');
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const dp = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+  for (let i = 0; i < rows; i++) dp[i][0] = i;
+  for (let j = 0; j < cols; j++) dp[0][j] = j;
+
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return dp[a.length][b.length];
+}
+
+function commonPrefixLength(a, b) {
+  const min = Math.min(a.length, b.length);
+  let i = 0;
+  while (i < min && a[i] === b[i]) i++;
+  return i;
+}
+
+function looksMorphological(a, b) {
+  if (!a || !b) return false;
+  if (a === b) return false;
+
+  const shortMorphPairs = new Set([
+    'fu|fui', 'fui|fu',
+    'e|è', 'è|e',
+    'al|a', 'a|al',
+    'del|de', 'de|del',
+    'nel|ne', 'ne|nel'
+  ]);
+  if (shortMorphPairs.has(`${a}|${b}`)) return true;
+
+  const distance = levenshteinDistance(a, b);
+  const maxLen = Math.max(a.length, b.length);
+  const prefix = commonPrefixLength(a, b);
+
+  if (maxLen <= 4) return distance === 1 && prefix >= 1;
+  if (prefix >= 3 && distance <= 2) return true;
+
+  return false;
+}
+
+function classifyTokenPair(hToken, pToken) {
+  if (!hToken && pToken) {
+    return { type: 'omissione-harley', label: 'Omissione Harley' };
+  }
+
+  if (hToken && !pToken) {
+    return { type: 'aggiunta-harley', label: 'Aggiunta Harley' };
+  }
+
+  if (!hToken && !pToken) {
+    return { type: 'vuoto', label: '—' };
+  }
+
+  if (hToken.light === pToken.light) {
+    return { type: 'uguale', label: 'Uguale' };
+  }
+
+  if (hToken.formal === pToken.formal) {
+    return { type: 'formale', label: 'Formale' };
+  }
+
+  if (looksMorphological(hToken.formal, pToken.formal)) {
+    return { type: 'morfologica', label: 'Morfologica' };
+  }
+
+  return { type: 'sostanziale', label: 'Sostanziale' };
+}
+
+function tokenSubstitutionCost(hToken, pToken) {
+  const cls = classifyTokenPair(hToken, pToken).type;
+  switch (cls) {
+    case 'uguale': return 0;
+    case 'formale': return 0.12;
+    case 'morfologica': return 0.35;
+    case 'sostanziale': return 0.95;
+    default: return 0.95;
+  }
+}
+
+function alignTokens(hTokens, pTokens) {
+  const hLen = hTokens.length;
+  const pLen = pTokens.length;
+  const gapCost = 0.78;
+  const dp = Array.from({ length: hLen + 1 }, () => Array(pLen + 1).fill(0));
+  const back = Array.from({ length: hLen + 1 }, () => Array(pLen + 1).fill(null));
+
+  for (let i = 1; i <= hLen; i++) {
+    dp[i][0] = dp[i - 1][0] + gapCost;
+    back[i][0] = 'delete';
+  }
+  for (let j = 1; j <= pLen; j++) {
+    dp[0][j] = dp[0][j - 1] + gapCost;
+    back[0][j] = 'insert';
+  }
+
+  for (let i = 1; i <= hLen; i++) {
+    for (let j = 1; j <= pLen; j++) {
+      const sub = dp[i - 1][j - 1] + tokenSubstitutionCost(hTokens[i - 1], pTokens[j - 1]);
+      const del = dp[i - 1][j] + gapCost;
+      const ins = dp[i][j - 1] + gapCost;
+      const best = Math.min(sub, del, ins);
+      dp[i][j] = best;
+      back[i][j] = best === sub ? 'sub' : best === del ? 'delete' : 'insert';
+    }
+  }
+
+  const pairs = [];
+  let i = hLen;
+  let j = pLen;
+
+  while (i > 0 || j > 0) {
+    const move = back[i][j];
+    if (move === 'sub') {
+      const harley = hTokens[i - 1];
+      const petrocchi = pTokens[j - 1];
+      const classification = classifyTokenPair(harley, petrocchi);
+      pairs.unshift({ harley, petrocchi, ...classification });
+      i--;
+      j--;
+    } else if (move === 'delete') {
+      const harley = hTokens[i - 1];
+      const classification = classifyTokenPair(harley, null);
+      pairs.unshift({ harley, petrocchi: null, ...classification });
+      i--;
+    } else {
+      const petrocchi = pTokens[j - 1];
+      const classification = classifyTokenPair(null, petrocchi);
+      pairs.unshift({ harley: null, petrocchi, ...classification });
+      j--;
+    }
+  }
+
+  return pairs;
+}
+
+function summarizeTokenPairs(pairs) {
+  const counts = pairs.reduce((acc, pair) => {
+    acc[pair.type] = (acc[pair.type] || 0) + 1;
+    return acc;
+  }, {});
+
+  const has = type => (counts[type] || 0) > 0;
+
+  if (pairs.length && pairs.every(pair => pair.type === 'uguale')) {
+    return { type: 'uguale', label: 'Uguale', counts };
+  }
+
+  if (has('sostanziale')) {
+    return { type: 'sostanziale', label: 'Sostanziale', counts };
+  }
+
+  if (has('aggiunta-harley') || has('omissione-harley')) {
+    return { type: 'aggiunta-omissione', label: 'Aggiunta / omissione', counts };
+  }
+
+  if (has('morfologica')) {
+    return { type: 'morfologica', label: 'Morfologica', counts };
+  }
+
+  if (has('formale')) {
+    return { type: 'formale', label: 'Formale', counts };
+  }
+
+  return { type: 'da-verificare', label: 'Da verificare', counts };
+}
+
+function compareVerseTokens(hHtml, pHtml) {
+  const harleyText = plainComparisonText(hHtml);
+  const petrocchiText = plainComparisonText(pHtml);
+  const harleyTokens = tokenizeComparableText(harleyText);
+  const petrocchiTokens = tokenizeComparableText(petrocchiText);
+  const pairs = alignTokens(harleyTokens, petrocchiTokens);
+  const summary = summarizeTokenPairs(pairs);
+  return { harleyText, petrocchiText, pairs, summary };
+}
+
+function renderTokenizedLine(pairs, side) {
+  return pairs.map(pair => {
+    const token = side === 'harley' ? pair.harley : pair.petrocchi;
+    if (!token) return `<span class="comparison-token gap ${escapeAttr(pair.type)}">—</span>`;
+    return `<span class="comparison-token ${escapeAttr(pair.type)}" title="${escapeAttr(pair.label)}">${escapeHTML(token.display)}</span>`;
+  }).join(' ');
+}
+
+function renderVariantDetails(pairs) {
+  const variants = pairs.filter(pair => pair.type !== 'uguale');
+  if (!variants.length) return '';
+
+  return `
+    <details class="comparison-details">
+      <summary>Dettaglio token (${variants.length})</summary>
+      <div class="token-detail-table">
+        <div class="token-detail-head">Harley</div>
+        <div class="token-detail-head">Petrocchi</div>
+        <div class="token-detail-head">Tipo</div>
+        ${variants.map(pair => `
+          <div>${pair.harley ? escapeHTML(pair.harley.display) : '<span class="muted">—</span>'}</div>
+          <div>${pair.petrocchi ? escapeHTML(pair.petrocchi.display) : '<span class="muted">—</span>'}</div>
+          <div><span class="variant-badge ${escapeAttr(pair.type)}">${escapeHTML(pair.label)}</span></div>
+        `).join('')}
+      </div>
+    </details>
+  `;
+}
+
+function renderComparisonFilters() {
+  const filters = [
+    ['all', 'Tutte'],
+    ['formale', 'Formali'],
+    ['morfologica', 'Morfologiche'],
+    ['sostanziale', 'Sostanziali'],
+    ['aggiunta-omissione', 'Aggiunte/omissioni'],
+    ['da-verificare', 'Da verificare']
+  ];
+
+  return `
+    <div class="comparison-toolbar" aria-label="Filtri confronto">
+      ${filters.map(([value, label], index) => `
+        <button type="button" class="comparison-filter ${index === 0 ? 'active' : ''}" data-comparison-filter="${value}">${label}</button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function bindComparisonFilters(container) {
+  const buttons = [...container.querySelectorAll('[data-comparison-filter]')];
+  const rows = [...container.querySelectorAll('.comparison-row')];
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.comparisonFilter;
+      buttons.forEach(b => b.classList.toggle('active', b === button));
+      rows.forEach(row => {
+        const type = row.dataset.variantType;
+        row.hidden = filter !== 'all' && type !== filter;
+      });
+    });
+  });
+}
+
+function renderConfrontoView() {
+  if (!els.confrontoContent) return;
+
+  const harleyCanto = state.cantos.find(c => c.n === state.currentCanto);
+  const petrocchiCanto = state.petrocchiCantos.find(c => c.n === state.currentCanto);
+
+  const harleyMode = getComparisonHarleyMode();
+  const harleyModeLabel = getComparisonHarleyModeLabel();
+
+  if (els.confrontoPanelTitle) {
+    els.confrontoPanelTitle.textContent = `Confronto Harley / Petrocchi — Canto ${toRoman(state.currentCanto)} · Harley ${harleyModeLabel}`;
+  }
+
+  if (!state.petrocchiDoc || !petrocchiCanto) {
+    els.confrontoContent.innerHTML = `
+      <div class="comparison-placeholder">
+        <h3>Confronto non ancora disponibile</h3>
+        <p>Inserisci il file <code>data/testo_petrocchi.xml</code> nel progetto. Se mantiene una struttura TEI compatibile con <code>commedia_inferno.xml</code>, questa scheda costruirà automaticamente il confronto verso per verso.</p>
+        <p>Per ora la scheda è già predisposta: quando il file sarà presente, mostrerà testo Harley, testo Petrocchi e stato della differenza.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const harleyLines = getLinesByIdFromCanto(harleyCanto);
+  const petrocchiLines = getLinesByIdFromCanto(petrocchiCanto);
+  const ids = unique([...harleyLines.keys(), ...petrocchiLines.keys()]).sort((a, b) => {
+    const an = parseInt((a.split('.')[2] || '0'), 10);
+    const bn = parseInt((b.split('.')[2] || '0'), 10);
+    return an - bn;
+  });
+
+  els.confrontoContent.innerHTML = `
+    <div class="comparison-mode-note">
+      <span class="comparison-mode-pill">Harley ${escapeHTML(harleyModeLabel)}</span>
+      <span>Il confronto usa la stessa lezione selezionata dal toggle <strong>Reg/Orig</strong>: Reg confronta <code>&lt;reg&gt;</code>/<code>&lt;corr&gt;</code>, Orig confronta <code>&lt;orig&gt;</code>/<code>&lt;sic&gt;</code>.</span>
+    </div>
+    ${renderComparisonFilters()}
+    <div class="comparison-grid comparison-grid-head">
+      <div>Verso</div>
+      <div>Harley 3459 (${escapeHTML(harleyModeLabel)})</div>
+      <div>Petrocchi</div>
+      <div>Esito</div>
+    </div>
+    ${ids.map(id => {
+      const h = harleyLines.get(id);
+      const p = petrocchiLines.get(id);
+      const hText = getLineTextForComparison(h, harleyMode);
+      const pText = getLineTextForComparison(p, 'reg');
+
+      let comparison;
+      let status;
+
+      if (!h && p) {
+        comparison = compareVerseTokens('', pText);
+        status = { type: 'omissione-harley', label: 'Manca Harley' };
+      } else if (h && !p) {
+        comparison = compareVerseTokens(hText, '');
+        status = { type: 'aggiunta-harley', label: 'Manca Petrocchi' };
+      } else {
+        comparison = compareVerseTokens(hText, pText);
+        status = comparison.summary;
+      }
+
+      const rowType = status.type === 'omissione-harley' || status.type === 'aggiunta-harley'
+        ? 'aggiunta-omissione'
+        : status.type;
+      const rowClass = rowType === 'uguale' ? 'same' : 'different';
+
+      return `
+        <div class="comparison-grid comparison-row ${rowClass} variant-${escapeAttr(rowType)}" data-line-id="${escapeAttr(id)}" data-variant-type="${escapeAttr(rowType)}">
+          <div class="comparison-ref">${escapeHTML(formatLineRef(id))}</div>
+          <div class="comparison-text harley-text">
+            ${comparison.pairs.length ? renderTokenizedLine(comparison.pairs, 'harley') : '<span class="muted">—</span>'}
+          </div>
+          <div class="comparison-text petrocchi-text">
+            ${comparison.pairs.length ? renderTokenizedLine(comparison.pairs, 'petrocchi') : '<span class="muted">—</span>'}
+          </div>
+          <div class="comparison-status">
+            <span class="variant-badge ${escapeAttr(rowType)}">${escapeHTML(status.label)}</span>
+          </div>
+          <div class="comparison-detail-cell">
+            ${renderVariantDetails(comparison.pairs)}
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+
+  bindComparisonFilters(els.confrontoContent);
+  bindNoteIndicators(els.confrontoContent);
+}
+
 /* ==========================================================================
    Event Binding 
    ========================================================================== */
 function bindEvents() {
-  $$('.view-tab').forEach(t => t.onclick = () => {
-    state.currentView = t.dataset.view;
-    $$('.view-tab').forEach(tab => tab.classList.toggle('active', tab === t));
-    els.viewFacsimile.classList.toggle('active', state.currentView === 'facsimile');
-    els.viewCommento.classList.toggle('active', state.currentView === 'commento');
-    state.currentView === 'commento' ? renderCommentoView() : renderFacsimileView();
+  $$('.view-tab').forEach(t => {
+    t.onclick = () => setCurrentView(t.dataset.view);
+  });
+
+  $$('[data-open-view]').forEach(btn => {
+    btn.addEventListener('click', () => setCurrentView(btn.dataset.openView));
+  });
+
+  els.toggleTextPanel?.addEventListener('click', () => {
+    state.showTextPanel = !state.showTextPanel;
+    updateCompletePanelVisibility();
+  });
+
+  els.toggleCommentoPanel?.addEventListener('click', () => {
+    state.showCommentoPanel = !state.showCommentoPanel;
+    updateCompletePanelVisibility();
   });
 
   els.cantoSelect.onchange = () => {
     state.currentCanto = parseInt(els.cantoSelect.value);
-    state.currentView === 'facsimile' ? renderFacsimileView() : renderCommentoView();
+    if (state.currentView === 'facsimile') renderFacsimileView();
+    else if (state.currentView === 'commento') renderCommentoView();
+    else if (state.currentView === 'confronto') renderConfrontoView();
   };
 
   $('#prevFolio').onclick = () => setCurrentFolioIdx(state.currentFolioIdx - 1);
@@ -1354,6 +2598,10 @@ function bindEvents() {
       origRegToggle.classList.toggle('active', state.showOrig);
       $('#toggleLabelReg')?.classList.toggle('active', !state.showOrig);
       $('#toggleLabelOrig')?.classList.toggle('active', state.showOrig);
+
+      if (state.currentView === 'confronto') {
+        renderConfrontoView();
+      }
     };
   }
 
@@ -1454,7 +2702,23 @@ function bindEvents() {
       if (idx >= 0 && state.currentFolioIdx !== idx) {
         state.currentFolioIdx = idx;
         updateFacsimile(true);
+        highlightCompleteCommentaryForFolio(folioN, true);
       }
+    });
+  }
+
+
+  if (els.completeCommentoContent) {
+    els.completeCommentoContent.addEventListener('scroll', () => {
+      if (state.isSyncingCommento || state.currentView !== 'facsimile') return;
+
+      const location = getCurrentCommentaryLocationFromScroll();
+      if (!location?.entry) return;
+
+      state.isSyncingCommento = true;
+      clearTimeout(state.commentoSyncTimeout);
+      syncFromCommentaryEntry(location.entry, { scrollText: false, scrollCommento: false, folioOverride: location.folio, updateFolio: true });
+      state.commentoSyncTimeout = setTimeout(() => { state.isSyncingCommento = false; }, 450);
     });
   }
 }
@@ -1464,21 +2728,28 @@ function bindEvents() {
 async function init() {
   cacheDom();
   try {
-    const [commediaDoc, commentoDoc, marginiDoc] = await Promise.all([
-      loadXML('data/commedia_inferno.xml'), loadXML('data/commento_inferno.xml'), loadXML('data/margini_inferno.xml')
+    const [commediaDoc, commentoDoc, marginiDoc, petrocchiDoc] = await Promise.all([
+      loadXML('data/commedia_inferno.xml'),
+      loadXML('data/commento_inferno.xml'),
+      loadXML('data/margini_inferno.xml'),
+      loadOptionalXML('data/testo_petrocchi.xml')
     ]);
 
-    Object.assign(state, { commediaDoc, commentoDoc, marginiDoc });
+    Object.assign(state, { commediaDoc, commentoDoc, marginiDoc, petrocchiDoc });
     state.cantos = parseCommedia(commediaDoc);
     state.commentary = parseCommentary(commentoDoc);
     state.marginalia = parseMarginalia(marginiDoc);
+    state.petrocchiCantos = petrocchiDoc ? parseCommedia(petrocchiDoc) : [];
     state.folioContentMap = buildFolioContentMap(commediaDoc, commentoDoc);
 
     els.cantoSelect.innerHTML = state.cantos.map(c => `<option value="${c.n}">Canto ${toRoman(c.n)}</option>`).join('');
 
     bindEvents();
+    renderCommentoView();
     renderFacsimileView();
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    renderConfrontoView();
+    updateCompletePanelVisibility();
+    setCurrentView('home');
 
     els.loadingOverlay.classList.add('hide');
     setTimeout(() => els.loadingOverlay.remove(), 500);
