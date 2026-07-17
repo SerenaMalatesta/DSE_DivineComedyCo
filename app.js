@@ -14,6 +14,7 @@ const GLYPHS = {
 /* --- State --- */
 const state = {
   commediaDoc: null,
+  corpusDoc: null,
   commentoDoc: null,
   marginiDoc: null,
   petrocchiDoc: null,
@@ -36,11 +37,13 @@ const state = {
   syncTimeout: null,
   commentoSyncTimeout: null,
   showTextPanel: true,
-  showCommentoPanel: true
+  showCommentoPanel: true,
+  showFacsimilePanel: true,
+  commentTextWitness: 'harley'
 };
 
 /* --- Facsimile file mapping (Dynamically Generated) --- */
-const FOLIO_ORDER = ['2r', '2v', '3r', '3v', '4r', '4v', '5r', '5v', '6r', '6v', '7r', '7v', '8r', '8v', '9r', '9v', '10r', '10v', '11r', '11v'];
+const FOLIO_ORDER = ['2r', '2v', '3r', '3v', '4r', '4v', '5r', '5v', '6r', '6v', '7r', '7v', '8r', '8v', '9r', '9v', '10r', '10v', '11r', '11v', '12r', '12v', '13r', '13v'];
 
 const FACSIMILE_MAP = Object.fromEntries(
   FOLIO_ORDER.map((folio, i) => {
@@ -72,6 +75,7 @@ function cacheDom() {
     confrontoPanelTitle: $('#confrontoPanelTitle'),
     toggleTextPanel: $('#toggleTextPanel'),
     toggleCommentoPanel: $('#toggleCommentoPanel'),
+    toggleFacsimilePanel: $('#toggleFacsimilePanel'),
     textPanelTitle: $('#textPanelTitle'),
     facsimileImg: $('#facsimileImg'),
     facsimileImageWrap: $('#facsimileImageWrap'),
@@ -85,6 +89,15 @@ function cacheDom() {
     aboutModal: $('#aboutModal'),
     columnBadges: $('#columnBadges'),
     folioContentSummary: $('#folioContentSummary'),
+    folioFilmstrip: $('#folioFilmstrip'),
+    commentoManuscriptContent: $('#commentoManuscriptContent'),
+    commentoManuscriptTitle: $('#commentoManuscriptTitle'),
+    showCommentHarley: $('#showCommentHarley'),
+    showCommentPetrocchi: $('#showCommentPetrocchi'),
+    aboutContent: $('#aboutContent'),
+    facsimileFullscreen: $('#facsimileFullscreen'),
+    fullscreenFacsimileImg: $('#fullscreenFacsimileImg'),
+    fullscreenFolioLabel: $('#fullscreenFolioLabel'),
   });
 }
 
@@ -232,6 +245,99 @@ function getChoiceEmendationNote(choiceEl) {
   return null;
 }
 
+
+function normalizeChoiceAnalysisValue(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/#/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/^corr-ms$/, 'correzione-manoscritto')
+    .replace(/^correzione-ms$/, 'correzione-manoscritto')
+    .replace(/^scribal-correction$/, 'correzione-manoscritto')
+    .replace(/^ed-ref-var$/, 'variante-edizione-riferimento')
+    .replace(/^ed-ref-error$/, 'errore-copia-non-corretto')
+    .replace(/^variante-ed-rif$/, 'variante-edizione-riferimento')
+    .replace(/^errore-copia$/, 'errore-copia-non-corretto')
+    .replace(/^dittografia$/, 'errore-copia-non-corretto')
+    .replace(/^ripetizione$/, 'errore-copia-non-corretto');
+}
+
+function getChoiceAnalysis(choiceEl) {
+  const rawValues = [
+    ...(choiceEl?.getAttribute('ana') || '').split(/\s+/),
+    choiceEl?.getAttribute('type') || '' // fallback per file più vecchi
+  ].filter(Boolean);
+
+  const values = rawValues.map(normalizeChoiceAnalysisValue).filter(Boolean);
+
+  // Priorità: se una choice contiene più analisi, prevale quella più specifica.
+  const priority = [
+    'correzione-manoscritto',
+    'errore-copia-non-corretto',
+    'variante-edizione-riferimento',
+    'normalizzazione'
+  ];
+
+  return priority.find(value => values.includes(value)) || '';
+}
+
+function getChoiceDisplayInfo(choiceEl, pairType = 'orig-reg') {
+  const analysis = getChoiceAnalysis(choiceEl);
+
+  if (analysis === 'correzione-manoscritto') {
+    return {
+      type: analysis,
+      originalLabel: 'Correzione del manoscritto',
+      editedLabel: 'Lettura risultante',
+      tooltipPrefix: 'Correzione del manoscritto'
+    };
+  }
+
+  if (analysis === 'errore-copia-non-corretto') {
+    return {
+      type: analysis,
+      originalLabel: 'Lezione del manoscritto con errore di copia',
+      editedLabel: 'Lezione dell’edizione di riferimento',
+      tooltipPrefix: 'Errore di copia non corretto nella revisione'
+    };
+  }
+
+  if (analysis === 'variante-edizione-riferimento') {
+    return {
+      type: analysis,
+      originalLabel: 'Lezione del manoscritto',
+      editedLabel: 'Lezione dall’edizione di riferimento',
+      tooltipPrefix: 'Variante rispetto all’edizione di riferimento'
+    };
+  }
+
+  if (analysis === 'normalizzazione') {
+    return {
+      type: analysis,
+      originalLabel: 'Lezione del manoscritto',
+      editedLabel: 'Resa editoriale',
+      tooltipPrefix: 'Lezione del manoscritto'
+    };
+  }
+
+  if (pairType === 'sic-corr') {
+    return {
+      type: 'errore-copia-non-corretto',
+      originalLabel: 'Lezione del manoscritto',
+      editedLabel: 'Lezione dell’edizione di riferimento',
+      tooltipPrefix: 'Errore di copia non corretto nella revisione'
+    };
+  }
+
+  return {
+    type: 'normalizzazione',
+    originalLabel: 'Lezione del manoscritto',
+    editedLabel: 'Resa editoriale',
+    tooltipPrefix: 'Lezione del manoscritto'
+  };
+}
+
 function renderChoiceNoteContent(noteEl, mode = 'line', anchorTarget = '') {
   if (!noteEl) return '';
 
@@ -357,30 +463,31 @@ function renderInlineElement(el) {
       if (sic && corr) {
         const sicContent = renderLineContent(sic);
         const corrContent = renderLineContent(corr);
-        const type = el.getAttribute('type') || 'correzione editoriale';
+        const choiceInfo = getChoiceDisplayInfo(el, 'sic-corr');
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(el), 'line');
 
         return `<span class="choice-reg choice-corr"
-                      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}"
-                      data-choice-original-label="Lezione del manoscritto (sic)"
-                      data-choice-edited-label="Correzione editoriale (corr)"
+                      data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(sicContent))}"
+                      data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
+                      data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
                       data-choice-edited="${escapeAttr(corrContent)}"
                       data-choice-note="${escapeAttr(noteContent)}"
-                      title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(type)}">${corrContent}</span><span class="choice-orig choice-sic"
+                      title="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(sicContent))}">${corrContent}</span><span class="choice-orig choice-sic"
                       title="Apparato (sic)">${sicContent}</span>`;
       }
       if (orig && reg) {
         const origContent = renderLineContent(orig);
         const regContent = renderLineContent(reg);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(el), 'line');
+        const choiceInfo = getChoiceDisplayInfo(el, 'orig-reg');
 
         return `<span class="choice-reg"
-                      data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}"
-                      data-choice-original-label="Lezione attestata nel manoscritto (orig)"
-                      data-choice-edited-label="Lezione emendata (reg)"
+                      data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(origContent))}"
+                      data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
+                      data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
                       data-choice-edited="${escapeAttr(regContent)}"
                       data-choice-note="${escapeAttr(noteContent)}"
-                      title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
+                      title="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
                       title="Apparato (orig)">${origContent}</span>`;
       }
       return renderLineContent(el);
@@ -399,9 +506,20 @@ function renderInlineElement(el) {
     case 'del': return `<span class="scribal-del">${renderLineContent(el)}</span>`;
     case 'add': return `<span class="scribal-add">${renderLineContent(el)}</span>`;
     case 'supplied': return `[${renderLineContent(el)}]`;
-    case 'note':
+    case 'note': {
       if (isChoiceEmendationNote(el)) return '';
-      return renderLineContent(el);
+
+      state.noteCounter++;
+      const label = noteTypeLabel(el.getAttribute('type'));
+      const content = renderLineContent(el).trim();
+      const noteId = `inline-note-${Date.now()}-${state.noteCounter}`;
+
+      return `<span class="note-indicator inline-note-indicator"
+                    data-note-id="${escapeAttr(noteId)}"
+                    data-note-title="${escapeAttr(label)}"
+                    data-note-content="${escapeAttr(content)}"
+                    title="${escapeAttr(label)}">${state.noteCounter}</span>`;
+    }
     case 'pb':
     case 'cb': return '';
 
@@ -662,15 +780,15 @@ function renderCommentaryNode(node, context = { folio: '', column: 'A' }) {
       const reg = qsTEI(node, 'reg');
 
       if (sic && corr) {
-        const cType = node.getAttribute('type') || 'correzione editoriale';
+        const choiceInfo = getChoiceDisplayInfo(node, 'sic-corr');
         const sicContent = renderCommentaryChildren(sic, context);
         const corrContent = renderCommentaryChildren(corr, context);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'commentary');
 
         return `<span class="choice-reg choice-corr"
-                      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}"
-                      data-choice-original-label="Lezione del manoscritto (sic)"
-                      data-choice-edited-label="Correzione editoriale (corr)"
+                      data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(sicContent))}"
+                      data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
+                      data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
                       data-choice-edited="${escapeAttr(corrContent)}"
                       data-choice-note="${escapeAttr(noteContent)}">${corrContent}</span><span class="choice-orig choice-sic"
                       title="Apparato (sic)">${sicContent}</span>`;
@@ -679,11 +797,12 @@ function renderCommentaryNode(node, context = { folio: '', column: 'A' }) {
         const origContent = renderCommentaryChildren(orig, context);
         const regContent = renderCommentaryChildren(reg, context);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'commentary');
+        const choiceInfo = getChoiceDisplayInfo(node, 'orig-reg');
 
         return `<span class="choice-reg"
                       data-tooltip="${escapeAttr(stripHTML(origContent))}"
-                      data-choice-original-label="Lezione attestata nel manoscritto (orig)"
-                      data-choice-edited-label="Lezione emendata (reg)"
+                      data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
+                      data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
                       data-choice-edited="${escapeAttr(regContent)}"
                       data-choice-note="${escapeAttr(noteContent)}">${regContent}</span><span class="choice-orig"
                       title="Apparato (orig)">${origContent}</span>`;
@@ -985,18 +1104,18 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       const reg = qsTEI(node, 'reg');
 
       if (sic && corr) {
-        const cType = node.getAttribute('type') || 'correzione editoriale';
+        const choiceInfo = getChoiceDisplayInfo(node, 'sic-corr');
         const sicContent = renderMarginaliaChildren(sic, anchorTarget);
         const corrContent = renderMarginaliaChildren(corr, anchorTarget);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'marginalia', anchorTarget);
 
         return `<span class="choice-reg choice-corr"
-                      data-tooltip="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}"
-                      data-choice-original-label="Lezione del manoscritto (sic)"
-                      data-choice-edited-label="Correzione editoriale (corr)"
+                      data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(sicContent))}"
+                      data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
+                      data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
                       data-choice-edited="${escapeAttr(corrContent)}"
                       data-choice-note="${escapeAttr(noteContent)}"
-                      title="${escapeAttr(stripHTML(sicContent))} — ${escapeAttr(cType)}">${corrContent}</span><span class="choice-orig choice-sic"
+                      title="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(sicContent))}">${corrContent}</span><span class="choice-orig choice-sic"
                       title="Apparato (sic)">${sicContent}</span>`;
       }
 
@@ -1004,14 +1123,15 @@ function renderMarginaliaNode(node, anchorTarget = '') {
         const origContent = renderMarginaliaChildren(orig, anchorTarget);
         const regContent = renderMarginaliaChildren(reg, anchorTarget);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'marginalia', anchorTarget);
+        const choiceInfo = getChoiceDisplayInfo(node, 'orig-reg');
 
         return `<span class="choice-reg"
-                      data-tooltip="orig.: ${escapeAttr(stripHTML(origContent))}"
-                      data-choice-original-label="Lezione attestata nel manoscritto (orig)"
-                      data-choice-edited-label="Lezione emendata (reg)"
+                      data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(origContent))}"
+                      data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
+                      data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
                       data-choice-edited="${escapeAttr(regContent)}"
                       data-choice-note="${escapeAttr(noteContent)}"
-                      title="orig.: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
+                      title="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(origContent))}">${regContent}</span><span class="choice-orig"
                       title="Apparato (orig)">${origContent}</span>`;
       }
 
@@ -1283,13 +1403,7 @@ function renderTextForCanto(canto) {
     return html;
   }, '');
 
-  html += `
-    <div class="end-of-canto-actions" style="margin-top: 50px; padding: 30px 0; border-top: 1px solid var(--border-light); text-align: center;">
-      <button id="goToCommentaryBtn" class="icon-btn" style="width: auto; padding: 12px 24px; background: var(--bg-surface); color: var(--accent); border: 1px solid var(--border); font-family: var(--font-sans); font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.2rem;">${GLYPHS.PIEDIMOSCA}</span> Passa al Commento
-      </button>
-    </div>
-  `;
+  html += renderCantoNavigation(canto.n);
 
   els.textContent.innerHTML = html;
 
@@ -1305,11 +1419,8 @@ function renderTextForCanto(canto) {
       highlightCompleteCommentary(line.dataset.lineId, true);
       setFolioFromLine(line.dataset.lineId);
     }
-    const btnCommentary = e.target.closest('#goToCommentaryBtn');
-    if (btnCommentary) {
-      setCurrentView('commento');
-      els.commentoContent.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    const cantoButton = e.target.closest('[data-canto-go]');
+    if (cantoButton) goToCanto(parseInt(cantoButton.dataset.cantoGo, 10));
   };
 
   els.textContent.querySelectorAll('.margin-indicator').forEach(ind => {
@@ -1323,6 +1434,28 @@ function renderTextForCanto(canto) {
   });
 
   bindNoteIndicators(els.textContent);
+}
+
+function renderCantoNavigation(cantoN) {
+  const numbers = state.cantos.map(c => c.n);
+  const position = numbers.indexOf(cantoN);
+  const previous = position > 0 ? numbers[position - 1] : null;
+  const next = position >= 0 && position < numbers.length - 1 ? numbers[position + 1] : null;
+
+  return `<nav class="end-of-canto-actions" aria-label="Navigazione tra i canti">
+    ${previous ? `<button class="canto-step canto-step-prev" data-canto-go="${previous}"><span>←</span><span><small>Canto precedente</small>Canto ${toRoman(previous)}</span></button>` : '<span></span>'}
+    ${next ? `<button class="canto-step canto-step-next" data-canto-go="${next}"><span><small>Canto successivo</small>Canto ${toRoman(next)}</span><span>→</span></button>` : '<span></span>'}
+  </nav>`;
+}
+
+function goToCanto(cantoN) {
+  if (!state.cantos.some(c => c.n === cantoN)) return;
+  state.currentCanto = cantoN;
+  if (els.cantoSelect) els.cantoSelect.value = cantoN;
+  if (state.currentView === 'facsimile') renderFacsimileView();
+  else if (state.currentView === 'commento') renderCommentoView();
+  else if (state.currentView === 'confronto') renderConfrontoView();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderTerzina(el) {
@@ -1367,8 +1500,8 @@ function bindNoteIndicators(container) {
       const noteHtml = choice.dataset.choiceNote || '';
 
       const isCorr = choice.classList.contains('choice-corr');
-      const originalLabel = choice.dataset.choiceOriginalLabel || (isCorr ? 'Lezione del manoscritto (sic)' : 'Lezione attestata nel manoscritto (orig)');
-      const editedLabel = choice.dataset.choiceEditedLabel || (isCorr ? 'Correzione editoriale (corr)' : 'Lezione regolarizzata (reg)');
+      const originalLabel = choice.dataset.choiceOriginalLabel || 'Lezione del manoscritto';
+      const editedLabel = choice.dataset.choiceEditedLabel || (isCorr ? 'Lezione dell’edizione di riferimento' : 'Resa editoriale');
 
       const body = els.notePopup.querySelector('.note-popup-body');
       els.notePopup.style.width = 'min(520px, calc(100vw - 32px))';
@@ -1452,8 +1585,87 @@ function renderCommentoView() {
   const entries = state.commentary[state.currentCanto] || [];
   els.commentoPanelTitle.textContent = `Commento — Canto ${toRoman(state.currentCanto)}`;
   els.commentoContent.innerHTML = renderCommentaryEntries(entries);
+  renderCommentoManuscript();
 
   bindNoteIndicators(els.commentoContent);
+  bindCommentaryHover();
+}
+
+function renderCommentoManuscript() {
+  if (!els.commentoManuscriptContent) return;
+  const isPetrocchi = state.commentTextWitness === 'petrocchi';
+  const sourceCantos = isPetrocchi ? state.petrocchiCantos : state.cantos;
+  const canto = sourceCantos.find(c => c.n === state.currentCanto);
+
+  els.showCommentHarley?.classList.toggle('active', !isPetrocchi);
+  els.showCommentHarley?.setAttribute('aria-pressed', String(!isPetrocchi));
+  els.showCommentPetrocchi?.classList.toggle('active', isPetrocchi);
+  els.showCommentPetrocchi?.setAttribute('aria-pressed', String(isPetrocchi));
+
+  if (els.showCommentPetrocchi) {
+    els.showCommentPetrocchi.disabled = !state.petrocchiDoc;
+    els.showCommentPetrocchi.title = state.petrocchiDoc ? 'Visualizza il testo dell’edizione Petrocchi' : 'File testo_petrocchi.xml non disponibile';
+  }
+
+  if (!canto) {
+    els.commentoManuscriptTitle.textContent = isPetrocchi ? 'Testo Petrocchi' : 'Testo Harley 3459';
+    els.commentoManuscriptContent.innerHTML = '<div class="empty-commentary-message">Testo non disponibile per questo canto.</div>';
+    return;
+  }
+
+  els.commentoManuscriptTitle.textContent = `${isPetrocchi ? 'Testo Petrocchi' : 'Testo Harley 3459'} — Canto ${toRoman(canto.n)}`;
+  els.commentoManuscriptContent.innerHTML = `
+    <div class="canto-heading">${canto.headingHtml || escapeHTML(canto.heading)}</div>
+    ${canto.elements.filter(el => el.type === 'terzina').map(renderTerzina).join('')}
+    ${renderCantoNavigation(canto.n)}
+  `;
+  bindNoteIndicators(els.commentoManuscriptContent);
+  els.commentoManuscriptContent.onclick = e => {
+    const button = e.target.closest('[data-canto-go]');
+    if (button) goToCanto(parseInt(button.dataset.cantoGo, 10));
+  };
+}
+
+function setCommentoManuscriptHighlight(lineId, scroll = false) {
+  if (!els.commentoManuscriptContent) return;
+  const lines = [...els.commentoManuscriptContent.querySelectorAll('.verse-line')];
+  lines.forEach(line => line.classList.toggle('gloss-hover', Boolean(lineId) && line.dataset.lineId === lineId));
+  const target = lines.find(line => line.dataset.lineId === lineId);
+  if (target && scroll) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function bindCommentaryHover() {
+  let hoverTimer = null;
+
+  els.commentoContent?.querySelectorAll('.commentary-entry').forEach(entry => {
+    entry.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        // Il passaggio del mouse evidenzia soltanto: nessuno spostamento
+        // automatico del testo, per evitare l'effetto "mare mosso".
+        setCommentoManuscriptHighlight(entry.dataset.lineRef, false);
+      }, 180);
+    });
+
+    entry.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      setCommentoManuscriptHighlight('');
+    });
+
+    entry.addEventListener('focusin', () => {
+      clearTimeout(hoverTimer);
+      setCommentoManuscriptHighlight(entry.dataset.lineRef, false);
+    });
+
+    entry.addEventListener('focusout', () => setCommentoManuscriptHighlight(''));
+
+    entry.addEventListener('click', e => {
+      if (e.target.closest('.note-indicator, .choice-reg, .tei-ref-jump')) return;
+      clearTimeout(hoverTimer);
+      // Solo una scelta intenzionale dell'utente porta il verso al centro.
+      setCommentoManuscriptHighlight(entry.dataset.lineRef, true);
+    });
+  });
 }
 
 function getCompleteCommentaryEntriesForCurrentCanto() {
@@ -1734,12 +1946,18 @@ els.facsimileImg.src = FACSIMILE_MAP[folioN] ? `assets/facsimile/${FACSIMILE_MAP
 els.facsimileImg.alt = FACSIMILE_MAP[folioN] ? `Facsimile carta ${folioN}` : 'Immagine non disponibile';
   }
   if (els.folioLabel) els.folioLabel.textContent = `c. ${folioN}`;
+  if (els.fullscreenFolioLabel) els.fullscreenFolioLabel.textContent = `c. ${folioN}`;
+  if (els.fullscreenFacsimileImg) {
+    els.fullscreenFacsimileImg.src = FACSIMILE_MAP[folioN] ? `assets/facsimile/${FACSIMILE_MAP[folioN]}` : '';
+    els.fullscreenFacsimileImg.alt = `Facsimile carta ${folioN}`;
+  }
 
   if ($('#prevFolio')) $('#prevFolio').disabled = state.currentFolioIdx <= 0;
   if ($('#nextFolio')) $('#nextFolio').disabled = state.currentFolioIdx >= FOLIO_ORDER.length - 1;
 
   applyZoom();
   renderColumnBadges();
+  renderFolioFilmstrip();
 
   if (state.currentView === 'facsimile') {
     if (!state.isSyncingCommento) {
@@ -1758,6 +1976,21 @@ els.facsimileImg.alt = FACSIMILE_MAP[folioN] ? `Facsimile carta ${folioN}` : 'Im
     const marker = els.textContent?.querySelector(`.folio-marker[data-folio="${folioN}"]`);
     if (marker) marker.classList.add('active');
   }
+}
+
+function renderFolioFilmstrip() {
+  if (!els.folioFilmstrip) return;
+  const start = Math.max(0, state.currentFolioIdx - 3);
+  const end = Math.min(FOLIO_ORDER.length, state.currentFolioIdx + 4);
+  els.folioFilmstrip.innerHTML = FOLIO_ORDER.slice(start, end).map((folio, offset) => {
+    const idx = start + offset;
+    return `<button type="button" class="folio-preview ${idx === state.currentFolioIdx ? 'active' : ''}" data-folio-index="${idx}" aria-current="${idx === state.currentFolioIdx ? 'page' : 'false'}">
+      <img src="assets/facsimile/${FACSIMILE_MAP[folio]}" alt="Anteprima carta ${folio}" loading="lazy"><span>c. ${folio}</span>
+    </button>`;
+  }).join('');
+  els.folioFilmstrip.querySelectorAll('[data-folio-index]').forEach(button => {
+    button.onclick = () => setCurrentFolioIdx(parseInt(button.dataset.folioIndex, 10));
+  });
 }
 
 const applyZoom = () => {
@@ -1958,6 +2191,7 @@ function updateCompletePanelVisibility() {
 
   els.viewFacsimile.classList.toggle('hide-text-panel', !state.showTextPanel);
   els.viewFacsimile.classList.toggle('hide-commento-panel', !state.showCommentoPanel);
+  els.viewFacsimile.classList.toggle('hide-facsimile-panel', !state.showFacsimilePanel);
 
   if (els.toggleTextPanel) {
     els.toggleTextPanel.classList.toggle('active', state.showTextPanel);
@@ -1968,6 +2202,63 @@ function updateCompletePanelVisibility() {
     els.toggleCommentoPanel.classList.toggle('active', state.showCommentoPanel);
     els.toggleCommentoPanel.setAttribute('aria-pressed', String(state.showCommentoPanel));
   }
+  if (els.toggleFacsimilePanel) {
+    els.toggleFacsimilePanel.classList.toggle('active', state.showFacsimilePanel);
+    els.toggleFacsimilePanel.setAttribute('aria-pressed', String(state.showFacsimilePanel));
+  }
+}
+
+function teiText(root, tag) {
+  const node = root ? qsTEI(root, tag) : null;
+  return node ? node.textContent.replace(/\s+/g, ' ').trim() : '';
+}
+
+function renderAboutFromTEI() {
+  if (!els.aboutContent || !state.corpusDoc) return;
+  const header = qsTEI(state.corpusDoc, 'teiHeader');
+  if (!header) return;
+  const titleStmt = qsTEI(header, 'titleStmt');
+  const publicationStmt = qsTEI(header, 'publicationStmt');
+  const msDesc = qsTEI(header, 'msDesc');
+  const editorialDecl = qsTEI(header, 'editorialDecl');
+  const availability = qsTEI(header, 'availability');
+  const revisionDesc = qsTEI(header, 'revisionDesc');
+  const mainTitle = qsaTEI(titleStmt, 'title').find(n => n.getAttribute('type') === 'main') || qsTEI(titleStmt, 'title');
+  const editor = teiText(titleStmt, 'editor');
+  const repository = teiText(msDesc, 'institution') || teiText(msDesc, 'repository');
+  const idno = teiText(msDesc, 'idno');
+  const summary = teiText(msDesc, 'summary');
+  const origin = teiText(msDesc, 'origin');
+  const project = teiText(header, 'projectDesc');
+  const licence = teiText(availability, 'licence');
+  const availabilityNotes = availability ? qsaTEI(availability, 'p').map(p => p.textContent.replace(/\s+/g, ' ').trim()) : [];
+  const editorialParagraphs = editorialDecl ? qsaTEI(editorialDecl, 'p').map(p => p.textContent.replace(/\s+/g, ' ').trim()) : [];
+  const chars = qsaTEI(header, 'char').map(char => ({
+    name: teiText(char, 'charName'), mapping: teiText(char, 'mapping'), note: teiText(char, 'desc') || teiText(char, 'note')
+  }));
+  const changes = revisionDesc ? qsaTEI(revisionDesc, 'change') : [];
+
+  els.aboutContent.innerHTML = `
+    <section class="about-section"><h3>L’edizione</h3><p><strong>${escapeHTML(mainTitle?.textContent.replace(/\s+/g, ' ').trim() || '')}</strong></p><p>A cura di ${escapeHTML(editor)}. ${escapeHTML(project)}</p></section>
+    <section class="about-section"><h3>Il manoscritto</h3><p><strong>${escapeHTML([repository, idno].filter(Boolean).join(', '))}</strong>. ${escapeHTML(summary)}</p>${origin ? `<p>${escapeHTML(origin)}</p>` : ''}</section>
+    <section class="about-section"><h3>Criteri editoriali</h3>${editorialParagraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</section>
+    ${chars.length ? `<section class="about-section"><h3>Dichiarazione dei caratteri</h3><table class="char-table"><thead><tr><th>Carattere</th><th>Unicode</th><th>Descrizione</th></tr></thead><tbody>${chars.map(c => `<tr><td>${escapeHTML(c.name)}</td><td>${escapeHTML(c.mapping)}</td><td>${escapeHTML(c.note)}</td></tr>`).join('')}</tbody></table></section>` : ''}
+    <section class="about-section"><h3>Pubblicazione e licenza</h3><p>${escapeHTML(teiText(publicationStmt, 'publisher'))}, ${escapeHTML(teiText(publicationStmt, 'date'))}. ${escapeHTML(licence)}</p>${availabilityNotes.map(p => `<p>${escapeHTML(p)}</p>`).join('')}</section>
+    ${changes.length ? `<section class="about-section"><h3>Stato dell’edizione</h3><ul>${changes.map(change => `<li>${escapeHTML(change.getAttribute('when') || '')}: ${escapeHTML(change.textContent.replace(/\s+/g, ' ').trim())}</li>`).join('')}</ul></section>` : ''}
+  `;
+}
+
+function openFacsimileFullscreen() {
+  if (!els.facsimileFullscreen) return;
+  els.facsimileFullscreen.hidden = false;
+  document.body.classList.add('lightbox-open');
+  updateFacsimile(true);
+}
+
+function closeFacsimileFullscreen() {
+  if (!els.facsimileFullscreen) return;
+  els.facsimileFullscreen.hidden = true;
+  document.body.classList.remove('lightbox-open');
 }
 
 function setCurrentView(view) {
@@ -2046,14 +2337,22 @@ function getElementTextForComparison(node, mode = 'reg') {
         const corr = qsTEI(node, 'corr');
         const orig = qsTEI(node, 'orig');
         const reg = qsTEI(node, 'reg');
+        const choiceType = getChoiceAnalysis(node);
 
         const selected = mode === 'orig'
           ? (orig || sic || reg || corr)
           : (reg || corr || orig || sic);
 
-        return selected
-          ? getElementTextForComparison(selected, mode)
-          : getChildTextForComparison(node, mode);
+        if (!selected) return getChildTextForComparison(node, mode);
+
+        // Per le correzioni già presenti nel manoscritto, nel confronto tokenizzato
+        // la modalità “Lezione del manoscritto” usa la lettura risultante della correzione,
+        // non la lezione cancellata. La visualizzazione, invece, continua a mostrare del/add.
+        const comparisonMode = choiceType === 'correzione-manoscritto' && mode === 'orig'
+          ? 'reg'
+          : mode;
+
+        return getElementTextForComparison(selected, comparisonMode);
       }
 
       case 'g': {
@@ -2082,7 +2381,8 @@ function getElementTextForComparison(node, mode = 'reg') {
         return getChildTextForComparison(node, mode);
 
       case 'note':
-        return isChoiceEmendationNote(node) ? '' : getChildTextForComparison(node, mode);
+        // Le note sono metadati editoriali: non devono entrare nel confronto tokenizzato.
+        return '';
 
       case 'pb':
       case 'cb':
@@ -2120,7 +2420,7 @@ function getComparisonHarleyMode() {
 }
 
 function getComparisonHarleyModeLabel() {
-  return state.showOrig ? 'Orig' : 'Reg';
+  return state.showOrig ? 'Lezione del manoscritto' : 'Resa editoriale';
 }
 
 /* ==========================================================================
@@ -2137,6 +2437,29 @@ function normalizeApostrophes(str) {
   return String(str || '')
     .replace(/[’‘`´]/g, "'")
     .replace(/[“”]/g, '"');
+}
+
+
+function expandPhonosyntacticDot(text) {
+  const LETTERS = 'A-Za-zÀ-ÖØ-öø-ÿ';
+  const doubledInitial = 'bb|cc|dd|ff|gg|ll|mm|nn|pp|rr|ss|tt|vv|zz';
+
+  return normalizeApostrophes(text || '')
+    // co·la, co·lla, co·lui, co·llui → co(n) la/lla/lui/llui.
+    // Mantengo co(n) come display, ma normalizeTokenLight lo confronta come "con".
+    .replace(new RegExp('\\bco·([' + LETTERS + ']+)', 'g'), 'co(n) $1')
+    .replace(new RegExp('\\bCo·([' + LETTERS + ']+)', 'g'), 'Co(n) $1')
+    .replace(new RegExp('\\bCO·([' + LETTERS + ']+)', 'g'), 'CO(N) $1')
+
+    // Generalizzazione del raddoppiamento fonosintattico marcato con middle dot:
+    // a·llui, a·lluogo, a·lla, e·lli, o·rribile, i·ssuoi ecc.
+    // diventano due token: a llui, a lluogo, a lla, e lli, o rribile, i ssuoi.
+    // La riduzione llui→lui, lluogo→luogo ecc. avviene poi in normalizeTokenFormal().
+    .replace(new RegExp('\\b([' + LETTERS + ']+)·(' + doubledInitial + '[' + LETTERS + ']*)', 'gi'), '$1 $2')
+
+    // Fallback: ogni altro middle dot tra lettere diventa comunque separatore di token.
+    .replace(new RegExp('([' + LETTERS + '])·([' + LETTERS + '])', 'g'), '$1 $2')
+    .replace(/·/g, ' ');
 }
 
 function normalizeTokenLight(token) {
@@ -2191,8 +2514,10 @@ function normalizeTokenFormal(token) {
 }
 
 function tokenizeComparableText(text) {
-  const normalized = normalizeApostrophes(text || '')
-    .replace(/[«»"“”.,;:!?()\[\]{}]/g, ' ')
+  const normalized = expandPhonosyntacticDot(text || '')
+    // Non elimino le parentesi tonde: servono al display co(n),
+    // mentre normalizeTokenLight le rimuove per il confronto.
+    .replace(/[«»"“”.,;:!?\[\]{}]/g, ' ')
     .replace(/[\n\r\t]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -2472,7 +2797,7 @@ function renderConfrontoView() {
   const harleyModeLabel = getComparisonHarleyModeLabel();
 
   if (els.confrontoPanelTitle) {
-    els.confrontoPanelTitle.textContent = `Confronto Harley / Petrocchi — Canto ${toRoman(state.currentCanto)} · Harley ${harleyModeLabel}`;
+    els.confrontoPanelTitle.textContent = `Confronto Harley / Petrocchi — Canto ${toRoman(state.currentCanto)} · Harley: ${harleyModeLabel}`;
   }
 
   if (!state.petrocchiDoc || !petrocchiCanto) {
@@ -2497,7 +2822,7 @@ function renderConfrontoView() {
   els.confrontoContent.innerHTML = `
     <div class="comparison-mode-note">
       <span class="comparison-mode-pill">Harley ${escapeHTML(harleyModeLabel)}</span>
-      <span>Il confronto usa la stessa lezione selezionata dal toggle <strong>Reg/Orig</strong>: Reg confronta <code>&lt;reg&gt;</code>/<code>&lt;corr&gt;</code>, Orig confronta <code>&lt;orig&gt;</code>/<code>&lt;sic&gt;</code>.</span>
+      <span>Il confronto usa la stessa modalità selezionata dal toggle <strong>Resa editoriale / Lezione del manoscritto</strong>: la resa editoriale legge <code>&lt;reg&gt;</code> o <code>&lt;corr&gt;</code>; la lezione del manoscritto legge <code>&lt;orig&gt;</code> o <code>&lt;sic&gt;</code>.</span>
     </div>
     ${renderComparisonFilters()}
     <div class="comparison-grid comparison-grid-head">
@@ -2577,6 +2902,23 @@ function bindEvents() {
     updateCompletePanelVisibility();
   });
 
+  els.toggleFacsimilePanel?.addEventListener('click', () => {
+    state.showFacsimilePanel = !state.showFacsimilePanel;
+    updateCompletePanelVisibility();
+  });
+
+  els.showCommentHarley?.addEventListener('click', () => {
+    if (state.commentTextWitness === 'harley') return;
+    state.commentTextWitness = 'harley';
+    renderCommentoManuscript();
+  });
+
+  els.showCommentPetrocchi?.addEventListener('click', () => {
+    if (!state.petrocchiDoc || state.commentTextWitness === 'petrocchi') return;
+    state.commentTextWitness = 'petrocchi';
+    renderCommentoManuscript();
+  });
+
   els.cantoSelect.onchange = () => {
     state.currentCanto = parseInt(els.cantoSelect.value);
     if (state.currentView === 'facsimile') renderFacsimileView();
@@ -2589,8 +2931,17 @@ function bindEvents() {
   $('#zoomIn').onclick = () => { state.zoom = Math.min(4, state.zoom + 0.2); applyZoom(); };
   $('#zoomOut').onclick = () => { state.zoom = Math.max(0.3, state.zoom - 0.2); applyZoom(); };
   $('#zoomReset').onclick = () => { state.zoom = 1; applyZoom(); };
+  $('#openFacsimileFullscreen')?.addEventListener('click', openFacsimileFullscreen);
+  $('#closeFacsimileFullscreen')?.addEventListener('click', closeFacsimileFullscreen);
+  $('#fullscreenPrevFolio')?.addEventListener('click', () => setCurrentFolioIdx(state.currentFolioIdx - 1));
+  $('#fullscreenNextFolio')?.addEventListener('click', () => setCurrentFolioIdx(state.currentFolioIdx + 1));
+  els.facsimileFullscreen?.addEventListener('click', e => {
+    if (e.target === els.facsimileFullscreen) closeFacsimileFullscreen();
+  });
 
   const origRegToggle = $('#origRegToggle');
+  $('#toggleLabelReg') && ($('#toggleLabelReg').textContent = 'Resa editoriale');
+  $('#toggleLabelOrig') && ($('#toggleLabelOrig').textContent = 'Lezione del manoscritto');
   if (origRegToggle) {
     origRegToggle.onclick = () => {
       state.showOrig = !state.showOrig;
@@ -2636,6 +2987,7 @@ function bindEvents() {
       hideNotePopup();
       els.searchResults?.classList.remove('visible');
       els.searchInput?.blur();
+      closeFacsimileFullscreen();
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
@@ -2728,19 +3080,21 @@ function bindEvents() {
 async function init() {
   cacheDom();
   try {
-    const [commediaDoc, commentoDoc, marginiDoc, petrocchiDoc] = await Promise.all([
+    const [corpusDoc, commediaDoc, commentoDoc, marginiDoc, petrocchiDoc] = await Promise.all([
+      loadOptionalXML('data/TEIcorpus.xml'),
       loadXML('data/commedia_inferno.xml'),
       loadXML('data/commento_inferno.xml'),
       loadXML('data/margini_inferno.xml'),
       loadOptionalXML('data/testo_petrocchi.xml')
     ]);
 
-    Object.assign(state, { commediaDoc, commentoDoc, marginiDoc, petrocchiDoc });
+    Object.assign(state, { corpusDoc, commediaDoc, commentoDoc, marginiDoc, petrocchiDoc });
     state.cantos = parseCommedia(commediaDoc);
     state.commentary = parseCommentary(commentoDoc);
     state.marginalia = parseMarginalia(marginiDoc);
     state.petrocchiCantos = petrocchiDoc ? parseCommedia(petrocchiDoc) : [];
     state.folioContentMap = buildFolioContentMap(commediaDoc, commentoDoc);
+    renderAboutFromTEI();
 
     els.cantoSelect.innerHTML = state.cantos.map(c => `<option value="${c.n}">Canto ${toRoman(c.n)}</option>`).join('');
 

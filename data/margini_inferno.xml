@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
-	schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
    <teiHeader>
       <fileDesc>
@@ -9,360 +8,226 @@
             <title>Marginalia to Dante’s Inferno according to MS Harley 3459</title>
             <editor resp="transcription, encoding">Serena Malatesta</editor>
          </titleStmt>
-
          <publicationStmt>
             <publisher>University of Padua – Université de Tours</publisher>
             <pubPlace>Padua</pubPlace>
             <date when="2025">2025</date>
          </publicationStmt>
-
          <sourceDesc>
-            <p> This file contains the marginal annotations (verbal and non-verbal) transmitted in
-               MS Harley 3459 alongside Dante’s *Inferno*. Notes are encoded using &lt;note&gt; with
-               @place attributes and are linked to the base text through @target pointers. </p>
+            <p>This file contains the marginal annotations, verbal and non-verbal, transmitted in MS Harley 3459 alongside Dante’s <emph>Inferno</emph>. Notes are encoded using <gi>note</gi> with <att>place</att> and are linked to the base text through <att>target</att> pointers.</p>
          </sourceDesc>
       </fileDesc>
-
       <encodingDesc>
          <projectDesc>
-            <p> This marginal apparatus is encoded following TEI P5 and relies on XInclude to
-               synchronise with the base transcription. All non-verbal signs (piedimosca / capitulum
-               / maniculae) are encoded as custom characters declared in &lt;charDecl&gt;. </p>
+            <p>This marginal apparatus is encoded following TEI P5 and relies on pointers to synchronise with the base transcription. Non-verbal signs are encoded with <gi>g</gi> and declared in <gi>charDecl</gi>.</p>
          </projectDesc>
-
-         
+         <classDecl>
+            <taxonomy xml:id="choice-typology">
+               <category xml:id="normalizzazione">
+                  <catDesc>Normalizzazione grafica, fonetica, fonosintattica o di segmentazione.</catDesc>
+               </category>
+               <category xml:id="correzione-manoscritto">
+                  <catDesc>Correzione presente nella copia, registrata con cancellature, aggiunte o sostituzioni.</catDesc>
+               </category>
+               <category xml:id="errore-copia-non-corretto">
+                  <catDesc>Errore di copia, dittografia, ripetizione o guasto non corretto nella revisione.</catDesc>
+               </category>
+               <category xml:id="variante-edizione-riferimento">
+                  <catDesc>Variante notevole rispetto all’edizione di riferimento.</catDesc>
+               </category>
+            </taxonomy>
+         </classDecl>
+         <charDecl>
+            <char xml:id="piedimosca">
+               <unicodeProp name="Name" value="CAPITULUM"/>
+               <unicodeProp name="Block" value="Supplemental_Punctuation"/>
+               <mapping type="unicode">U+2E3F</mapping>
+               <mapping type="display-fallback">U+204B</mapping>
+               <desc>Medieval capitulum sign.</desc>
+            </char>
+            <char xml:id="middle_dot">
+               <unicodeProp name="Name" value="MIDDLE DOT"/>
+               <unicodeProp name="Block" value="Latin-1 Supplement"/>
+               <mapping type="unicode">U+00B7</mapping>
+               <desc>Editorial phonosyntactic marker.</desc>
+            </char>
+         </charDecl>
       </encodingDesc>
       <profileDesc>
          <langUsage>
             <language ident="it">Medieval Italian</language>
          </langUsage>
       </profileDesc>
-
       <revisionDesc>
-         <change when="2025-03-01"> Initial encoding of verbal and non-verbal marginalia. </change>
+         <change when="2025-03-01">Initial encoding of verbal and non-verbal marginalia.</change>
+         <change when="2026-07-14">Uniformed marginal annotations: each marginal notation is encoded as a note with xml:id, type, place, and target where applicable.</change>
       </revisionDesc>
    </teiHeader>
-
-
-
    <text>
       <body xml:id="margin_inferno">
          <!-- MARGINE INF.1 -->
-         <!-- Carta 2r -->
          <div type="canto" n="1">
-            <pb n="2r" facs="#c2r" corresp="#carta_002r"/>
-
-         <div type="margin" xml:id="Ha_Marg_Inf.01">
-               <p>
-                  <note place="internal_margin">
-                     <ref type="non_verbal" target="#Inf.01.001" corresp="#piedimosca"
-                        xml:id="Ha-An-Ma-Inf.01.001"><g ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.01.002" corresp="#piedimosca"
-                        xml:id="Ha-An-Ma-Inf.01.002"><g ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.01.013" corresp="#piedimosca"
-                        xml:id="Ha-An-Ma-Inf.01.013"><g ref="#piedimosca"/></ref>
-                     <ref type="verbal" target="#Inf.01.032" xml:id="Ha-An-Ma-Inf.01.032"> [32 -
-                        Lonza] lusuria </ref>
-                  </note>
-                  <note place="intercolumn">
-                     <ref type="non_verbal" target="#Inf.01.043" corresp="#piedimosca"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.01.049" corresp="#piedimosca"><g
-                           ref="#piedimosca"/></ref>
-                  </note>
-               </p>
-          
-                 <div type="margin" xml:id="Ha_Marg_Inf.01.041"> <p>
-                 <note place="external_margin">
-                     <ref type="verbal" target="#Inf.01.041" xml:id="Ha-An-Ma-Inf.01.041"> [41]
-                        Pone se per buono ingiunge per la buona sensualità regolata dalla dritta
-                        ragione</ref>
-                  </note> </p>
-                  </div>
-               
-                 <div type="margin" xml:id="Ha_Marg_Inf.01.045"> <p><note place="external_margin">
-                     <ref type="verbal" target="#Inf.01.045" xml:id="Ha-An-Ma-Inf.01.045"> [45 - Leone] </ref> La superbia 
-                  </note></p></div>
-                 <div type="margin" xml:id="Ha_Marg_Inf.01.049"> <p><note place="external_margin">   
-                     <ref type="verbal" target="#Inf.01.049" xml:id="Ha-An-Ma-Inf.01.049"> [49 – Lupa]</ref> L’avarizia 
-                  </note></p></div>
-                  <div type="margin" xml:id="Ha_Marg_Inf.01.052"><p><note place="external_margin">
-                     <ref type="verbal" target="#Inf.01.052" xml:id="Ha-An-Ma-Inf.01.052"> [52] </ref> Pone per la selva questo mondo e la scurità per li peccati 
-                  </note></p></div>
-                <div type="margin" xml:id="Ha_Marg_Inf.01.079"> <p> <note place="external_margin">   
-                     <ref type="verbal" target="#Inf.01.079" xml:id="Ha-An-Ma-Inf.01.079"> [79 - Virgilio] </ref> Cioè la ragione filosofica e naturale quanta per uomo umano e per istudio se ne può avere
-                  </note>
-               </p></div>
+            <div type="margin" xml:id="Ha_Marg_Inf.01">
+               <pb n="2r" facs="#c2r" corresp="#carta_002r"/>
+               <note xml:id="Ha-An-Ma-Inf.01.001" type="non_verbal" place="internal_margin" target="#Inf.01.001" corresp="#piedimosca">
+                  <g ref="#piedimosca"/>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.002" type="non_verbal" place="internal_margin" target="#Inf.01.002" corresp="#piedimosca">
+                  <g ref="#piedimosca"/>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.013" type="non_verbal" place="internal_margin" target="#Inf.01.013" corresp="#piedimosca">
+                  <g ref="#piedimosca"/>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.032" type="verbal" place="internal_margin" target="#Inf.01.032">
+                  <p><ref type="lemma" target="#Inf.01.032"><quote>[32 - Lonza]</quote></ref> lusuria</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.043-nv" type="non_verbal" place="intercolumn" target="#Inf.01.043" corresp="#piedimosca">
+                  <g ref="#piedimosca"/>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.049-nv" type="non_verbal" place="intercolumn" target="#Inf.01.049" corresp="#piedimosca">
+                  <g ref="#piedimosca"/>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.041" type="verbal" place="external_margin" target="#Inf.01.041">
+                  <p><ref type="lemma" target="#Inf.01.041"><quote>[41]</quote></ref> Pone se per buono ingiunge per la buona sensualità regolata dalla dritta ragione.</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.045" type="verbal" place="external_margin" target="#Inf.01.045">
+                  <p><ref type="lemma" target="#Inf.01.045"><quote>[45 - Leone]</quote></ref> La superbia</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.049" type="verbal" place="external_margin" target="#Inf.01.049">
+                  <p><ref type="lemma" target="#Inf.01.049"><quote>[49 – Lupa]</quote></ref> L’avarizia</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.052" type="verbal" place="external_margin" target="#Inf.01.052">
+                  <p><ref type="lemma" target="#Inf.01.052"><quote>[52]</quote></ref> Pone per la selva questo mondo e la scurità per li peccati</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.01.079" type="verbal" place="external_margin" target="#Inf.01.079">
+                  <p><ref type="lemma" target="#Inf.01.079"><quote>[79 - Virgilio]</quote></ref> Cioè la ragione filosofica e naturale quanta per uomo umano e per istudio se ne può avere</p>
+               </note>
             </div>
          </div>
 
          <!-- MARGINE INF.2 -->
          <div type="canto" n="2">
-            <!-- Carta 4r -->
-            <pb n="4r" facs="#c2r" corresp="#carta_004r"/>
-            <cb n="a"/>
             <div type="margin" xml:id="Ha_Marg_Inf.02">
-               <p>
-                  <note place="internal_margin">
-                     <ref type="non_verbal" target="#Inf.02.013" xml:id="Ha-An-Ma-Inf.02.013"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.02.016" xml:id="Ha-An-Ma-Inf.02.016"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.02.022" xml:id="Ha-An-Ma-Inf.02.022"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.02.025" xml:id="Ha-An-Ma-Inf.02.025"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.02.027" xml:id="Ha-An-Ma-Inf.02.027"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.02.028" xml:id="Ha-An-Ma-Inf.02.028"><g
-                           ref="#piedimosca"/></ref>
-                  </note>
-                  <cb n="B"/>
-                  <note place="intercolumn">
-                     <ref type="non_verbal" target="#Inf.02.052" xml:id="Ha-An-Ma-Inf.02.052"><g
-                           ref="#piedimosca"/></ref>
-                     <ref type="non_verbal" target="#Inf.02.076" xml:id="Ha-An-Ma-Inf.02.076"><g
-                           ref="#piedimosca"/></ref>
-                  </note>
-                  <!-- Carta 4v -->
-                  <pb n="4v" facs="#c4v"/>
-                  <cb n="A"/>
-                  <note place="internal_margin">
-                     <ref type="verbal" target="#Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094a">[94] <emph>Per questa
-                        cosa</emph></ref>
-                     <ref type="non_verbal" target="#Inf.02.103" xml:id="Ha-An-Ma-Inf.02.103"><g
-                           ref="#piedimosca"/></ref>
-                  </note>
-                  <note place="inferior_margin">
-                     <ref type="verbal" target="#Inf.02.094" xml:id="Ha-An-Ma-Inf.02.094b"
-                        >Per questa cosa dice essere uscito di ’nferno questa donna è solamente la
-                        carità <add place="supralinear">divina</add> la quale è fondamento di nostra
-                        salute <choice>
-                           <orig><subst>
-                                 <del rend="erased">la prima</del>
-                                 <add>dellalmetre</add>
-                              </subst></orig>
-                           <reg>dell’altre tre</reg>
-                        </choice>, la quale è fondamento di nostra salute. Dell’altre tre sì è la
-                        divina grazia, sentimento e scienzia, lume di teologia: queste utime sono le
-                        tre donne benedette che parlano di lui ne la corte del cielo. Per Lucia la
-                        grazia di Dio misericordiosa e nimica d’ogni crudeltà.</ref>
-                  </note>
-               </p>
+               <pb n="4r" facs="#c2r" corresp="#carta_004r"/>
+               <cb n="a"/>
+               <note xml:id="Ha-An-Ma-Inf.02.013" type="non_verbal" place="internal_margin" target="#Inf.02.013" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.016" type="non_verbal" place="internal_margin" target="#Inf.02.016" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.022" type="non_verbal" place="internal_margin" target="#Inf.02.022" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.025" type="non_verbal" place="internal_margin" target="#Inf.02.025" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.027" type="non_verbal" place="internal_margin" target="#Inf.02.027" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.028" type="non_verbal" place="internal_margin" target="#Inf.02.028" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <cb n="B"/>
+               <note xml:id="Ha-An-Ma-Inf.02.052" type="non_verbal" place="intercolumn" target="#Inf.02.052" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.076" type="non_verbal" place="intercolumn" target="#Inf.02.076" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <pb n="4v" facs="#c4v"/>
+               <cb n="A"/>
+               <note xml:id="Ha-An-Ma-Inf.02.094a" type="verbal" place="internal_margin" target="#Inf.02.094">
+                  <p><ref type="lemma" target="#Inf.02.094"><quote>[94] <emph>Per questa cosa</emph></quote></ref></p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.02.103" type="non_verbal" place="internal_margin" target="#Inf.02.103" corresp="#piedimosca"><g ref="#piedimosca"/></note>
+               <note xml:id="Ha-An-Ma-Inf.02.094b" type="verbal" place="inferior_margin" target="#Inf.02.094">
+                  <p>Per questa cosa dice essere uscito di ’nferno questa donna è solamente la carità <add place="supralinear">divina</add> la quale è fondamento di nostra salute <choice ana="#correzione-manoscritto"><orig><subst><del rend="erased">la prima</del><add>dellalmetre</add></subst></orig><reg>dell’altre tre</reg></choice>, la quale è fondamento di nostra salute. Dell’altre tre sì è la divina grazia, sentimento e scienzia, lume di teologia: queste utime sono le tre donne benedette che parlano di lui ne la corte del cielo. Per Lucia la grazia di Dio misericordiosa e nimica d’ogni crudeltà.</p>
+               </note>
             </div>
          </div>
 
          <!-- MARGINE INF.3 -->
-         <!-- Carta 5v -->
-         <div n="3" type="canto">
-            <pb n="5v" facs="#c5v" corresp="#carta_005v"/>
+         <div type="canto" n="3">
             <div type="margin" xml:id="Ha_Marg_Inf.03">
-               <div type="margin" xml:id="Ha_Marg_Inf.03.052">
-                  <p>
-                     <note place="internal_margin">
-                        <ref type="verbal" target="#Inf.03.052" xml:id="Ha-An-Ma-Inf.03.052"><quote>
-                              [52] <emph>E io che rig<supplied reason="omitted">uardai</supplied>
-                                 ecc.</emph></quote></ref> Nel mondo presente, né già di questa
-                        generazione, una parte è in significazione di merito, per la ’nsigna degli
-                        eletti; l’altra parte è in significazione di punizione, voltando la ’nsegna <choice>
-                           <orig>ttuttavia</orig>
-                           <reg>tuttavia</reg>
-                        </choice> e <subst>
-                           <del rend="erased">erina</del>
-                           <add>ritornando</add>
-                        </subst> e voltando in un proposito, sí come questi dannati, non mai fermati
-                        in uno de’ due propositi, notabilemente mantenersi statosi, cioè che non
-                        furono vivi né ’n bene né ’n male.</note></p>
-               </div>
-
+               <pb n="5v" facs="#c5v" corresp="#carta_005v"/>
+               <note xml:id="Ha-An-Ma-Inf.03.052" type="verbal" place="internal_margin" target="#Inf.03.052">
+                  <p><ref type="lemma" target="#Inf.03.052"><quote>[52] <emph>E io che rig<supplied reason="omitted">uardai</supplied> ecc.</emph></quote></ref> Nel mondo presente, né già di questa generazione, una parte è in significazione di merito, per la ’nsigna degli eletti; l’altra parte è in significazione di punizione, voltando la ’nsegna <choice ana="#normalizzazione"><orig>ttuttavia</orig><reg>tuttavia</reg></choice> e <subst><del rend="erased">erina</del><add>ritornando</add></subst> e voltando in un proposito, sí come questi dannati, non mai fermati in uno de’ due propositi, notabilemente mantenersi statosi, cioè che non furono vivi né ’n bene né ’n male.</p>
+               </note>
                <pb n="6r" facs="#c6r" corresp="#carta_006r"/>
-               <div type="margin" xml:id="Ha_Marg_Inf.03.109">
-                  <p>
-                     <note place="internal_margin">
-                        <ref type="verbal" xml:id="Ha-An-Ma-Inf.03.109">Lo dimonio dimostra al peccatore vivo in Dio molta misericordia e poca giustizia per farlo pecare; ma quand’è morto, li fa tutto l’opposito e vagli col vero e dice: « Tu sse’ pessima persona, e però meriti lo ’nferno e non sperar mai vedere el cielo nella faccia di Dio ». <quote>[109] <emph>Caron
-                                 dimonio</emph></quote>: è interpetrato Caron razionem, cioè per
-                           ragione; per nave: cioè non essere il peccatore in penitenza di suoi
-                           pecati a la morte finale.</ref></note>
-                  </p>
-               </div>
+               <note xml:id="Ha-An-Ma-Inf.03.109" type="verbal" place="internal_margin" target="#Inf.03.109">
+                  <p>Lo dimonio dimostra al peccatore vivo in Dio molta misericordia e poca giustizia per farlo pecare; ma quand’è morto, li fa tutto l’opposito e vagli col vero e dice: « Tu sse’ pessima persona, e però meriti lo ’nferno e non sperar mai vedere el cielo nella faccia di Dio ». <ref type="lemma" target="#Inf.03.109"><quote>[109] <emph>Caron dimonio</emph></quote></ref>: è interpetrato Caron razionem, cioè per ragione; per nave: cioè non essere il peccatore in penitenza di suoi pecati a la morte finale.</p>
+               </note>
             </div>
          </div>
 
          <!-- MARGINE INF.4 -->
-         <div n="4" type="canto">
+         <div type="canto" n="4">
             <div type="margin" xml:id="Ha_Marg_Inf.04">
-               <div type="margin" xml:id="Ha_Marg_Inf.04.053">
-                  <p>
-                     <note place="intercolumn">
-                        <ref type="verbal" target="#Inf.04.053" xml:id="Ha-An-Ma-Inf.04.053"><quote>
-                              [53] <emph>Quasi vuol dire che per 3 modi si soleva
-                              salvare</emph></quote></ref> ma tutti a un fine dirizzati, cioè a la
-                        fede di Christo. E questo è parlare d’Ugho da San Vitore, che dice che al
-                        tempo di Moisè era a sufficienza credere Idio per sua misericordia riparare.
-                        Questo era da Moisè inanzi. E da Moisè in qua credere Idio manderebe Messia,
-                        e verrebe a riparare la legge. E venuto che fu Christo, credere per lo
-                        battesimo chome llui ordinò.</note></p>
-               </div>
-               <div type="margin" xml:id="Ha_Marg_Inf.04.087">
-                  <p>
-                     <note place="external_margin">
-                        <ref type="verbal" target="#Inf.04.087" xml:id="Ha-An-Ma-Inf.04.087"><quote> 
-                              [87] <emph>Homerio per la giustizia</emph></quote></ref>; <ref
-                           type="verbal" target="#Inf.04.088" xml:id="Ha-An-Ma-Inf.04.088"><quote>
-                              [88] <emph>Horazio per la prudenza</emph></quote></ref>; <ref
-                           type="verbal" target="#Inf.04.089" xml:id="Ha-An-Ma-Inf.04.089"><quote>
-                              [89] <emph>Hovidio per la temperanza</emph></quote></ref>; <ref
-                           type="verbal" target="#Inf.04.090" xml:id="Ha-An-Ma-Inf.04.090"><quote>
-                              [90] <emph>Lucano per la fortezza</emph></quote></ref>. <ref
-                           type="verbal" target="#Inf.04.121" xml:id="Ha-An-Ma-Inf.04.121">Sì che
-                           aggiunto a queste IIII la ragione filosofica e naturale e lo buono e
-                           diritto ingegno, con queste sei si può cominciare a fare buone
-                           operazioni. <quote> [121] <emph>Eletra pone per la madre de’
-                              forti</emph></quote></ref>; <ref type="verbal" target="#Inf.04.122"
-                           xml:id="Ha-An-Ma-Inf.04.122"><quote> [122] <emph>Ettor significa la
-                                 costanza</emph></quote></ref>; <ref type="verbal"
-                           target="#Inf.04.123" xml:id="Ha-An-Ma-Inf.04.123"><quote> [123]
-                                 <emph>Enea la lunganimità</emph></quote></ref>; <ref type="verbal"
-                           target="#Inf.04.124" xml:id="Ha-An-Ma-Inf.04.124"><quote> [124]
-                                 <emph>Cammilla castità e verginità</emph></quote></ref>; <ref
-                           type="verbal" target="#Inf.04.125" xml:id="Ha-An-Ma-Inf.04.125"><quote>
-                              [125] <emph>Pantasalea pudicizia</emph></quote>, cioè non si
-                           congiungere con uomo umano, se non per avere figliuoli. E essa venne a
-                           tTroia per avere figliuoli d’Ettor, ma non poté, il perché essa morì
-                           vergine; e fu donna di grandissima vertù.</ref>
-                        <ref type="verbal" target="#Inf.04.126" xml:id="Ha-An-Ma-Inf.04.126"><quote>
-                              [126] <emph>Lo re Latino e</emph></quote></ref>
-                        <ref type="verbal" target="#Inf.04.127" xml:id="Ha-An-Ma-Inf.04.127"><quote>
-                              [127] <emph>Lavina pone per la inteligenza</emph></quote></ref>; <ref
-                           type="verbal" target="#Inf.04.128" xml:id="Ha-An-Ma-Inf.04.128"><quote>
-                              [128] <emph>Bruto per la fortezza acquistata e abituata ne
-                                 l’animo</emph></quote></ref>. <ref type="verbal"
-                           target="#Inf.04.129" xml:id="Ha-An-Ma-Inf.04.129"><quote> [129]
-                                 <emph>Lucrezia, Iulia, Marzia, Cornelia</emph></quote>: quattro
-                           romane caste e con virtù quanta essere potesse</ref>;
-                             <ref type="verbal" target="#Inf.04.130" xml:id="Ha-An-Ma-Inf.04.130">
-                     <quote>[130] <emph>il Saladino fu uomo di tanta vertù</emph></quote>, che vuole il poeta che fusse solo cioè che i·llui furono tutte opere di virtù.
-                  </ref>
-
-                  <ref type="verbal" target="#Inf.03.060" xml:id="Ha-An-Ma-Inf.03.060">
-                     <quote>[Inf.03.060] <emph>Papa Celestrino</emph></quote></ref> pone per uom idioto e però lo mette tra la scongiurati.
-
-                  <ref type="verbal" target="#Inf.06.013" xml:id="Ha-An-Ma-Inf.06.013">
-                     <quote>[Inf.06.013] <emph>Cerbero</emph></quote> </ref> per lo vizio de la gola.
-                  </note>
-                  </p>
-               </div>
-
+               <note xml:id="Ha-An-Ma-Inf.04.053" type="verbal" place="intercolumn" target="#Inf.04.053">
+                  <p><ref type="lemma" target="#Inf.04.053"><quote>[53] <emph>Quasi vuol dire che per 3 modi si soleva salvare</emph></quote></ref> ma tutti a un fine dirizzati, cioè a la fede di Christo. E questo è parlare d’Ugho da San Vitore, che dice che al tempo di Moisè era a sufficienza credere Idio per sua misericordia riparare. Questo era da Moisè inanzi. E da Moisè in qua credere Idio manderebe Messia, e verrebe a riparare la legge. E venuto che fu Christo, credere per lo battesimo chome llui ordinò.</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.04.087" type="verbal" place="external_margin" target="#Inf.04.087 #Inf.04.088 #Inf.04.089 #Inf.04.090 #Inf.04.121 #Inf.04.122 #Inf.04.123 #Inf.04.124 #Inf.04.125 #Inf.04.126 #Inf.04.127 #Inf.04.128 #Inf.04.129 #Inf.04.130 #Inf.03.060 #Inf.06.013">
+                  <p><ref type="lemma" target="#Inf.04.087"><quote>[87] <emph>Homerio per la giustizia</emph></quote></ref>; <ref type="lemma" target="#Inf.04.088"><quote>[88] <emph>Horazio per la prudenza</emph></quote></ref>; <ref type="lemma" target="#Inf.04.089"><quote>[89] <emph>Hovidio per la temperanza</emph></quote></ref>; <ref type="lemma" target="#Inf.04.090"><quote>[90] <emph>Lucano per la fortezza</emph></quote></ref>. <ref type="lemma" target="#Inf.04.121">Sì che aggiunto a queste IIII la ragione filosofica e naturale e lo buono e diritto ingegno, con queste sei si può cominciare a fare buone operazioni. <quote>[121] <emph>Eletra pone per la madre de’ forti</emph></quote></ref>; <ref type="lemma" target="#Inf.04.122"><quote>[122] <emph>Ettor significa la costanza</emph></quote></ref>; <ref type="lemma" target="#Inf.04.123"><quote>[123] <emph>Enea la lunganimità</emph></quote></ref>; <ref type="lemma" target="#Inf.04.124"><quote>[124] <emph>Cammilla castità e verginità</emph></quote></ref>; <ref type="lemma" target="#Inf.04.125"><quote>[125] <emph>Pantasalea pudicizia</emph></quote>, cioè non si congiungere con uomo umano, se non per avere figliuoli. E essa venne a tTroia per avere figliuoli d’Ettor, ma non poté, il perché essa morì vergine; e fu donna di grandissima vertù.</ref> <ref type="lemma" target="#Inf.04.126"><quote>[126] <emph>Lo re Latino e</emph></quote></ref> <ref type="lemma" target="#Inf.04.127"><quote>[127] <emph>Lavina pone per la inteligenza</emph></quote></ref>; <ref type="lemma" target="#Inf.04.128"><quote>[128] <emph>Bruto per la fortezza acquistata e abituata ne l’animo</emph></quote></ref>. <ref type="lemma" target="#Inf.04.129"><quote>[129] <emph>Lucrezia, Iulia, Marzia, Cornelia</emph></quote>: quattro romane caste e con virtù quanta essere potesse</ref>; <ref type="lemma" target="#Inf.04.130"><quote>[130] <emph>il Saladino fu uomo di tanta vertù</emph></quote>, che vuole il poeta che fusse solo cioè che i·llui furono tutte opere di virtù.</ref> <ref type="cross_reference" target="#Inf.03.060"><quote>[Inf.03.060] <emph>Papa Celestrino</emph></quote></ref> pone per uom idioto e però lo mette tra la scongiurati. <ref type="cross_reference" target="#Inf.06.013"><quote>[Inf.06.013] <emph>Cerbero</emph></quote></ref> per lo vizio de la gola.</p>
+               </note>
                <pb n="7v" facs="#c7v" corresp="#carta_007v"/>
-               <div type="margin" xml:id="Ha_Marg_Inf.04.084">
-                  <p>
-                     <note place="inferior_margin">
-                        <ref type="verbal" target="#Inf.04.084" xml:id="Ha-An-Ma-Inf.04.084"><quote>
-                              [84] <emph>Né ttrista né llieta</emph></quote></ref>: non trista
-                        perché non avevon gran pene arispetto delli altri, e non lieti perché non
-                        avevono la groria e dice <ref type="verbal" target="#Inf.04.083"
-                           xml:id="Ha-An-Ma-Inf.04.083"><quote> [83]
-                           <emph>grandi</emph></quote></ref> per istudio, per vertù, per iscienzia.
-                           <ref type="verbal" target="#Inf.04.088" xml:id="Ha-An-Ma-Inf.04.088b"> <quote> [88] <emph>Homero pone co la spada</emph></quote> per un de’
-                           primi singulari poeti, e dice che tutti a quattro gli fano onore perché
-                           studiò e’ loro libri e nella loro gentilezza di scienza e sapienza, onde
-                           ne li resurge grande onore.</ref> Per <ref type="verbal"
-                           target="#Inf.04.095" xml:id="Ha-An-Ma-Inf.04.095"><quote> [95]
-                                 <emph>l’altissimo canto</emph></quote> la poesia non per grandezza,
-                           ma per l’entrare fittivo.</ref>
-                     </note>
-                  </p>
-               </div>
-
-
-               <div type="margin" xml:id="Ha_Marg_Inf.04.000">
-                  <p>
-                     <note place="inferior_margin"> Due pene hanno e’ peccatori: ja di perduta
-                        visione di Dio; ija di sentita pena. </note>
-                  </p>
-               </div>
+               <note xml:id="Ha-An-Ma-Inf.04.084" type="verbal" place="inferior_margin" target="#Inf.04.084 #Inf.04.083 #Inf.04.088 #Inf.04.095">
+                  <p><ref type="lemma" target="#Inf.04.084"><quote>[84] <emph>Né ttrista né llieta</emph></quote></ref>: non trista perché non avevon gran pene arispetto delli altri, e non lieti perché non avevono la groria e dice <ref type="lemma" target="#Inf.04.083"><quote>[83] <emph>grandi</emph></quote></ref> per istudio, per vertù, per iscienzia. <ref type="lemma" target="#Inf.04.088"><quote>[88] <emph>Homero pone co la spada</emph></quote> per un de’ primi singulari poeti, e dice che tutti a quattro gli fano onore perché studiò e’ loro libri e nella loro gentilezza di scienza e sapienza, onde ne li resurge grande onore.</ref> Per <ref type="lemma" target="#Inf.04.095"><quote>[95] <emph>l’altissimo canto</emph></quote> la poesia non per grandezza, ma per l’entrare fittivo.</ref></p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.04.000" type="verbal" place="inferior_margin" target="#Inferno_4">
+                  <p>Due pene hanno e’ peccatori: ja di perduta visione di Dio; ija di sentita pena.</p>
+               </note>
             </div>
+         </div>
 
-             <!-- MARGINE INF.5 -->
-          <div n="5" type="canto">
+         <!-- MARGINE INF.5 -->
+         <div type="canto" n="5">
             <div type="margin" xml:id="Ha_Marg_Inf.05">
-               <div type="margin" xml:id="Ha_Marg_Inf.05.025">
                <pb n="8r" facs="#c8r" corresp="#carta_008r"/>
-                  <p>
-                     <note place="external_margin">
-                        <ref type="verbal" target="#Inf.05.025" xml:id="Ha-An-Ma-Inf.05.025">
-                              Ogni volontà è appetito e non ogni appetito volontà. </ref>
-                     </note>
-                  </p>
-               </div>
-               <div type="margin" xml:id="Ha_Marg_Inf.05.025a">
-                  <p>
-                     <note place="external_margin">
-                        <ref type="verbal" target="#Inf.05.025" xml:id="Ha-An-Ma-Inf.05.025a">
-                        Tre amicizie ha dio co<g ref="#middle_dot">·</g>la natura: 1) naturalmente 2) moralmente 3) spiritualmente. <lb/>
-                        E però perché non pigli errore dico che Dio fu loro amico: prima in dar loro l’essere; 1/2 in dar loro la inteligenzia del libero albitrio e senno naturale; 1/3 e ll’amicizia de la grolia sua e questa nel nostro albitrio che chi la vuole l’ha. <lb/>
-                        E però dice se Dio ci fuste amico cioè a l’ utima parte e no ’sendo amico Idio loro non Esau direbe e loro prieghi. E qui fa parlare la donna: perché tra atti di parlare a la donna più conderenti a lloro *
-                        </ref>
-                        
-                     </note>
-                     <note place="inferior_margin">
-                     <ref type="verbal" target="#Inf.05.025" xml:id="Ha-An-Ma-Inf.05.025b">
-                     *quando si truovano i·miseria. Primo sono più ppronte nel parlare e piutosto rispondono che l’uomo; lo ij che nel parlare sanno meglio conferire piatà e ttenerezza che subito piangono, lo iij si è che trovandosi i·miseria come qui finge essere più sfacciata che l’uomo e meno si vergogna.</ref></note>
-                  </p>
-               </div>
-               <div type="margin" xml:id="Ha_Marg_Inf.05.019">
-                  <p>
-                     <note place="inferior_margin">
-                        <ref type="verbal" target="#Inf.05.019" xml:id="Ha-An-Ma-Inf.05.019">
-                        <emph>Guarda com’entri </emph>ecc. cioè com’entri nel peccato che ttu non ti confidi in limosine, che ttu ffaccia tu o altri per te che non ti vale nulla se al fine muori dannato.
-                        </ref>
-                     </note>                  
-                  </p>
-               </div>
-               </div>
+               <note xml:id="Ha-An-Ma-Inf.05.025" type="verbal" place="external_margin" target="#Inf.05.025">
+                  <p>Ogni volontà è appetito e non ogni appetito volontà.</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.05.025a" type="verbal" place="external_margin" target="#Inf.05.025">
+                  <p>Tre amicizie ha dio co<g ref="#middle_dot"/>la natura: 1) naturalmente 2) moralmente 3) spiritualmente. <lb/> E però perché non pigli errore dico che Dio fu loro amico: prima in dar loro l’essere; 1/2 in dar loro la inteligenzia del libero albitrio e senno naturale; 1/3 e ll’amicizia de la grolia sua e questa nel nostro albitrio che chi la vuole l’ha. <lb/> E però dice se Dio ci fuste amico cioè a l’ utima parte e no ’sendo amico Idio loro non Esau direbe e loro prieghi. E qui fa parlare la donna: perché tra atti di parlare a la donna più conderenti a lloro *</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.05.025b" type="verbal" place="inferior_margin" target="#Inf.05.025">
+                  <p>*quando si truovano i·miseria. Primo sono più ppronte nel parlare e piutosto rispondono che l’uomo; lo ij che nel parlare sanno meglio conferire piatà e ttenerezza che subito piangono, lo iij si è che trovandosi i·miseria come qui finge essere più sfacciata che l’uomo e meno si vergogna.</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.05.019" type="verbal" place="inferior_margin" target="#Inf.05.019">
+                  <p><emph>Guarda com’entri </emph>ecc. cioè com’entri nel peccato che ttu non ti confidi in limosine, che ttu ffaccia tu o altri per te che non ti vale nulla se al fine muori dannato.</p>
+               </note>
+            </div>
          </div>
 
-                  <!-- MARGINE INF.6 -->
-          <div n="6" type="canto">
+         <!-- MARGINE INF.6 -->
+         <div type="canto" n="6">
             <div type="margin" xml:id="Ha_Marg_Inf.06">
-               <div type="margin" xml:id="Ha_Marg_Inf.06.025">
                <pb n="9v" facs="#c9v" corresp="#carta_009v"/>
-                  <p>
-                     <note place="inferior_margin">
-                        <ref type="verbal" target="#Inf.06.065" xml:id="Ha-An-Ma-Inf.06.065">
-                              <emph>Benvenuto da Imola]</emph>
-                             Messer Vieri de’ Cerchi fu capo di parte bianca e messer Corso Donati di parte nera. Pervenono al sangue, finché messer Corso fittivamente pregava papa Bonifacio, suo grande amico, che ponesse legge a Firenza aciò che discordia non fusse; e questo faceva per farsi ser e allirivsti ché messer Veri co molta uccisione cacciorono messer Corso e suoi selvaggi da perché di poco tempo inanzi eran venuti; e’ Cerchi dil Pivieri da Cone; e dice <emph><choice><orig>selvaggi <del rend="erased">ai</del></orig><reg>selvaggi</reg></choice> </emph> a rispetto de la casa de’ Donati. Di nuovo messer Corso mosse papa Bonifazio, e mandocci Carlo Sanzaterra franzese, sí che potesse tornare e stare in Firenza in pace. E ttornato in Firenza, a tutti mostrava gra’ benignità; e ’n tempo di 3 anni cacciò messer Veri e ’ suoi fuori, e ne la cacciata fu morto messer Veri.</ref>
-                     </note>
-                  </p>
-               </div>
-               <div type="margin" xml:id="Ha_Marg_Inf.06.073">
+               <note xml:id="Ha-An-Ma-Inf.06.065" type="verbal" place="inferior_margin" target="#Inf.06.065">
+                  <p><emph>Benvenuto da Imola]</emph> Messer Vieri de’ Cerchi fu capo di parte bianca e messer Corso Donati di parte nera. Pervenono al sangue, finché messer Corso fittivamente pregava papa Bonifacio, suo grande amico, che ponesse legge a Firenza aciò che discordia non fusse; e questo faceva per farsi ser e allirivsti ché messer Veri co molta uccisione cacciorono messer Corso e suoi selvaggi da perché di poco tempo inanzi eran venuti; e’ Cerchi dil Pivieri da Cone; e dice <emph><choice ana="#correzione-manoscritto"><orig>selvaggi <del rend="erased">ai</del></orig><reg>selvaggi</reg></choice></emph> a rispetto de la casa de’ Donati. Di nuovo messer Corso mosse papa Bonifazio, e mandocci Carlo Sanzaterra franzese, sí che potesse tornare e stare in Firenza in pace. E ttornato in Firenza, a tutti mostrava gra’ benignità; e ’n tempo di 3 anni cacciò messer Veri e ’ suoi fuori, e ne la cacciata fu morto messer Veri.</p>
+               </note>
                <pb n="10r" facs="#c10r" corresp="#carta_010r"/>
-                  <p>
-                     <note place="inferior_margin">
-                        <ref type="verbal" target="#Inf.06.073" xml:id="Ha-An-Ma-Inf.06.073">
-                              Dice Benvenuto che per que’ due giusti non entesi Dante volse dire di se e di messer Guido di messer Cavalcante Cavalcanti e ben che noi voglian dire che più assai ve ne fusse non di meno e luulgo metteva questi due innanzi a tutti. </ref>
-                     </note>
-                  </p>
-               </div>
-               </div>
+               <note xml:id="Ha-An-Ma-Inf.06.073" type="verbal" place="inferior_margin" target="#Inf.06.073">
+                  <p>Dice Benvenuto che per que’ due giusti non entesi Dante volse dire di se e di messer Guido di messer Cavalcante Cavalcanti e ben che noi voglian dire che più assai ve ne fusse non di meno e luulgo metteva questi due innanzi a tutti.</p>
+               </note>
             </div>
          </div>
 
-
-
-  <!-- MARGINE INF.7 -->
-          <div n="7" type="canto">
+         <!-- MARGINE INF.7 -->
+         <div type="canto" n="7">
             <div type="margin" xml:id="Ha_Marg_Inf.07">
-               <div type="margin" xml:id="Ha_Marg_Inf.07.001">
-               <pb n="10v" facs="#c10r" corresp="#carta_010r"/>
-                  <p>
-
-                  </p>
-               </div>
+               <pb n="10r" facs="#c10r" corresp="#carta_010r"/>
+               <note xml:id="Ha-An-Ma-Inf.07.001" type="verbal" place="inferior_margin" target="#Inf.07.001">
+                  <p><ref type="lemma" target="#Inf.07.001"><quote>[1] <emph>Pape Satàn</emph></quote></ref> salama a pastori de la Chiesa come fu Satànas contra Christo e qui dice d’alcuni cherici che si son dati a beni temporali che di ragione non tocano a cherici e vieno da ignoranza</p>
+               </note>
+               <pb n="10v" facs="#c10v" corresp="#carta_010v"/>
+               <note xml:id="Ha-An-Ma-Inf.07.097" type="verbal" place="inferior_margin" target="#Inf.07.097 #Inf.07.098 #Inf.01.037">
+                  <p><ref type="lemma" target="#Inf.07.097"><quote>[97] <emph>A maggior pietà</emph></quote></ref>, <ref type="lemma" target="#Inf.07.098"><quote>[98] <emph>ogni stella cade che saliva</emph></quote></ref>, <ref type="cross_reference" target="#Inf.01.037"><quote>[Inf. I 37] <emph>temp’era nel principio del mattino</emph></quote></ref> che andava verso la luce, ora cadevano le stelle per chè va verso le tenebre dove le stelle ragguono e non fanno lume. E un medesimo effetto cioè che verso la luce va partendosi da’ pecati e acostensi alcuirui; e verso le tenebre va per avere ’sperienza de le punizioni de’ danati per infiamare se medesimo a le virtù.</p>
+               </note>
             </div>
          </div>
 
-
+         <!-- MARGINE INF.8 -->
+         <div type="canto" n="8">
+            <div type="margin" xml:id="Ha_Marg_Inf.08">
+               <pb n="11v" facs="#c11v" corresp="#carta_011v"/>
+               <note xml:id="Ha-An-Ma-Inf.08.061" type="verbal" place="internal_margin" target="#Inf.08.061">
+                  <p><ref type="lemma" target="#Inf.08.061"><quote>[61 Filippo Argenti] de li Aldimari</quote></ref></p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.08.001" type="verbal" place="inferior_margin" target="#Inf.08.001">
+                  <p>De uno sette capitoli passati ha ttrattato de’ pecatori ignoranti; ora tratta de’ maliziosi e comincia ne la città di Dite, cioè ricca, ricca di pene. Quivi per la <emph>barchetta</emph> s’intende la poesia, co<g ref="#middle_dot"/>la qual v’entra e’ cerchi tutto lo ’nferno. <emph>Fregïàs</emph> fu ccrudele e iracundo segnore ne le parti di Tersia. <emph>Filipo Argenti</emph> ferava el cavallo d’argento nimico d’ogni pacifico sta<supplied reason="omitted" resp="#SM">to</supplied> massime del <supplied reason="omitted" cert="medium" resp="#SM">comune</supplied> fiorentino; e ffu a ssuo tempo e conobelo.</p>
+               </note>
+               <pb n="12r" facs="#c12r" corresp="#carta_012r"/>
+               <cb n="a"/>
+               <note xml:id="Ha-An-Ma-Inf.08.094" type="non_verbal" place="internal_margin" target="#Inf.08.094">
+                  <p><quote>Richiamo ^</quote></p>
+               </note>
+            </div>
+         </div>
       </body>
    </text>
 </TEI>

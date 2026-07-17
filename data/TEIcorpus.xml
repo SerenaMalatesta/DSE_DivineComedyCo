@@ -9,21 +9,47 @@
            xmlns:xi="http://www.w3.org/2001/XInclude"
            xml:id="Harley3459_Inferno_corpus">
 
-   <teiHeader>
+   <teiHeader xml:lang="it">
       <fileDesc>
          <titleStmt>
-            <title>TEI Corpus: Dante Alighieri, Commedia - Inferno (BL, MS Harley 3459)</title>
-            <editor resp="transcription encoding scholarly-editing">Serena Malatesta</editor>
+            <title type="main">Edizione scientifica digitale della <hi rend="italic">Commedia</hi> e del commento volgare nel ms. London, British Library, Harley 3459</title>
+            <title type="short">Commedia e Chiose volgarizzate — Harley 3459</title>
+            <author>Dante Alighieri</author>
+            <editor role="principal" ref="#SM">Serena Malatesta</editor>
+            <respStmt><resp>trascrizione, codifica TEI, studio filologico e progettazione dell’edizione digitale</resp><persName xml:id="SM">Serena Malatesta</persName></respStmt>
+            <funder>Università degli Studi di Padova</funder>
          </titleStmt>
          <publicationStmt>
-            <publisher>University of Padua – Fontegaia</publisher>
-            <pubPlace>Padua</pubPlace>
-            <date when="2025">2025</date>
+            <publisher>Università degli Studi di Padova; Université de Tours</publisher>
+            <pubPlace>Padova; Tours</pubPlace>
+            <date when="2026">2026</date>
+            <availability status="restricted">
+               <licence target="https://creativecommons.org/licenses/by-nc-sa/4.0/">Testi e codifica distribuiti con licenza CC BY-NC-SA 4.0.</licence>
+               <p>Le riproduzioni digitali del manoscritto, realizzate con mezzi propri, sono pubblicate su autorizzazione della British Library e restano soggette alle condizioni stabilite dall’istituzione conservatrice.</p>
+            </availability>
          </publicationStmt>
          <sourceDesc>
-            <p>TEI Corpus unifying the base text, commentary, and marginalia of Dante's Inferno from MS Harley 3459 (British Library).</p>
+            <msDesc xml:id="Harley3459">
+               <msIdentifier><country>Regno Unito</country><settlement>Londra</settlement><institution>British Library</institution><repository>Manuscripts</repository><idno>Harley 3459</idno></msIdentifier>
+               <msContents><summary>Testimone della <hi rend="italic">Commedia</hi> di Dante Alighieri, corredato da un commento volgare derivato dalle chiose latine dell’Anonimo Lombardo e da annotazioni marginali verbali e non verbali. Il corpus digitale comprende attualmente i materiali codificati dell’Inferno; l’integrazione del Purgatorio è in corso.</summary></msContents>
+               <physDesc><objectDesc form="codex"><supportDesc material="paper"><support>Manoscritto cartaceo.</support></supportDesc><layoutDesc><layout columns="2">Testo e commento disposti prevalentemente su due colonne.</layout></layoutDesc></objectDesc><handDesc><p>Scrittura mercantesca; sono distinti nella codifica l’intervento del copista e quello del correttore.</p></handDesc></physDesc>
+               <history><origin><origDate notBefore="1401" notAfter="1500" precision="low">XV secolo</origDate><p>La datazione e la localizzazione richiedono ulteriore verifica catalografica e paleografica.</p></origin></history>
+            </msDesc>
          </sourceDesc>
       </fileDesc>
+      <encodingDesc>
+         <projectDesc><p>Il corpus riunisce, mediante XInclude, la trascrizione del testo dantesco, il commento volgare e i marginalia. La separazione dei documenti sorgente consente di riutilizzare i dati TEI indipendentemente dall’interfaccia di visualizzazione.</p></projectDesc>
+         <editorialDecl>
+            <p>L’edizione adotta una trascrizione interpretativa con conservazione selettiva delle forme del manoscritto. Le lezioni del testimone e gli interventi editoriali sono distinti mediante <gi>choice</gi>, <gi>orig</gi>/<gi>reg</gi> e <gi>sic</gi>/<gi>corr</gi>; aggiunte e cassature sono rappresentate mediante <gi>add</gi> e <gi>del</gi>.</p>
+            <normalization><p>Tra gli interventi dichiarati: eliminazione di <mentioned>h</mentioned> nelle grafie <mentioned>cha</mentioned>, <mentioned>cho</mentioned>, <mentioned>gha</mentioned>, <mentioned>gho</mentioned>; riduzione di <mentioned>lgl</mentioned> e <mentioned>ngn</mentioned> a <mentioned>gl</mentioned> e <mentioned>gn</mentioned>; resa di <mentioned>et</mentioned> con <mentioned>e</mentioned>. Il punto mediano segnala fenomeni fonosintattici.</p></normalization>
+         </editorialDecl>
+         <charDecl>
+            <char xml:id="middle-dot"><charName>MIDDLE DOT</charName><mapping type="unicode">U+00B7</mapping><desc>Marcatore editoriale di fenomeni fonosintattici.</desc></char>
+            <char xml:id="reversed-pilcrow"><charName>REVERSED PILCROW SIGN</charName><mapping type="unicode">U+204B</mapping><desc>Segno impiegato nell’interfaccia per i marginalia non verbali di tipo capitulum.</desc></char>
+         </charDecl>
+      </encodingDesc>
+      <profileDesc><langUsage><language ident="it">Italiano</language><language ident="la">Latino</language></langUsage><textClass><keywords scheme="local"><term>edizione scientifica digitale</term><term>filologia dantesca</term><term>commento volgare</term><term>TEI XML</term></keywords></textClass></profileDesc>
+      <revisionDesc status="in-progress"><change when="2026-07-14" who="#SM">Ampliamento del teiHeader e predisposizione della sua visualizzazione dinamica nell’interfaccia.</change><change when="2025" who="#SM">Prima costituzione del corpus TEI.</change></revisionDesc>
    </teiHeader>
 
    <xi:include href="commedia_inferno.xml" parse="xml"/>

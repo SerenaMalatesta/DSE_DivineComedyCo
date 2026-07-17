@@ -666,13 +666,73 @@
             <!--Canto VII -->
             <div n="7" type="commentary" xml:id="Ha_An_Inf.07">
                <!-- Carta 8va -->
-               <pb n="8v" facs="#c8v"/>
+               <pb n="11r" facs="#11r"/>
                <cb n="a"/>
                <div type="commentary" xml:id="Ha_An_Inf.07.001"> 
-                  <p><ref target="Inf.07.001"><quote>[1]<emph> -- </emph></quote></ref>. lorem ipsum</p>
+                  <p><ref target="Inf.07.001"><quote>[1]<emph> Pape Satàn, pape Satàn aleppe </emph></quote></ref>. In questa parte pone l’autore questa boce <emph>pape</emph> per una parte di grammatica la qual si dice interazzione e significa gridare e maraviglia. <emph>Satàn</emph> è un demonio e questo demonio Pluto grida e dice pape Satàn quasi vuol dire: “ correte, Satàn corre a veder maraviglia dell’avenimento di Virgilio e di Dante”. <ref target="Inf.07.001"><quote>[1] <emph>Aleppe</emph></quote></ref>. Questo è nome greco.</p>
+               </div>
+               <cb n="b"/>
+               <div type="commentary" xml:id="Ha_An_Inf.07.011"> 
+                  <p><ref target="Inf.07.011"><quote>[11]<emph> Volsi nell’alto là dove Michele </emph></quote></ref>.  Dice in questa parte che volontà di Dio è che San Michele percosse e discacciò lo stupro, cioè, el demonio, il quale stava acostato a le bilance co le quali San Michele pesava l’anime e ancora per che Samichele inanzi a ttutti gli altri angioli combatteo co<g ref="#middle_dot"/>Lucifero quando fu cacciato di Paradiso. </p>
+               </div>
+                 <div type="commentary" xml:id="Ha_An_Inf.07.028"> 
+                  <p><ref target="Inf.07.028"><quote>[28]<emph> Percotevansi incontro e poscia pur lì </emph></quote></ref>. In questa parte dice che chi vide e prodighi e gli avari in un cerchio e continuamente corrono l’un contra l’altro in fin che si scontrano insieme e allora si percuotono col petto sí forte che ll’una parte dall’altra si parte e gridano li prodighi e dicono agli avari: <ref target="Inf.07.030"><quote>[30] <emph>« Perché tieni? </emph></quote></ref>. cioè perché fusti tenaci e avari rispondono: <ref target="Inf.07.030"><quote>[30] <emph>« Perché burli? »</emph></quote></ref>, cioè perché fusti scialaquatori e in questo modo eran puniti continovamente. </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.07.057"> 
+                  <p><ref target="Inf.07.057"><quote>[57]<emph> Col pugno chiuso </emph></quote></ref>. Intende degli avari. </p>
+                  <p><ref target="Inf.07.057"><quote>[57] <emph>Questi co’ crini mozzi</emph></quote></ref>. Intende de’ prodighi e quali risurgerano col capo tosato cioè nel dì del giudizio. </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.07.072"> 
+                  <p><ref target="Inf.07.072"><quote>[72]<emph> Or vo’ che ttu mie sentenza ne ‘mbocche</emph></quote></ref>. In questa parte dice che Dio concedette a la fortuna [di] reggere e governare il mondo, cioè li beni temporali; sí come a le pianete splendore e finire suo corso alli forti giudicii a la qual dice non poter l’uomo contastare e questo brievemente vuol dire insino a quel testo che dice: <ref target="Inf.07.085"><quote>[85] <emph>QVostro saper non ha contasto a llei.</emph></quote></ref> </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.07.091"> 
+                  <p><ref target="Inf.07.091"><quote>[91]<emph>  Questa colei che ttanto è posta in croce</emph></quote></ref>. In questa parte riplende l’autore li savi uomini e quali dispregiano la Fortuna, ma la Fortuna non cura questo.</p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.07.107"> 
+                  <p><ref target="Inf.07.107"><quote>[107]<emph> Questo triste ruscello, quand’ è disceso</emph></quote></ref>. In questa parte vuol dire che questo rivo è un palude, lo qual si chiama Stige. E ssappi che Stige è interpetrato Iustizia e in quel son puniti li superbi. </p>
+               </div>
+               <pb n="11v" facs="#11v"/>
+               <cb n="a"/>
+               <div type="commentary" xml:id="Ha_An_Inf.07.121"> 
+                  <p><ref target="Inf.07.121"><quote>[121]<emph> Fitti nel limbo dicon tristi fommo</emph></quote></ref>. In questa parte dice l’autore che queste parole dicevano coloro che erano nel palude sotto l’acqua e non <choice><orig>chiramente</orig><reg>chiaramente</reg></choice>  ma ssottoboce parlavano e dicevano: « Oh Idio quanto fumo tristi nel mondo portando odio e malvolere celato, ora siam triste fitte nel limbo e nel fango e stian sotto l’acqua ». Quasi voglia dire che sempre funno e ssaranno triste.</p>
                </div>
             </div>
 
+            <!--Canto VIII -->
+            <div n="8" type="commentary" xml:id="Ha_An_Inf.08">
+               <!-- Carta 12rb -->
+               <pb n="12r" facs="#12r"/>
+               <cb n="b"/>
+               <div type="commentary" xml:id="Ha_An_Inf.08.001"> 
+                  <p><ref target="Inf.08.001"><quote>[1]<emph> Io dico, seguitando, ch’assa’ prima </emph></quote></ref>. </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.021"> 
+                  <p><ref target="Inf.08.021"><quote>[21]<emph> Più non ci arai che sol passando il loto. </emph></quote></ref>.In questa parte dice che Virgilio disse a quel dimonio che niente guadagnerebbe se non la fatica d passarli.   </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.030"> 
+                  <p><ref target="Inf.08.030"><quote>[30]<emph> Dell’acqua più che non suol con altrui </emph></quote></ref>. Dice che la prua de la nave  più entrava nell’acqua che non soleva per lo peso di Dante, per ciò che era vivo.  </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.061"> 
+                  <p><ref target="Inf.08.061"><quote>[61]<emph> tTutti gridavano: « Ai Filippo Argenti » </emph></quote></ref>. Dice l’autore che Filippo Argenti era fiorentino uomo 
+               <pb n="12v" facs="#12v"/>
+               <cb n="a"/> rogante e superbo. </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.068"> 
+                  <p><ref target="Inf.08.068"><quote>[68]<emph> S’appressa la città ch’a nome Dite </emph></quote></ref>. In questa parte dice l’autore che Virgilio li disse che Dite è maestra de lo ’nferno.  </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.070"> 
+                  <p><ref target="Inf.08.068"><quote>[70]<emph> E io: « Maestro, già le sue meschite </emph></quote></ref>. In questa parte dice che Saraini chiamano li lor chiese ‘meschite’. </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.126"> 
+                  <p><ref target="Inf.08.126"><quote>[126]<emph> La qual sanza serrame ancora si truova </emph></quote></ref>. In questa parte l’autore vuol dire che li demoni quando altra volta discesero a lo ’nferno, essi demoni avevan chiusa la porta de lo ’nferno la qual non era tanto serrate quanta questa la quale l’angiolo fece aprire quando Cristo discese a lo ’nferno e da indi inanzi sempre sono state aperte.  </p>
+               </div>
+                <div type="commentary" xml:id="Ha_An_Inf.08.127"> 
+                  <p><ref target="Inf.08.127"><quote>[127]<emph> Sopr’essa vedestú la scritta morta </emph></quote></ref>. In questa parte dice Virgilio a Dante che sopra questa porta vide una scritta che diceva [III 4] <emph><ref target="Inf.03.004"> « Giustizia mosse il mio alto fattore »</ref></emph> nel principio del terzo capitolo.  </p>
+               </div>
+               <div type="commentary" xml:id="Ha_An_Inf.08.128"> 
+                  <p><ref target="Inf.08.128"><quote>[128]<emph> E già di qua da llei discende l’erta </emph></quote></ref>. In questa parte dice Virgilio a Dante che sopra questa porta discese uno angiolo che la farà aprire. </p>
+               </div>
+               </div>
 
       </body>
    </text>

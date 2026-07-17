@@ -25,7 +25,7 @@
         </svg>
         <div class="header-titles">
           <h1 class="site-title">Dante, <em>Commedia</em> · Inferno - Purgatorio</h1>
-          <p class="site-subtitle">MS Harley 3459 · Edizione digitale a cura di Serena Malatesta</p>
+          <p class="site-subtitle">MS Harley 3459 · Edizione digitale del commento dell'Anonimo Lombardo volgarizzato a cura di Serena Malatesta</p>
         </div>
       </div>
       <div class="header-actions">
@@ -69,11 +69,14 @@
         </button>
         <span class="toggle-label" id="toggleLabelOrig" title="Lezione originale del manoscritto">Orig</span>
       </div>
-      <div class="complete-layout-controls" aria-label="Pannelli della visualizzazione completa">
-        <span class="layout-controls-label">Pannelli</span>
-        <button id="toggleTextPanel" class="layout-toggle active" type="button" aria-pressed="true">Testo</button>
-        <button id="toggleCommentoPanel" class="layout-toggle active" type="button" aria-pressed="true">Commento</button>
-      </div>
+      <details class="complete-layout-controls panel-menu">
+        <summary><i data-lucide="panels-top-left"></i> Pannelli</summary>
+        <div class="panel-menu-popover" aria-label="Pannelli della visualizzazione completa">
+          <button id="toggleTextPanel" class="layout-toggle active" type="button" aria-pressed="true"><i data-lucide="check"></i> Testo</button>
+          <button id="toggleCommentoPanel" class="layout-toggle active" type="button" aria-pressed="true"><i data-lucide="check"></i> Commento</button>
+          <button id="toggleFacsimilePanel" class="layout-toggle active" type="button" aria-pressed="true"><i data-lucide="check"></i> Facsimile</button>
+        </div>
+      </details>
       <div class="canto-nav">
         <label for="cantoSelect" class="canto-label">Canto</label>
         <select id="cantoSelect" class="canto-select"></select>
@@ -92,26 +95,25 @@
     <section class="home-hero">
       <p class="home-kicker">Edizione digitale · MS Harley 3459</p>
       <h2>Seleziona una modalità di lettura</h2>
-      <p>La visualizzazione completa resta la modalità principale: testo, commento e facsimile sono affiancati, con possibilità di nascondere temporaneamente testo o commento.</p>
     </section>
 
     <section class="home-view-grid" aria-label="Modalità di visualizzazione">
       <button class="home-view-card primary" type="button" data-open-view="facsimile">
         <span class="home-card-icon"><i data-lucide="columns-3"></i></span>
         <span class="home-card-title">Visualizzazione completa</span>
-        <span class="home-card-text">Testo, commento e facsimile in tre pannelli. Il facsimile segue lo scroll del testo; il commento resta consultabile senza forzare il cambio carta al click.</span>
+        <span class="home-card-text">Testo, commento e immagini sono affiancati e ciascun pannello può essere nascosto temporaneamente.</span>
       </button>
 
       <button class="home-view-card" type="button" data-open-view="commento">
         <span class="home-card-icon"><i data-lucide="message-square-text"></i></span>
         <span class="home-card-title">Commento</span>
-        <span class="home-card-text">Lettura distesa del commento per canto, senza facsimile affiancato.</span>
+        <span class="home-card-text">Lettura distesa del commento affiancato al testo del manoscritto o dell'edizione Petrocchi </span>
       </button>
 
       <button class="home-view-card" type="button" data-open-view="confronto">
         <span class="home-card-icon"><i data-lucide="git-compare"></i></span>
         <span class="home-card-title">Confronto Harley/Petrocchi</span>
-        <span class="home-card-text">Scheda predisposta per confrontare il testo del manoscritto con <code>testo_petrocchi.xml</code>.</span>
+        <span class="home-card-text">Da eliminare.</span>
       </button>
     </section>
   </main>
@@ -120,7 +122,7 @@
   <main id="viewFacsimile" class="view view-facsimile view-completa">
     <section class="text-panel complete-panel" aria-label="Testo poetico">
       <div class="panel-header">
-        <h2 class="panel-title" id="textPanelTitle">Testo poetico</h2>
+        <h2 class="panel-title" id="textPanelTitle">Testo Commedia</h2>
       </div>
       <div id="textContent" class="text-content"></div>
     </section>
@@ -134,7 +136,7 @@
 
     <section class="facsimile-panel complete-panel" aria-label="Facsimile">
       <div class="panel-header">
-        <h2 class="panel-title">Facsimile</h2>
+        <h2 class="panel-title">Immagini del ms.</h2>
         <div class="folio-nav">
           <button id="prevFolio" class="folio-btn" aria-label="Carta precedente" title="Carta precedente">
             <i data-lucide="chevron-left"></i>
@@ -145,6 +147,9 @@
           </button>
         </div>
         <div class="zoom-controls">
+          <button id="openFacsimileFullscreen" class="icon-btn-sm" aria-label="Apri il facsimile a tutto schermo" title="Facsimile a tutto schermo">
+            <i data-lucide="maximize-2"></i>
+          </button>
           <button id="zoomOut" class="icon-btn-sm" aria-label="Rimpicciolisci" title="Rimpicciolisci">
             <i data-lucide="zoom-out"></i>
           </button>
@@ -163,17 +168,30 @@
           <div id="columnBadges" class="column-badges"></div>
         </div>
       </div>
+      <div id="folioFilmstrip" class="folio-filmstrip" aria-label="Navigazione rapida tra le carte"></div>
       <div id="folioContentSummary" class="folio-content-summary"></div>
     </section>
   </main>
 
   <!-- View 2: Commento -->
   <main id="viewCommento" class="view view-commento">
-    <div class="commento-container">
+    <div class="commento-reading-layout">
+      <aside class="commento-manuscript-panel" aria-label="Testo del manoscritto">
+        <div class="panel-header commento-header">
+          <h2 class="panel-title" id="commentoManuscriptTitle">Testo del manoscritto</h2>
+          <div class="comment-text-witness-toggle" role="group" aria-label="Testo visualizzato accanto al commento">
+            <button id="showCommentHarley" class="witness-toggle active" type="button" aria-pressed="true">Harley 3459</button>
+            <button id="showCommentPetrocchi" class="witness-toggle" type="button" aria-pressed="false">Petrocchi</button>
+          </div>
+        </div>
+        <div id="commentoManuscriptContent" class="text-content commento-manuscript-content"></div>
+      </aside>
+      <div class="commento-container">
       <div class="panel-header commento-header">
         <h2 class="panel-title" id="commentoPanelTitle">Commento — Canto I</h2>
       </div>
       <div id="commentoContent" class="commento-content"></div>
+      </div>
     </div>
   </main>
 
@@ -196,56 +214,22 @@
           <i data-lucide="x"></i>
         </button>
       </div>
-      <div class="modal-body">
-        <section class="about-section">
-          <h3>Il manoscritto</h3>
-          <p>Il <strong>MS Harley 3459</strong>, conservato presso la <em>British Library</em> di Londra, è un testimone della <em>Commedia</em> di Dante Alighieri risalente alla fine del XV secolo. Il manoscritto è in lingua italiana e contiene il testo dell'<em>Inferno</em> accompagnato da un commento volgare derivato dalle chiose latine attribuite al cosiddetto <em>Anonimo Lombardo</em>.</p>
-        </section>
-        <section class="about-section">
-          <h3>L'edizione digitale</h3>
-          <p>Questa edizione scientifica digitale è stata curata da <strong>Serena Malatesta</strong> (Università degli Studi di Padova, Université de Tours) nell'ambito del progetto <em>Fontegaia</em>. L'edizione comprende:</p>
-          <ul>
-            <li>La trascrizione interpretativa del testo poetico</li>
-            <li>Il commento volgare (volgarizzamento delle chiose latine dell'Anonimo Lombardo)</li>
-            <li>L'apparato delle annotazioni marginali (verbali e non verbali)</li>
-            <li>Il facsimile digitale del manoscritto</li>
-          </ul>
-        </section>
-        <section class="about-section">
-          <h3>Criteri editoriali</h3>
-          <p>L'edizione adotta un approccio interpretativo, conservando una trascrizione semi-diplomatica nei casi in cui si ritenga utile documentare le peculiarità grafiche e linguistiche del fiorentino tardo-quattrocentesco. Tra gli interventi normalizzativi:</p>
-          <ul>
-            <li>Eliminazione della <em>h</em> nelle combinazioni <em>cha</em>, <em>cho</em>, <em>gha</em>, <em>gho</em></li>
-            <li>Riduzione dei gruppi <em>lgl</em> e <em>ngn</em> a <em>gl</em> e <em>gn</em></li>
-            <li>Riduzione di <em>et</em> a <em>e</em></li>
-            <li>I fenomeni fonosintattici sono rappresentati dal carattere <em>middle dot</em> (·)</li>
-          </ul>
-          <p>Gli interventi dell'editore sono segnalati con la codifica <code>&lt;choice&gt; &lt;orig&gt; &lt;reg&gt;</code>.</p>
-        </section>
-        <section class="about-section">
-          <h3>Dichiarazione dei caratteri</h3>
-          <table class="char-table">
-            <thead><tr><th>Carattere</th><th>Unicode</th><th>Descrizione</th></tr></thead>
-            <tbody>
-              <tr><td>⸿</td><td>U+2E3F</td><td>Capitulum / piedimosca medievale</td></tr>
-              <tr><td>·</td><td>U+00B7</td><td>Middle dot — marcatore fonosintattico editoriale</td></tr>
-            </tbody>
-          </table>
-        </section>
-     <section class="about-section">
-  <h3>Licenza</h3>
-  <p>
-    © Università degli Studi di Padova - Université de Tours 2025. 
-    Edizione distribuita con licenza 
-    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">
-      CC BY-NC-SA 4.0
-    </a>.
-  </p>
-  <p>
-    Le riproduzioni digitali del manoscritto sono state eseguite con mezzi propri e pubblicate su autorizzazione della British Library.
-  </p>
-</section>
+      <div id="aboutContent" class="modal-body">
+        <p class="about-loading">Informazioni ricavate dal TEI Header…</p>
       </div>
+    </div>
+  </div>
+
+  <div id="facsimileFullscreen" class="facsimile-lightbox" role="dialog" aria-modal="true" aria-label="Facsimile a tutto schermo" hidden>
+    <div class="facsimile-lightbox-toolbar">
+      <button id="fullscreenPrevFolio" class="icon-btn" aria-label="Carta precedente"><i data-lucide="chevron-left"></i></button>
+      <strong id="fullscreenFolioLabel">c. 2r</strong>
+      <button id="fullscreenNextFolio" class="icon-btn" aria-label="Carta successiva"><i data-lucide="chevron-right"></i></button>
+      <span class="lightbox-spacer"></span>
+      <button id="closeFacsimileFullscreen" class="icon-btn" aria-label="Chiudi"><i data-lucide="x"></i></button>
+    </div>
+    <div id="fullscreenFacsimileViewer" class="facsimile-lightbox-stage">
+      <img id="fullscreenFacsimileImg" alt="Facsimile del manoscritto a tutto schermo" draggable="false">
     </div>
   </div>
 

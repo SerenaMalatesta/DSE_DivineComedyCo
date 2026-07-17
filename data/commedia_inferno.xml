@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
-	schematypens="http://purl.oclc.org/dsdl/schematron"?> 
-
+	schematypens="http://purl.oclc.org/dsdl/schematron"?>
 
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
   <teiHeader>
@@ -70,11 +69,14 @@
         <interpretation>
           <p>Phonosyntactic phenomena are represented through the custom character “middle_dot”
             (U+00B7).</p>
+          <p>La visualizzazione digitale distingue tra Lezione del manoscritto e Resa editoriale. Le categorie analitiche sono espresse con @ana su &lt;choice&gt;, non con @type: #normalizzazione per rese grafiche, fonetiche, fonosintattiche o di segmentazione; #correzione-manoscritto per interventi correttivi presenti nella copia; #errore-copia-non-corretto per dittografie, ripetizioni o guasti non corretti dal copista nella revisione; #variante-edizione-riferimento per varianti notevoli rispetto all’edizione di riferimento.</p>
         </interpretation>
         <punctuation>
           <p>Punctuation is standardised.</p>
         </punctuation>
-      </editorialDecl>
+</editorialDecl>
+
+     
 
       <charDecl>
         <char xml:id="piedimosca">
@@ -119,7 +121,7 @@
             <l xml:id="Inf.01.006"> che nel pensiero rinuova la paura!</l>
           </lg>
           <lg type="terzina">
-            <l xml:id="Inf.01.007">Tant’<choice><reg>è</reg><orig>e<del rend="erased">ra</del></orig></choice> amara che poco è più morte;</l>
+            <l xml:id="Inf.01.007">Tant’<choice ana="#correzione-manoscritto"><reg>è</reg><orig>e<del rend="erased">ra</del></orig></choice> amara che poco è più morte;</l>
             <l xml:id="Inf.01.008">ma per trattare del bene ch’io vi trovai,</l>
             <l xml:id="Inf.01.009">dirò dell’altre cose ch’io v’ho scorte.</l>
           </lg>
@@ -134,7 +136,7 @@
             <l xml:id="Inf.01.015">che m’avia di paura el core compunto,</l>
           </lg>
           <lg type="terzina">
-            <l xml:id="Inf.01.016"><choice><orig>uardai</orig><reg>Guardai</reg></choice><note type="emendation"> La consonante iniziale di terzina G non è realizzata nel manoscritto; viene integrata editorialmente per restituire la forma Guardai.
+            <l xml:id="Inf.01.016"><choice ana="#normalizzazione"><orig>uardai</orig><reg>Guardai</reg></choice><note type="emendation"> La consonante iniziale di terzina G non è realizzata nel manoscritto; viene integrata editorialmente per restituire la forma Guardai.
  </note> in alto e vidi le sue spalle</l>
             <l xml:id="Inf.01.017">vestite già de’ raggi del pianeta</l>
             <l xml:id="Inf.01.018">che mena dritto altrui per ogni calle.</l>
@@ -152,7 +154,7 @@
           <lg type="terzina">
             <l xml:id="Inf.01.025">Così l’animo mio, che ancora fuggiva,</l>
             <l xml:id="Inf.01.026">si volse indietro a rrimirare il passo</l>
-            <l xml:id="Inf.01.027">che non lasciò <choice>
+            <l xml:id="Inf.01.027">che non lasciò <choice ana="#normalizzazione">
                 <orig>giamai</orig>
                 <reg>giammai</reg>
               </choice> anima viva.</l>
@@ -186,7 +188,7 @@
           </lg>
           <lg type="terzina">
             <l xml:id="Inf.01.043">l’ora del tempo e la dolce stagione;</l>
-            <l xml:id="Inf.01.044">ma non sí che paura <choice>
+            <l xml:id="Inf.01.044">ma non sí che paura <choice ana="#normalizzazione">
                 <orig>no</orig>
                 <reg>non</reg>
               </choice><note type="emendation"> Manca titulus. </note> mi desse</l>
@@ -248,7 +250,7 @@
             <l xml:id="Inf.01.078">che plincipio e cagione di ttutta gioia? ».</l>
           </lg>
           <lg type="terzina">
-            <l xml:id="Inf.01.079">« Or se' ttu quel Vergilio e quella fonte</l>
+            <l xml:id="Inf.01.079">« Or se’ ttu quel Vergilio e quella fonte</l>
             <l xml:id="Inf.01.080">che spandi di parlare sí largo fiume? »,</l>
             <!-- carta 2vA -->
             <pb n="2v" facs="#c2v"/>
@@ -258,14 +260,14 @@
           <lg type="terzina">
             <l xml:id="Inf.01.082">« Oh dagli altri poeti onore e llume,</l>
             <l xml:id="Inf.01.083">vagliame il lungo studio e ’l grand’amore</l>
-            <l xml:id="Inf.01.084">che m’ha fatto <choice>
+            <l xml:id="Inf.01.084">che m’ha fatto <choice ana="#correzione-manoscritto">
                 <orig><subst>
                     <del rend="strikethrought" type="erasure">seghuire</del>
                     <add place="supralinear">cerchare</add>
                   </subst>
                 </orig>
                 <reg>cercare</reg>
-              </choice> <note type="emendation"> Aggiunta sopralineare. </note> "el tuo vilume.</l>
+              </choice> <note type="emendation"> Aggiunta sopralineare. </note> el tuo vilume.</l>
           </lg>
           <lg type="terzina">
             <l xml:id="Inf.01.085">Tu sse il mio maestro e ’l mio dottore,</l>
@@ -300,7 +302,7 @@
           </lg>
           <lg type="terzina">
             <l xml:id="Inf.01.103">Costui non ciberà terra né peltro,</l>
-            <l xml:id="Inf.01.104">ma sapienza, amore e vertute</l>
+            <l xml:id="Inf.01.104">ma sapïenza, amore e vertute</l>
             <l xml:id="Inf.01.105">e sua nazione sarà tra ffeltro e feltro.</l>
           </lg>
           <lg type="terzina">
@@ -342,7 +344,7 @@
           </lg>
           <lg type="terzina">
             <l xml:id="Inf.01.127">In tutte parti imperia e quivi reggia;</l>
-            <l xml:id="Inf.01.128">quivi è la suo città e l’alto <choice>
+            <l xml:id="Inf.01.128">quivi è la suo città e l’alto <choice ana="#normalizzazione">
                 <orig>seggo</orig>
                 <reg>seggio</reg>
               </choice> <note type="emendation"> Omissione della -i diacritica. </note>
@@ -366,7 +368,7 @@
       </div>
 
       <!-- CANTO 2 -->
-      <div n="2" type="canto" xml:id="Inferno_2">
+      <div n="2" type="canto" xml:id="Inferno_02">
         <!-- carta 4rA -->
         <pb n="4r" facs="#c4r" xml:id="carta_004r"/>
         <cb n="A"/>
@@ -450,7 +452,7 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.02.046">La qual molte fiate l’uomo ingombra </l>
-          <l xml:id="Inf.02.047"><choice>
+          <l xml:id="Inf.02.047"><choice ana="#correzione-manoscritto">
               <orig><del rend="strikethrough">come</del> sì</orig>
               <reg>sì</reg>
             </choice> che d’errata impresa la rivolve,</l>
@@ -484,7 +486,7 @@
         <lg type="terzina">
           <l xml:id="Inf.02.064">E temo che non sia già sì smarrito, </l>
           <l xml:id="Inf.02.065">ch’io mi sia tardi al soccorso levata,</l>
-          <l xml:id="Inf.02.066"><choice>
+          <l xml:id="Inf.02.066"><choice ana="#correzione-manoscritto">
               <orig><del rend="strikethrough">che</del> per</orig>
               <reg>per</reg>
             </choice> quel ch’io di lui nel cielo udito.</l>
@@ -592,7 +594,7 @@
         <lg type="terzina">
           <l xml:id="Inf.02.124">Poscia che tali tre donne benedette</l>
           <l xml:id="Inf.02.125">
-            <choice>
+            <choice ana="#correzione-manoscritto">
               <orig><subst>
                   <del rend="strikethrought" type="erasure">parlano</del>
                   <add place="intercolumn">curano</add>
@@ -633,7 +635,7 @@
 
 
       <!-- CANTO 3 -->
-      <div n="3" type="canto" xml:id="Inferno_3">
+      <div n="3" type="canto" xml:id="Inferno_03">
         <!-- carta 5rB -->
         <pb n="5r" facs="#c5r" xml:id="carta_005r"/>
         <cb n="B"/>
@@ -646,46 +648,43 @@
         <lg type="terzina">
           <l xml:id="Inf.03.004">Giustizia mosse il mio alto fattore;</l>
           <l xml:id="Inf.03.005">fecemi la divina podestate,</l>
-          <l xml:id="Inf.03.006">la somma sapienza e ’l primo amore.</l>
+          <l xml:id="Inf.03.006">la somma sapïenza e ’l primo amore.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.007"><choice>
-              <orig>Dinanzi</orig>
-              <reg>Dinnanzi</reg>
-            </choice> a mme non fur cose criate</l>
+          <l xml:id="Inf.03.007"> Dinanzi a mme non fur cose criate</l>
           <l xml:id="Inf.03.008">se non etterne, e io etterno duro.</l>
           <l xml:id="Inf.03.009">Lasciate ogni speranza, voi che entrate».</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.03.010">Queste parole di colore oscuro</l>
-          <l xml:id="Inf.03.011">vid’io dipinte al <choice>
+          <l xml:id="Inf.03.011">vid’ïo dipinte al <choice ana="#normalizzazione">
               <orig>somo</orig>
               <reg>sommo</reg>
             </choice> d’una porta;</l>
           <l xml:id="Inf.03.012">per ch’io: « Maestro el senno loro m’è duro</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.013">Et egli a me, come persona acorta:</l>
+          <l xml:id="Inf.03.013">Et egli a me, come persona <choice ana="#normalizzazione"><reg>accorta</reg><orig>acorta</orig></choice>:</l>
           <!-- carta 5vA -->
           <pb n="5v" facs="#c5v" xml:id="carta_005v"/>
           <cb n="A"/>
           <l xml:id="Inf.03.014">« Qui si conviene lasciare ogni sospetto;</l>
-          <l xml:id="Inf.03.015"><choice>
+          <l xml:id="Inf.03.015"><choice ana="#correzione-manoscritto">
               <orig><del rend="strikethrough">ongi</del> ogni</orig>
               <reg>ogni</reg>
             </choice> viltà convien che qui sia morta.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.016">Non siam <choice>
+          <l xml:id="Inf.03.016">Non siam <choice ana="#normalizzazione">
               <orig>vnuti</orig>
               <reg>venuti</reg>
-            </choice>al loco ov’io t’ho detto</l>
+            </choice> al loco ov’io t’ho detto</l>
           <l xml:id="Inf.03.017">che ttu vedrai le genti dolorose</l>
           <l xml:id="Inf.03.018">c’hanno perduto il bene de lo ’ntelletto ».</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.019">E po che la suo mano a la mia pose</l>
-          <l xml:id="Inf.03.020">co ’llieto volto, ond’io mi confortai, </l>
+          <l xml:id="Inf.03.019">E po’ che la suo mano a la mia pose</l>
+          <l xml:id="Inf.03.020">co<g ref="#middle_dot"/>llieto volto, ond’io mi confortai, </l>
           <l xml:id="Inf.03.021">missemi dentro a le segrete cose.</l>
         </lg>
         <lg type="terzina">
@@ -694,7 +693,7 @@
           <l xml:id="Inf.03.024"> per ch’io al cominciare ne lagrimai.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.025"> Diverse boci, <choice>
+          <l xml:id="Inf.03.025"> Diverse boci, <choice ana="#normalizzazione">
               <orig>oribili</orig>
               <reg>orribili</reg>
             </choice> favelle,</l>
@@ -707,17 +706,17 @@
           <l xml:id="Inf.03.030">come la rena quando a tturbo spira.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.031">E io ch’avia d’<choice>
+          <l xml:id="Inf.03.031">E io ch’avia d’<choice ana="#normalizzazione">
               <orig>erore</orig>
-              <reg>orrore</reg>
+              <reg>errore</reg>
             </choice> la testa cinta, </l>
-          <l xml:id="Inf.03.32">dissi: « Maestro, che è quel ch’i’ odo? </l>
+          <l xml:id="Inf.03.032">dissi: « Maestro, che è quel ch’i’ odo? </l>
           <l xml:id="Inf.03.033">E che gent’è che pare nel duol sí vinta? ».</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.03.034">Et egli a mme: « Questo misero modo </l>
           <l xml:id="Inf.03.035">tengono l’anime triste di coloro</l>
-          <l xml:id="Inf.03.036"><choice>
+          <l xml:id="Inf.03.036"><choice ana="#normalizzazione">
               <orig>di che</orig>
               <reg>che</reg>
             </choice> vissero sanza ’nfamia e sanza lodo.</l>
@@ -725,18 +724,15 @@
         <lg type="terzina">
           <l xml:id="Inf.03.037">Mischiate sono a quel cattivo coro</l>
           <l xml:id="Inf.03.038">degli angioli che non furono ribelli</l>
-          <l xml:id="Inf.03.039">né fur fedeli a dio, né per se foro.</l>
+          <l xml:id="Inf.03.039">né fur fedeli a Dio, né per sé foro.</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.03.040">Cacciali e cieli per non esser men belli,</l>
-          <l xml:id="Inf.03.041">nello profondo infenro li riceve, </l>
-          <l xml:id="Inf.03.042">che alcuna gloria e rei <choice>
-              <orig>arebber</orig>
-              <reg>avrebber</reg>
-            </choice>d’elli ».</l>
+          <l xml:id="Inf.03.041"><choice ana="#normalizzazione"><reg>né lo</reg><orig>ne llo</orig></choice> profondo inferno li riceve, </l>
+          <l xml:id="Inf.03.042">che alcuna gloria e rei <choice ana="#normalizzazione"><orig>arebber</orig><reg>avrebber</reg></choice> d’elli ».</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.043">E io: « Maestro, he è tanto grieve</l>
+          <l xml:id="Inf.03.043">E io: « Maestro, che è tanto grieve</l>
           <l xml:id="Inf.03.044"> a lloro che lamentar li fa sì forte? ».</l>
           <l xml:id="Inf.03.045">Rispose «Dicerolloti molto brieve.</l>
         </lg>
@@ -746,158 +742,158 @@
           <l xml:id="Inf.03.048">che invidiosi sono d’ogn’altra sorte.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.049">Fama di loro el mondo esser no llassa;</l>
+          <l xml:id="Inf.03.049">Fama di loro el mondo esser no<g ref="#middle_dot"/>llassa;</l>
           <l xml:id="Inf.03.050">misericordia e giustizia li sdegna:</l>
-          <l xml:id="Inf.03.051">non ragionar di loro ma guarda e passa».</l>
+          <l xml:id="Inf.03.051">non ragionar di loro ma guarda e passa ».</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.052">Fama di loro el mondo esser no<g ref="#middle_dot"/>llassa;</l>
-          <l xml:id="Inf.03.053">misericordia e giustizia li sdegna:</l>
-          <l xml:id="Inf.03.054">non ragionar di loro ma guarda e passa».</l>
-        </lg>
-        <lg type="terzina">
-          <l xml:id="Inf.03.055">E io, che riguardai, vidi una ’nsegna</l>
-          <l xml:id="Inf.03.056">che girando veniva tanto ratta,</l>
-          <l xml:id="Inf.03.057">che d’ogni posa mi pareva indegna;</l>
-        </lg>
-        <lg type="terzina">
-          <l xml:id="Inf.03.058">E io, che riguardai, vidi una ’nsegna</l>
-          <l xml:id="Inf.03.059">che girando veniva tanto ratta,</l>
-          <l xml:id="Inf.03.060">che d’ogni posa mi pareva indegna;</l>
-        </lg>
-        <lg type="terzina">
-          <l xml:id="Inf.03.061">E io, che riguardai, vidi una ’nsegna</l>
-          <l xml:id="Inf.03.062">che girando veniva tanto ratta,</l>
-          <l xml:id="Inf.03.063">che d’ogni posa mi pareva indegna;</l>
+          <l xml:id="Inf.03.052">E io, che riguardai, vidi una ’nsegna</l>
+          <l xml:id="Inf.03.053">che girando veniva tanto ratta,</l>
+          <l xml:id="Inf.03.054">che d’ogni posa mi pareva indegna;</l>
         </lg>
         <!-- carta 5vB -->
         <cb n="B"/>
         <lg type="terzina">
-          <l xml:id="Inf.03.064">et dietro li veniva sí llunga tratta</l>
-          <l xml:id="Inf.03.065">di gente, ch’io non <choice>
+          <l xml:id="Inf.03.055">et dietro li veniva sí llunga tratta</l>
+          <l xml:id="Inf.03.056">di gente, ch’io non <choice ana="#normalizzazione">
               <orig>are</orig>
               <reg>avere</reg>
             </choice> mai creduto</l>
-          <l xml:id="Inf.03.066">che morte tanta n’avesse disfatta.</l>
+          <l xml:id="Inf.03.057">che morte tanta n’avesse disfatta.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.067">Poscia ch’io n’ebbi alcuno riconosciuto,</l>
-          <l xml:id="Inf.03.068"> vidi e <choice>
+          <l xml:id="Inf.03.058">Poscia ch’io n’ebbi alcuno riconosciuto,</l>
+          <l xml:id="Inf.03.059"> vidi e <choice ana="#normalizzazione">
               <orig>conobi</orig>
               <reg>conobbi</reg>
             </choice> l’ombra di colui</l>
-          <l xml:id="Inf.03.069">che fece per viltade il gran rifiuto.</l>
+          <l xml:id="Inf.03.060">che fece per viltade il gran rifiuto.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.070">Incontanente intesi e certo fui</l>
-          <l xml:id="Inf.03.071">che quella era la setta de’cattivi,</l>
-          <l xml:id="Inf.03.072">a Dio spiacenti e a’nimici sui.</l>
+          <l xml:id="Inf.03.061">Incontanente intesi e certo fui</l>
+          <l xml:id="Inf.03.062">che quella era la setta de’cattivi,</l>
+          <l xml:id="Inf.03.063">a Dio spiacenti e a’nimici sui.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.073">Questi sciagurati che mai non fur vivi,</l>
-          <l xml:id="Inf.03.074">erano inudi e stimolati molto</l>
-          <l xml:id="Inf.03.075">da mosconi e da vespe che erano ivi.</l>
+          <l xml:id="Inf.03.064">Questi sciagurati che mai non fur vivi,</l>
+          <l xml:id="Inf.03.065">erano inudi e stimolati molto</l>
+          <l xml:id="Inf.03.066">da mosconi e da vespe che erano ivi.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.076">Elle rigavano loro di sangue ’l volto,</l>
-          <l xml:id="Inf.03.077">che meschiate di lagrime, a’lor piedi</l>
-          <l xml:id="Inf.03.078">da fastidiosi vermini era acolto.</l>
+          <l xml:id="Inf.03.067">Elle rigavano loro di sangue ’l volto,</l>
+          <l xml:id="Inf.03.068">che meschiate di lagrime, a’lor piedi</l>
+          <l xml:id="Inf.03.069">da fastidiosi vermini era acolto.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.079">E ppo’ che a guardare oltre mi diedi</l>
-          <l xml:id="Inf.03.080"> vidi gente a la riva d’un gran fiume;</l>
-          <l xml:id="Inf.03.081">per ch’io dissi al maestro: « Ora mi concedi</l>
+          <l xml:id="Inf.03.070">E ppo’ che a guardare oltre mi diedi</l>
+          <l xml:id="Inf.03.071"> vidi gente a la riva d’un gran fiume;</l>
+          <l xml:id="Inf.03.072">per ch’io dissi al maestro: « Ora mi concedi</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.082">Ch’i’ sappia chi son quelli e qual costume</l>
-          <l xml:id="Inf.03.083">le fa di trapassar parer sì pronte,</l>
-          <l xml:id="Inf.03.084">com’io discerno per lo fioco lume ».</l>
+          <l xml:id="Inf.03.073">ch’i’ sappia chi son quelli e qual costume</l>
+          <l xml:id="Inf.03.074">le fa di trapassar parer sì pronte,</l>
+          <l xml:id="Inf.03.075">com’io discerno per lo fioco lume ».</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.085">Et egli a me le cose ti fien conte</l>
-          <l xml:id="Inf.03.086">quando no’fermereno e nostri passi </l>
-          <l xml:id="Inf.03.087">su la trista riviera d’Acheronte ».</l>
+          <l xml:id="Inf.03.076">Et egli a me le cose ti fien conte</l>
+          <l xml:id="Inf.03.077">quando no’fermereno e nostri passi </l>
+          <l xml:id="Inf.03.078">su la trista riviera d’Acheronte ».</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.088">Allora co gli occhi vergognosi e bassi, </l>
-          <l xml:id="Inf.03.089">temendo che ’l mio dire li fusse grave,</l>
-          <l xml:id="Inf.03.090">insino al fiume del parlare mi trassi.</l>
+          <l xml:id="Inf.03.079">Allora co gli occhi vergognosi e bassi, </l>
+          <l xml:id="Inf.03.080">temendo che ’l mio dire li fusse grave,</l>
+          <l xml:id="Inf.03.081">insino al fiume del parlare mi trassi.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.091">Et <choice>
+          <l xml:id="Inf.03.082">Et <choice ana="#normalizzazione">
               <orig>eco</orig>
               <reg>ecco</reg>
             </choice> verso noi venire per nave</l>
-          <l xml:id="Inf.03.092">un <choice>
+          <l xml:id="Inf.03.083">un <choice ana="#normalizzazione">
               <orig>vechio</orig>
               <reg>vecchio</reg>
             </choice> bianco per antico pelo,</l>
-          <l xml:id="Inf.03.093">gridando: « Guai a voi, anime prave!</l>
+          <l xml:id="Inf.03.084">gridando: « Guai a voi, anime prave!</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.094">None sperate mai veder lo cielo:</l>
-          <l xml:id="Inf.03.095">i’ vengo per menarvi ad altra riva</l>
-          <l xml:id="Inf.03.096">ne le tenebre etterne, in caldo e gielo</l>
+          <l xml:id="Inf.03.085">None sperate mai veder lo cielo:</l>
+          <l xml:id="Inf.03.086">i’ vengo per menarvi ad altra riva</l>
+          <l xml:id="Inf.03.087">ne le tenebre etterne, in caldo e gielo</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.097">E ttu che sse costi, anima viva,</l>
-          <l xml:id="Inf.03.098">partiti da cotessta che so morti » .</l>
-          <l xml:id="Inf.03.099">E ppo che vide ch’io non mi partiva,</l>
+          <l xml:id="Inf.03.088">e ttu che sse costi, anima viva,</l>
+          <l xml:id="Inf.03.089">partiti da cotessta che so morti » .</l>
+          <l xml:id="Inf.03.090">E ppo che vide ch’io non mi partiva,</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.100">Disse: « Per altra via, per altri porte</l>
-          <l xml:id="Inf.03.101">verrai a piaggia, non qui, per passare:</l>
-          <l xml:id="Inf.03.102">più llieve legno convien che ti porte ».</l>
+          <l xml:id="Inf.03.091">Disse: « Per altra via, per altri porte</l>
+          <l xml:id="Inf.03.092">verrai a piaggia, non qui, per passare:</l>
+          <l xml:id="Inf.03.093">più llieve legno convien che ti porte ».</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.103">E ’l duca a llui: « Caron, non ti crucciare:</l>
-          <l xml:id="Inf.03.104"> vuolsi così colà dove si puote </l>
-          <l xml:id="Inf.03.105">ciò che si vuole, e ppiù non domandare ».</l>
+          <l xml:id="Inf.03.094">E ’l duca a llui: « Caron, non ti crucciare:</l>
+          <l xml:id="Inf.03.095"> vuolsi così colà dove si puote </l>
+          <l xml:id="Inf.03.096">ciò che si vuole, e ppiù non domandare ».</l>
         </lg>
         <!-- carta 6rA -->
         <pb n="6r" facs="#c6r" xml:id="carta_006r"/>
         <cb n="A"/>
         <lg type="terzina">
-          <l xml:id="Inf.03.106">Allor fur chete le lanose gote</l>
-          <l xml:id="Inf.03.107">al nocchiere de la livida palude,</l>
-          <l xml:id="Inf.03.108">che intorno agli occhi avia di <choice>
+          <l xml:id="Inf.03.097">Allor fur chete le lanose gote</l>
+          <l xml:id="Inf.03.098">al nocchiere de la livida palude,</l>
+          <l xml:id="Inf.03.099">che intorno agli occhi avia di <choice ana="#normalizzazione">
               <orig>fiame</orig>
               <reg>fiamme</reg>
             </choice> rote.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.109">E quell’anime lasse e ttriste e nnude,</l>
-          <l xml:id="Inf.03.110">canbiar colore e dibattero li denti,</l>
-          <l xml:id="Inf.03.111">ratto che intesero le parole crude. </l>
+          <l xml:id="Inf.03.100">E quell’anime lasse e ttriste e nnude,</l>
+          <l xml:id="Inf.03.101">canbiar colore e dibattero li denti,</l>
+          <l xml:id="Inf.03.102">ratto che intesero le parole crude. </l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.112">Bestegnavano Idio e lor parenti, </l>
-          <l xml:id="Inf.03.113">l’umana spezie, il loco e ’l tempo e ’l seme</l>
-          <l xml:id="Inf.03.114">di lor semenza e di loro nascimenti</l>
+          <l xml:id="Inf.03.103">Bestegnavano Idio e lor parenti, </l>
+          <l xml:id="Inf.03.104">l’umana spezie, il loco e ’l tempo e ’l seme</l>
+          <l xml:id="Inf.03.105">di lor semenza e di loro nascimenti</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.115">Poi si racolsero tutti quanti insieme,</l>
-          <l xml:id="Inf.03.116">forte piangendo, a la riva malvagia</l>
-          <l xml:id="Inf.03.117">che attende ciasceduno che Dio non teme.</l>
+          <l xml:id="Inf.03.106">Poi si racolsero tutti quanti insieme,</l>
+          <l xml:id="Inf.03.107">forte piangendo, a la riva malvagia</l>
+          <l xml:id="Inf.03.108">che attende ciasceduno che Dio non teme.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.118">Caron demonio, con ochi di bragia</l>
-          <l xml:id="Inf.03.119">loro accennando tutti li racoglie;</l>
-          <l xml:id="Inf.03.120">batte col remo qualunque s’adagia.</l>
+          <l xml:id="Inf.03.109">Caron demonio, con ochi di bragia</l>
+          <l xml:id="Inf.03.110">loro accennando tutti li racoglie;</l>
+          <l xml:id="Inf.03.111">batte col remo qualunque s’adagia.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.121">Come d’aultumno si levano le foglie</l>
-          <l xml:id="Inf.03.122">l’una presso dell’altra infin che ’l ramo</l>
-          <l xml:id="Inf.03.123">vede a la tera tutte le sue spoglie,</l>
+          <l xml:id="Inf.03.112">Come d’aultumno si levano le foglie</l>
+          <l xml:id="Inf.03.113">l’una presso dell’altra infin che ’l ramo</l>
+          <l xml:id="Inf.03.114">vede a la tera tutte le sue spoglie,</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.03.124">Similemente il mal seme d’Adamo</l>
-          <l xml:id="Inf.03.125">partonsi di quel lito a una a una</l>
-          <l xml:id="Inf.03.126">come uccello fa per suo richiamo.</l>
+          <l xml:id="Inf.03.115">similemente il mal seme d’Adamo</l>
+          <l xml:id="Inf.03.116">partonsi di quel lito a una a una</l>
+          <l xml:id="Inf.03.117">come uccello fa per suo richiamo.</l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.03.118">Così se ne vanno su per l’onda bruna, </l>
+          <l xml:id="Inf.03.119">e inanzi che sieno di là discese, </l>
+          <l xml:id="Inf.03.120">anco di qua nuova schiera s’aduna </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.03.121">« Figliuol mio» disse ’l maestro cortese, </l>
+          <l xml:id="Inf.03.122">«quelli che muoiono nell’ira di Dio </l>
+          <l xml:id="Inf.03.123">tutti pervengon qui d’ogni paese; </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.03.124"> e ssono in pronte a ttrapassar lo rio,</l>
+          <l xml:id="Inf.03.125"> che la divina iustizia li sprona, </l>
+          <l xml:id="Inf.03.126"> sí che la tema si volve in disio. </l>     
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.03.127">Quinci non passò mai anima buona; </l>
-          <l xml:id="Inf.03.128">et però se Charon di te si lagna,</l>
+          <l xml:id="Inf.03.128">et però, se Charon di te si lagna,</l>
           <l xml:id="Inf.03.129">ben puoi sapere omai che ’l suo dir sona ».</l>
         </lg>
         <lg type="terzina">
@@ -916,7 +912,7 @@
       </div>
 
       <!--Canto iv-->
-      <div n="4" type="canto" xml:id="Inferno_4">
+      <div n="4" type="canto" xml:id="Inferno_04">
         <pb n="6v" facs="#c6v" corresp="#carta_006v"/>
         <cb n="a"/>
         <head>Quarto Capitolo Inferno</head>
@@ -947,12 +943,12 @@
           <l xml:id="Inf.04.015">«I’ sarò primo e ttu sarai sicondo ». </l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.04.016">E io, che del colore mi fu’ <choice>
+          <l xml:id="Inf.04.016">E io, che del colore mi fu’ <choice ana="#normalizzazione">
               <orig>acorto</orig>
               <reg>accorto</reg>
             </choice>
           </l>
-          <l xml:id="Inf.04.017">dissi « Come <choice>
+          <l xml:id="Inf.04.017">dissi « Come <choice ana="#normalizzazione">
               <orig>verò</orig>
               <reg>verrò</reg>
             </choice>, se tu paventi </l>
@@ -1122,7 +1118,7 @@
           <l xml:id="Inf.04.111">venimo in prato di fresca verzura. </l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.04.112">Genti v’eran con <choice><orig>ochi</orig><reg>occhi</reg></choice> tardi e gravi, </l>
+          <l xml:id="Inf.04.112">Genti v’eran con ochi tardi e gravi, </l>
           <l xml:id="Inf.04.113">di grand altorità ne’ lor sembianti: </l>
           <l xml:id="Inf.04.114">parlavano rado, con voci soavi. </l>
         </lg>
@@ -1190,7 +1186,7 @@
       </div>
 
      <!--Canto v-->
-      <div n="5" type="canto" xml:id="Inferno_5">
+      <div n="5" type="canto" xml:id="Inferno_05">
        <pb n="7v" facs="#c7v" corresp="#carta_007v"/>
         <cb n="a"/>
         <head>Quinto capitolo Infernii</head>
@@ -1200,34 +1196,34 @@
           <l xml:id="Inf.05.003">e ttanto più dolore, che punge in guaio.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.05.004">Stavi Minos oribile e ringhia:</l>
+          <l xml:id="Inf.05.004">Stavi Minòs oribile e ringhia:</l>
           <l xml:id="Inf.05.005">esamina le colpe ne l’entrata;</l>
-          <l xml:id="Inf.05.006">giudica e manda sicondo ch’avinghia.</l>
+          <l xml:id="Inf.05.006">giudica e manda sicondo <choice ana="#normalizzazione"><orig>ch’avinghia</orig><reg>ch’avvinghia</reg></choice>.</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.007">Dico che quando l’anima mal nata</l>
           <l xml:id="Inf.05.008">gli va davanti, tutta si confessa; </l>
-          <l xml:id="Inf.05.009">e quel conoscittore di lo pecata</l>
+          <l xml:id="Inf.05.009">e quel conoscittore de le <choice ana="#normalizzazione"><orig>pecata</orig><reg>peccata</reg></choice></l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.010">vede qua’ luogo d’inferno è da essa; </l>
-          <l xml:id="Inf.05.011">cingesi co·la coda tante volte </l>
-          <l xml:id="Inf.05.012">quantunque gradi vuol che giù si è messa.</l>
+          <l xml:id="Inf.05.011">cignesi co<g ref="#middle_dot"/>la coda tante volte </l>
+          <l xml:id="Inf.05.012">quantunque gradi vuol che giù sie messa.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.05.013">Sempre dinanzi a llui ne stano molte:</l>
+          <l xml:id="Inf.05.013">Sempre dinanzi a<g ref="#middle_dot"/>llui ne stano molte:</l>
           <l xml:id="Inf.05.014">vanno a vicenda ciascuno al giudizio, </l>
           <l xml:id="Inf.05.015">dicono e odono e po’ son giù volte.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.05.016">« Oh tu che vieni al doloroso ospizio », </l>
+          <l xml:id="Inf.05.016">« O tu che vieni al doloroso ospizio », </l>
           <l xml:id="Inf.05.017">disse Minòs allor quando mi vide,</l>
-          <l xml:id="Inf.05.018">lasciando il loco di cotanto ofizio,</l>
+          <l xml:id="Inf.05.018">lasciando il loco di cotanto <choice ana="#normalizzazione"><orig>ofizio</orig><reg>offizio</reg></choice>,</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.019">« guarda com’entri e di cu’ tu tti fidi;</l>
           <l xml:id="Inf.05.020">non t’inganni l’empiezza dell’entrare! ».</l>
-          <l xml:id="Inf.05.021">E ’l duca mio a llui: « Perché pur gride ? </l>
+          <l xml:id="Inf.05.021">E ’l duca mio a<g ref="#middle_dot"/>llui: « Perché pur gride ? </l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.022">Non impedire lo suo fatale andare:</l>
@@ -1242,7 +1238,7 @@
           <l xml:id="Inf.05.027">là dove molto piato mi percuote.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.05.028">E venni a lluogo d’ogni luce muto,</l>
+          <l xml:id="Inf.05.028">E venni a<g ref="#middle_dot"/>lluogo d’ogni luce muto,</l>
           <l xml:id="Inf.05.029">che muglia come fa ’l mar per tempesta,</l>
           <l xml:id="Inf.05.030">se da contrari venti è combattuto.</l>
         </lg>
@@ -1288,12 +1284,12 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.055">A vizio di luxuria fu sí rotta,</l>
-          <l xml:id="Inf.05.056">che <choice><orig>labito</orig><reg>libito</reg></choice> lecito fece in suo legge, </l>
+          <l xml:id="Inf.05.056">che <choice ana="#normalizzazione"><orig>labito</orig><reg>libito</reg></choice> lecito fece in suo legge, </l>
           <l xml:id="Inf.05.057">per torre el biasimo in che era condotta.</l> 
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.058">Ell’è Semiramis, di cui si legge </l>
-          <l xml:id="Inf.05.059">che soccedette a <choice><orig>nNino</orig><reg>Nino</reg></choice> e ffu suo sposa:</l>
+          <l xml:id="Inf.05.059">che soccedette a <choice ana="#normalizzazione"><orig>nNino</orig><reg>Nino</reg></choice> e ffu suo sposa:</l>
           <l xml:id="Inf.05.060">tene la terra che ’l Soldano corregge. </l>
         </lg>
         <lg type="terzina">
@@ -1327,10 +1323,10 @@
         <lg type="terzina">
           <l xml:id="Inf.05.076">Et e’ risposte a me: « Quando saranno</l>
           <l xml:id="Inf.05.077">giunti più ppresso a nnoi e ttu gli priega </l>
-          <l xml:id="Inf.05.078">per l’amor <choice><orig>che 
+          <l xml:id="Inf.05.078">per l’amor <choice ana="#correzione-manoscritto"><orig>che 
                     <del rend="strikethrought" type="erasure">gdli</del>
                   </orig><reg>che</reg></choice>gli mena, 
-                  <choice><orig>reverano</orig><reg>reveranno</reg></choice>.</l>
+                  <choice ana="#normalizzazione"><orig>reverano</orig><reg>reveranno</reg></choice>.</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.079">Sí ttosto come ’l vento a noi li piega</l>
@@ -1379,14 +1375,14 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.05.106">Amor, condusse noi a una forte </l>
-          <l xml:id="Inf.05.107">Chino attende che vita ci spense». </l>
+          <l xml:id="Inf.05.107"><choice><sic>Chino</sic><corr>Caina</corr></choice> attende che vita ci spense». </l>
         </lg>
       <pb n="8v" facs="#c8v" corresp="#carta_008v"/>
         <lg type="terzina">
           <l xml:id="Inf.05.108">Queste parole da llor ci fur porte.</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.05.109">Quando intesi quell’<choice><orig>ame</orig><reg>anime</reg></choice> offense, </l>
+          <l xml:id="Inf.05.109">Quando intesi quell’<choice ana="#normalizzazione"><orig>ame</orig><reg>anime</reg></choice> offense, </l>
           <l xml:id="Inf.05.110">chinai el viso, e ffiso el tenni basso, </l>
           <l xml:id="Inf.05.111">fin che ’l maestro mi disse: « Che pense? ». </l>
         </lg>
@@ -1394,11 +1390,11 @@
           <l xml:id="Inf.05.112">Quando lo ’ntesi, i’ cominciai: « Oh lasso,  </l>
           <l xml:id="Inf.05.113">quanti dolci pensieri, quanto disio </l>
           <l xml:id="Inf.05.114">menò costoro
-                <choice>
+                <choice ana="#errore-copia-non-corretto">
                   <sic>al dolo questo doloroso</sic>
                   <corr>questo doloroso</corr>
-                </choice>
-                <choice>
+                </choice> 
+                <choice ana="#normalizzazione">
                   <orig>paso</orig>
                   <reg>passo</reg>
                 </choice>».
@@ -1455,10 +1451,10 @@
       </div>
 
        <!--Canto VI-->
-      <div n="6" type="canto" xml:id="Inferno_6">
+      <div n="6" type="canto" xml:id="Inferno_06">
        <pb n="9r" facs="#c9r" corresp="#carta_009r"/>
         <cb n="b"/>
-        <head>Capitolo VI <choice><orig><del rend="erased">purghatori</del> Inferni </orig><reg>Inferni</reg></choice></head>
+        <head>Capitolo VI <choice ana="#correzione-manoscritto"><orig><del rend="erased">purghatori</del> Inferni </orig><reg>Inferni</reg></choice></head>
         <lg type="terzina">
           <l xml:id="Inf.06.001">Al tornar de la mente che si schiuse</l>
           <l xml:id="Inf.06.002">dinanzi a la piatà de’ due cognati, </l>
@@ -1467,7 +1463,7 @@
         <lg type="terzina">
           <l xml:id="Inf.06.004">nuovi tormenti e nuovi tormentati </l>
           <l xml:id="Inf.06.005">mi vego intorno, e come ch’io mi muova</l>
-          <l xml:id="Inf.06.006">e come ch’io <choice><orig>mi <del rend="erased">uov</del></orig><reg>mi</reg></choice> voglia e ch’io mi guati.</l> 
+          <l xml:id="Inf.06.006">e come ch’io <choice ana="#correzione-manoscritto"><orig>mi <del rend="erased">uov</del></orig><reg>mi</reg></choice> voglia e ch’io mi guati.</l> 
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.06.007">Io sono al terzo cerchio, de la piova</l>
@@ -1485,7 +1481,7 @@
           <l xml:id="Inf.06.015">sopra la gente che quivi somersa. </l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.06.016"><choice><sic>gi ochi</sic><corr>Gli occhi</corr></choice> ha vermigli, la boca onta  e atra </l>
+          <l xml:id="Inf.06.016"><choice ana="#errore-copia-non-corretto"><sic>gi ochi</sic><corr>Gli ochi</corr></choice> ha vermigli, la boca onta  e atra </l>
           <l xml:id="Inf.06.017">larga il ventre e unghianta le mani; </l>
           <l xml:id="Inf.06.018">graffia li spiriti, ingoia et isquarta.</l>
         </lg>
@@ -1510,7 +1506,7 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.06.028">Qual è quel cane che abaiando agogna, </l>
-          <l xml:id="Inf.06.029">e ssi <choice><orig>raqu<add place="supralinear">e</add>ta</orig><reg>racqueta</reg></choice> poi che ’l pasto morde,  </l>
+          <l xml:id="Inf.06.029">e ssi <choice ana="#correzione-manoscritto"><orig>raqu<add place="supralinear">e</add>ta</orig><reg>racqueta</reg></choice> poi che ’l pasto morde,  </l>
           <l xml:id="Inf.06.030">ché solo a divorarlo intende e pogna, </l>
         </lg>
         <lg type="terzina">
@@ -1526,12 +1522,12 @@
         <lg type="terzine">
           <l xml:id="Inf.06.037">Elle giacien per terra tutte quante,</l>
           <l xml:id="Inf.06.038">fuor d’una ch’a ssedere si levò, ratto </l>
-          <l xml:id="Inf.06.039">ch’<choice><reg>ella</reg><orig>ela</orig></choice> ci vide passarsi davante.</l>
+          <l xml:id="Inf.06.039">ch’<choice ana="#normalizzazione"><reg>ella</reg><orig>ela</orig></choice> ci vide passarsi davante.</l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.06.040">«Oh tu che ssè per questo inferno tratto », </l>
           <l xml:id="Inf.06.041">mi disse, « riconoscimi, se ssai: </l>
-          <l xml:id="Inf.06.042"> tu ffusti prima ch'io disfatto, fatto ». </l>
+          <l xml:id="Inf.06.042"> tu ffusti prima ch’io disfatto, fatto ». </l>
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.06.043">E io a llui : « L’angoscia che tu hai </l>
@@ -1550,7 +1546,7 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.06.052">Voi cittadini che mi chiamasti Ciaco: </l>
-          <l xml:id="Inf.06.053">per la dannosa colpa <choice><orig>del<add place="supralinear">a</add></orig><reg>de la</reg></choice> gola </l>
+          <l xml:id="Inf.06.053">per la dannosa colpa <choice ana="#correzione-manoscritto"><orig>del<add place="supralinear">a</add></orig><reg>de la</reg></choice> gola </l>
           <l xml:id="Inf.06.054"> vedette ben ch’a la pioggia mi fiaco. </l>
         </lg>
         <lg type="terzina">
@@ -1588,7 +1584,7 @@
         </lg>
         <lg type="terzina">
           <l xml:id="Inf.06.073"> Giusti son due, ma non vi sono ’ntesi;</l>
-          <l xml:id="Inf.06.074"> superbia e ’nvidia e avarizia <choice><orig><del rend="strikethrough">e</del>sono</orig><reg>sono</reg></choice> </l>
+          <l xml:id="Inf.06.074"> superbia e ’nvidia e avarizia <choice ana="#correzione-manoscritto"><orig><del rend="strikethrough">e</del>sono</orig><reg>sono</reg></choice> </l>
           <l xml:id="Inf.06.075"> le tre faville c’hanno e cori accesi ».  </l>
         </lg>
         <lg type="terzina">
@@ -1617,7 +1613,7 @@
           <l xml:id="Inf.06.090"> più non ti dico e più non ti rispondo ». </l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.06.091"> Li diritt’ <choice><orig>ochi</orig><reg>occhi</reg></choice> torse allora in biechi; </l>
+          <l xml:id="Inf.06.091"> Li diritt’ ochi torse allora in biechi; </l>
           <l xml:id="Inf.06.092"> guardomi al quanto e ppoi chinò la testa: </l>
           <l xml:id="Inf.06.093"> cade con seco al pari degli altri ciechi. </l>
         </lg>
@@ -1627,7 +1623,7 @@
           <l xml:id="Inf.06.096"> quando verà la nimica podesta: </l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.06.097"> ciascuno <choice><orig><del rend="strikethrough">rive</del>rivedera</orig><reg>rivederà</reg></choice> l’antica tomba, </l>
+          <l xml:id="Inf.06.097"> ciascuno <choice ana="#correzione-manoscritto"><orig><del rend="strikethrough">rive</del>rivedera</orig><reg>rivederà</reg></choice> l’antica tomba, </l>
           <l xml:id="Inf.06.098"> ripiglierà suo carne e ssuo figura, </l>
           <l xml:id="Inf.06.099"> udirà quel che in etterno rimbomba ». </l>
         </lg>
@@ -1663,8 +1659,8 @@
         </lg>
       </div>
 
-      <div n="6" type="canto" xml:id="Inferno_7">
-       <pb n="9r" facs="#c10r" corresp="#carta_010r"/>
+      <div n="7" type="canto" xml:id="Inferno_07">
+       <pb n="10r" facs="#c10r" corresp="#carta_010r"/>
         <cb n="b"/>
         <head>Capitolo Settimo Inferni</head>
         <lg type="terzina">
@@ -1722,46 +1718,418 @@
           <l xml:id="Inf.07.030">gridando: « Perché tieni? » e « Perché burli? »</l>
         </lg>
         <lg type="terzina">
-          <l xml:id="Inf.07.031"> </l>
-          <l xml:id="Inf.07.032"> </l>
-          <l xml:id="Inf.07.033"> </l>
+          <l xml:id="Inf.07.031"> Poi si tornavan per lo cerchio tetro </l>
+          <l xml:id="Inf.07.032"> da ogni mano a l’opposito punto, </l>
+          <l xml:id="Inf.07.033"> gridando sí anche ontoso metro; </l>
         </lg>
           <lg type="terzina">
-          <l xml:id="Inf.07.034"> </l>
-          <l xml:id="Inf.07.035"> </l>
-          <l xml:id="Inf.07.036"> </l>
+          <l xml:id="Inf.07.034"> poi si volgia ciascun, quand’era giunto, </l>
+          <l xml:id="Inf.07.035"> per lo suo mezzo <choice ana="#variante-edizione-riferimento">
+  <orig>cerdi</orig>
+  <reg source="#Petrocchi">cerchi</reg>
+</choice> all’altra giostra.</l>
+          <l xml:id="Inf.07.036"> E io, ch’avevo ’l core quasi compunto, </l>
         </lg>
   <lg type="terzina">
-          <l xml:id="Inf.07.037"> </l>
-          <l xml:id="Inf.07.038"> </l>
-          <l xml:id="Inf.07.039"> </l>
+          <l xml:id="Inf.07.037"> dissi: « Maestro mio, or mi dimostra </l>
+          <l xml:id="Inf.07.038"> che gent’è questa, se ttutti fur cherici </l>
+          <l xml:id="Inf.07.039"> questi chercuti a la sinistra nostra ». </l>
         </lg>
   <lg type="terzina">
-          <l xml:id="Inf.07.040"> </l>
-          <l xml:id="Inf.07.041"> </l>
-          <l xml:id="Inf.07.042"> </l>
+          <l xml:id="Inf.07.040"> E elli a me: « Tutti quanti fur guerci </l>
+          <l xml:id="Inf.07.041"> sì de la mente in la vita primaia,  </l>
+          <l xml:id="Inf.07.042"> che co<g ref="#middle_dot"/>misura nullo spendio ferci.</l>
         </lg>
   <lg type="terzina">
-          <l xml:id="Inf.07.043"> </l>
-          <l xml:id="Inf.07.044"> </l>
-          <l xml:id="Inf.07.045"> </l>
+          <l xml:id="Inf.07.043"> Assai la boce loro chiaro <choice ana="#normalizzazione"><reg>l’abbaia</reg><orig>l’abaia</orig></choice>, </l>
+          <l xml:id="Inf.07.044"> quando vengono a un punto del cerchio </l>
+          <l xml:id="Inf.07.045"> dove colpa contraria li dispaia.</l>
         </lg>
-
-	
-
-
-	
-
-
-
-
-
+        <lg type="terzina">
+          <l xml:id="Inf.07.046"> Questi fur cherci, che non han coperchio </l>
+          <l xml:id="Inf.07.047"> peloso al capo, papi e cardinali,  </l>
+          <l xml:id="Inf.07.048"> in cui usò avarizia el suo soverchio ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.049"> E io: « Maestro, in fra questi cotali </l>
+          <l xml:id="Inf.07.050"> dovre’ io bene riconoscere alcuni </l>
+          <l xml:id="Inf.07.051"> che furo immondi di cotesti mali ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.052"> E ello a me: « Van pensieri aduni:  </l>
+          <l xml:id="Inf.07.053"> la sconoscente vita che li fé sozzi,  </l>
+          <l xml:id="Inf.07.054"> a ogni conoscenza or li fa bruni,  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.055"> In etterno verrano a li due cozzi: </l>
+          <l xml:id="Inf.07.056"> questi risurgeranno del sepulcro </l>
+          <l xml:id="Inf.07.057"> col pugno chiuso e quelli co’ crin mozzi. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.058"> Mal dare e mal tenere lo mondo pulcro </l>
+          <l xml:id="Inf.07.059"> ha ttolti loro e pposti a questa zuffa:  </l>
+          <l xml:id="Inf.07.060"> qual ella sia, parole non ci pulcro.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.061"> Or può vedere, figliuolo, la corta buffa  </l>
+          <l xml:id="Inf.07.062"> de’ ben che son comessi a la fortuna, </l>
+          <l xml:id="Inf.07.063"> per cui l’umana gente si rabuffa; </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.064"> ché tutto l’oro ch’è sotto la luna </l>
+        </lg>
+        <cb n="b"/>
+        <lg type="terzina">
+          <l xml:id="Inf.07.065"> o che già fu, di quell’anime stanche </l>
+          <l xml:id="Inf.07.066"> non e’ potrebbe far posar pur una ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.067"> « Maestro », diss’io a llui, « or mi dì anche: </l>
+          <l xml:id="Inf.07.068"> questa fortuna di che ttu mi <choice><reg>tocche</reg><orig>toche</orig></choice>,  </l>
+          <l xml:id="Inf.07.069"> che è, che ben del mondo ha ssí ttra branche? ». </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.070"> Ello a mme: « Oh creature sciocche,  </l>
+          <l xml:id="Inf.07.071"> quanta ignoranza è quella che v’ofende! </l>
+          <l xml:id="Inf.07.072"> Or vo’ che ttu mie sentenza ne’ mbroche. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.073"> Colui lo cui sapere tutto trascende,  </l>
+          <l xml:id="Inf.07.074"> fece li cieli e diè lloro chi conduce </l>
+          <l xml:id="Inf.07.075"> sì, ch’ogni parte a ogni parte sprende, </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.076"> distribuendo egualmente la luce. </l>
+          <l xml:id="Inf.07.077"> Similemente alli splendor mondani </l>
+          <l xml:id="Inf.07.078"> ordinò generale ministro e duce </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.079"> che ttramutasse al tempo li ben vani </l>
+          <l xml:id="Inf.07.080"> di gente in gente e d’uno in altro sangue,  </l>
+          <l xml:id="Inf.07.081"> oltra la difension de’ senni umani; </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.082"> per ch’una gente impera e altra langue, </l>
+          <l xml:id="Inf.07.083"> seguendo lo giudicio di costei,  </l>
+          <l xml:id="Inf.07.084"> che è <choice ana="#normalizzazione"><reg>occulto</reg><orig>oculto</orig></choice> come in erba l’angue. </l>
+        </lg>
+           <lg type="terzina">
+          <l xml:id="Inf.07.085"> Vostro sapere non ha contasto a llei: </l>
+          <l xml:id="Inf.07.086"> questa provede, giudica, e pplesegue </l>
+          <l xml:id="Inf.07.087"> suo regno come il loro gli altri Idei. </l>
+        </lg>
+            <lg type="terzina">
+          <l xml:id="Inf.07.088"> Le sue trasmutazioni non <choice><reg>hanno</reg><orig>ano</orig></choice> triegue: </l>
+          <l xml:id="Inf.07.089"> necessità la fe esser veloce; </l>
+          <l xml:id="Inf.07.090"> sí spesso viene ch’a vicenda consegue. </l>
+        </lg>
+          <lg type="terzina">
+          <l xml:id="Inf.07.091"> Quest’è colei ch’è ttanto posta ’n croce  </l>
+          <l xml:id="Inf.07.092"> pur da color che le dovrien dar lode,  </l>
+          <l xml:id="Inf.07.093"> dandole biasimo a ttorto e mala boce; </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.094"> ma ella s’è biata e cciò non ode:  </l>
+          <l xml:id="Inf.07.095"> coll’altre prime criature lieta  </l>
+          <l xml:id="Inf.07.096"> volve suo spera e biata si gode. </l>
+        </lg>
+           <lg type="terzina">
+          <l xml:id="Inf.07.097"> Or discendiono omai a maggior pieta:  </l>
+          <l xml:id="Inf.07.098"> già ogni stella cade che saliva  </l>
+          <l xml:id="Inf.07.099"> quando mi mosse, ’l troppo star si vieta ». </l>
+        </lg>
+         <lg type="terzina">
+          <l xml:id="Inf.07.099a" ana="#correzione-manoscritto">  <add hand="#copista" place="inline">  <del hand="#correttore" rend="strikethrough">già ogni stella cade che saliva </del> <note>Cassato dal copista per ripetizione</note></add></l>
+          <l xml:id="Inf.07.100"> Noi <choice ana="#normalizzazione"><reg>recidemmo</reg><orig>ricidemo</orig></choice> all’altra riva </l>
+          <l xml:id="Inf.07.101"> sopr’una fonte che bolle e rriversa </l>
+          <l xml:id="Inf.07.102"> per un fossato che da llei deriva. </l>
+        </lg>
+        <pb n="11r" facs="#c11r" corresp="#carta_011r"/>
+        <cb n="a"/>
+        <lg type="terzina">
+          <l xml:id="Inf.07.103"> L’acqua era buia assa’ più che persa;  </l>
+          <l xml:id="Inf.07.104"> e noi, in compagnia dell’onde bigie,  </l>
+          <l xml:id="Inf.07.105"> entrammo giù per una via diversa. </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.106"> Una palude va ch’ha nome Stigie  </l>
+          <l xml:id="Inf.07.107"> questo piccil ruscello, quand’è disceso  </l>
+          <l xml:id="Inf.07.108"> a’ ppiè de le maligne piaggie grigie.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.109"> E io, che di mirare stavo inteso,   </l>
+          <l xml:id="Inf.07.110"> vidi genti fangose in quel pantano,  </l>
+          <l xml:id="Inf.07.111"> inude ttutte, con sembiante offeso.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.112"> Queste si percotieno non pur co<g ref="#middle_dot"/>mmano,    </l>
+          <l xml:id="Inf.07.113"> ma co la testa e col petto e co piedi,  </l>
+          <l xml:id="Inf.07.114"> troncandosi co’ denti a brano a brano.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.115"> El mio maestro disse: « Figlio, or vedi   </l>
+          <l xml:id="Inf.07.116"> l’anime di coloro cui vinse l’ira;   </l>
+          <l xml:id="Inf.07.117"> e anco vo’ che ttu per certo credi  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.118"> che ssotto l’acqua ha gente che sospira,    </l>
+          <l xml:id="Inf.07.119"> che fanno pulular quell’acqua al sommo,  </l>
+          <l xml:id="Inf.07.120"> voltando come vedi, u’ che s’aggira.   </l>
+        </lg>
+         <lg type="terzina">
+          <l xml:id="Inf.07.121"> Fitti nel fango dicon: “ Tristi fommo  </l>
+          <l xml:id="Inf.07.122"> nell’aire dolce che dal sol s’allegra,  </l>
+          <l xml:id="Inf.07.123"> portando dentro accidïoso fummo:   </l>
+        </lg>
+         <lg type="terzina">
+          <l xml:id="Inf.07.124"> or ci attristiamo ne la belletta negra”.  </l>
+          <l xml:id="Inf.07.125"> Questo <choice><sic>mo</sic><corr>inno</corr></choice> lo gorgoglia ne la strozza,  </l>
+          <l xml:id="Inf.07.126"> ché dir nol posson con parola intera ». </l>
+        </lg>
+         <lg type="terzina">
+          <l xml:id="Inf.07.127"> Noi pur giramo de la lorda pozza  </l>
+          <l xml:id="Inf.07.128"> grand’arco tra la ripa <choice><reg>secca</reg><orig>seca</orig></choice> e ’l mezzo, </l>
+          <l xml:id="Inf.07.129"> co gli ochi volti a chi del fango ingozza.  </l>
+        </lg>
+        <lg type="terzina">
+          <l xml:id="Inf.07.130"> Venimo a piè d’una torre al da ssezzo. </l>
+        </lg>
       </div>
 
 
-
-
-
+<!-- Canto 8-->
+      <div n="8" type="canto" xml:id="Inferno_08">
+       <pb n="11v" facs="#c11v" corresp="#carta_011v"/>
+        <cb n="b"/>
+        <head><choice ana="#normalizzazione"><orig>Clap(it)lo</orig><reg>Capitolo</reg></choice> Ottavo Inferni</head>
+        <lg type="terzina">
+          <l xml:id="Inf.08.001">  Io dico, seguitando, che assai prima </l>
+          <l xml:id="Inf.08.002">che noi fussimo a ppiè dell’alta torre,   </l>
+          <l xml:id="Inf.08.003">gli ochi mie se n’andar suso a la cima  </l>
+        </lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.004">per due fiamette che vedemo porre, </l>
+						<l xml:id="Inf.08.005">e un’altra da llungi render cenno,</l>
+						<l xml:id="Inf.08.006">tanto ch’appena il potev’ <choice><reg>ochio</reg><orig>ocho</orig></choice> tòrre.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.007">E io mi volsi al mar di tutto senno;</l>
+						<l xml:id="Inf.08.008">e dissi: « Quel che dice? e che risponde</l>
+						<l xml:id="Inf.08.009">quell’altro fuoco? e chi son que’ che ’l fenno? ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.010">E elli a me: « Su per le sudice onde</l>
+						<l xml:id="Inf.08.011">già puo’ vedere ciò che per te s’aspetta,</l>
+						<l xml:id="Inf.08.012">se ’l fumo del pantan nol ti nasconde ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.013">Corda non pinse mai d’arco saetta</l>
+						<l xml:id="Inf.08.014">che ssí sengisse via per l’aire snella,</l>
+						<l xml:id="Inf.08.015">com’io vidi una nave piccioletta</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.016">venir pe’ ll’acqua in ver di noi in quella,</l>
+						<l xml:id="Inf.08.017">sotto ’l governo d’un sol galeotto,</l>
+						<l xml:id="Inf.08.018">che gridava: « Or se’ giunta, anima fella!».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.019"> « Fregïàs, Fregïàs, tu gri’ a vòto », </l>
+						<l xml:id="Inf.08.020">disse lo mio signore, « a questa volta:</l>
+						<l xml:id="Inf.08.021">più non ci arai che sol passando il loto ».</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.022">Qual è colui che ’l grande ingan’ ascolta</l>
+						<l xml:id="Inf.08.023">che gli sia fatto, e ppoi se ne ramarca, </l>
+						<l xml:id="Inf.08.024">fecesi Fregïàs nell’ira acolta.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.025">El duca mio discese ne la barca,</l>
+						<l xml:id="Inf.08.026">e poi mi fece ’ntrare dirieto a lui;</l>
+          </lg>
+          <cb n="b"/>
+          <lg type="terzina">
+						<l xml:id="Inf.08.027">e ssol quan’io fu’ dentro parve carca.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.028"><choice ana="#correzione-manoscritto"><orig><del rend="erased">Mentre</del> tosto </orig><reg>Tosto</reg></choice>  che ’l duca e io nel legno fui,</l>
+						<l xml:id="Inf.08.029">segando se ne va l’antica plora</l>
+						<l xml:id="Inf.08.030">dell’acqua più che non suol con altrui.</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.031">Mentre noi <choice><orig>coravano</orig><reg>corravamo</reg></choice> la morta gora,</l>
+						<l xml:id="Inf.08.032"> scontrameri in un cura pien di fango</l>
+						<l xml:id="Inf.08.033"> e disse: « Chi sse’ ttu che vieni anz’ora? ». </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.034">E io a llui: « S’i’ vengo, i’ non rimango;</l>
+						<l xml:id="Inf.08.035">ma ttu chi sse’, che si sé fatto brutto? ».</l>
+						<l xml:id="Inf.08.036">Rispose: « Vedi ch’i’ son un che piango ». </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.037">E io a llui: « Con piangere e co<g ref="#middle_dot"/><choice><orig>lluto</orig><reg>llutto</reg></choice>,</l>
+						<l xml:id="Inf.08.038">spirito maladetto, di rimani;</l>
+						<l xml:id="Inf.08.039">ch’i’ ti conosco, ancor sie lordo tutto ». </l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.040">Allora stese al legno ambo le mani;</l>
+						<l xml:id="Inf.08.041">per che ’l maestro <choice><reg>accorto</reg><orig>acorto</orig></choice> lo sospinse, </l>
+						<l xml:id="Inf.08.042">dicendo: « Via costà co gli altri cani! ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.043">E collo poi co<g ref="#middle_dot"/>le braccia mi cinse; </l>
+						<l xml:id="Inf.08.044">guardomi ’l voto e diss’: « Alma sdegnosa, </l>
+						<l xml:id="Inf.08.045">benedetta colei che ’n te s’<choice><orig>icinse</orig><reg>incinse</reg></choice>!</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.046">Que’ fu al mondo persona argogliosa;</l>
+						<l xml:id="Inf.08.047">bontà non è che sua memoria fregi: </l>
+						<l xml:id="Inf.08.048">così s’è ll’ombra sua qui furïosa.</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.049">Quanti si tengon ora là ssú gran regi </l>
+						<l xml:id="Inf.08.050">che qui staranno come porci in brago,</l>
+						<l xml:id="Inf.08.051">di sé lasciando orribili dispregi!".</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.052">E io: « Maestro, molto sare’ vago</l>
+						<l xml:id="Inf.08.053">di vederli tuffare in questa broda </l>
+						<l xml:id="Inf.08.054">prima che noi uscissimo del lago ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.055">E ello a mme: « Avanti che la proda </l>
+						<l xml:id="Inf.08.056">ti si lasci vedere, tu ssarai sazio: </l>
+						<l xml:id="Inf.08.057">di tal disïo converà che ttu goda".</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.058">Di po’ ciò poco i’ vidi quello strazio </l>
+						<l xml:id="Inf.08.059">far a coloro de le fangose genti,  </l>
+						<l xml:id="Inf.08.060">che Dio ancor ne lodo e ne <choice><orig>ringrazo</orig><reg>ringrazio</reg></choice>.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.061">Tutti gridavano: « Ai Filippo Argenti! »;</l>
+						<l xml:id="Inf.08.062">e ’l fiorentino spirito bizzarro</l>
+						<l xml:id="Inf.08.063">in sé medesimo si mordea co’ denti.</l>
+					</lg>
+           <pb n="12r" facs="#c12r" corresp="#carta_012r"/>
+        <cb n="a"/>
+          <lg type="terzina">
+						<l xml:id="Inf.08.064">Quivi e’ llasciamo, che ppiù non ne narro;</l>
+						<l xml:id="Inf.08.065">ma ne l’orechie mi percosse un duolo, </l>
+						<l xml:id="Inf.08.066">pper ch’io avante l’ochio attento sbarro. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.067">El buon maestro disse: « Omai, figliuolo, </l>
+						<l xml:id="Inf.08.068">s’appressa la città c’ha nome Dite, </l>
+						<l xml:id="Inf.08.069">co’ gravi cittadini, col grande stuolo ».</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.070">E io: « Maestro, già le sue meschite </l>
+						<l xml:id="Inf.08.071">là dentro certo ne la valle scerno, </l>
+						<l xml:id="Inf.08.072">vermiglie come se di fuoco uscite</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.073">fossero ». E e’ mi disse: « Il fuoco etterno </l>
+						<l xml:id="Inf.08.074">ch’entro l'affuoca le dimostra rosse, </l>
+						<l xml:id="Inf.08.075">come ttu vedi in questo basso inferno ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.076">Noi pur giungemo dintra ll’alte fosse</l>
+						<l xml:id="Inf.08.077">che vallan <choice><orig>quela tera</orig><reg>quella terra</reg></choice> sventurata:</l>
+						<l xml:id="Inf.08.078">le mura mi paria che fferro fosse.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.079">Non sanza prima far granda girata</l>
+						<l xml:id="Inf.08.080">venimo in parte dove ’l nochier forte</l>
+						<l xml:id="Inf.08.081">« Usciteci » gridò: « qui è l’entrata ».</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.082">I’ vidi più di mille in sulle porte</l>
+						<l xml:id="Inf.08.083">da cciel piovute, che stizzosamente</l>
+						<l xml:id="Inf.08.084">dicien: « Chi è costui che sanza morte </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.085">va per lo regno de la morta gente? ».</l>
+						<l xml:id="Inf.08.086">E ’l savio mio maestro fece segno </l>
+						<l xml:id="Inf.08.087">di voler lor parlar segretamente.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.088">Allor chiuser un poco el grande sdegno</l>
+						<l xml:id="Inf.08.089">e dissero: « Vien tu ssolo, e que sen vada</l>
+						<l xml:id="Inf.08.090">che sicuro entrò per questo regno. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.091">Sol si ritorni per la folle strada:</l>
+						<l xml:id="Inf.08.092">pruovi, se sa; ché ttu qui rimarrai,</l>
+						<l xml:id="Inf.08.093">che gl’hai scorta sí buia contrada ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.094">Pensa lettore com’io mi confortai</l>
+						<l xml:id="Inf.08.095">nel suon de le parole maladette,</l>
+						<l xml:id="Inf.08.096">ché non credetti ritornarci mai.</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.097">« O caro duca mio, che più di sette </l>
+						<l xml:id="Inf.08.098">volte m’hai sicurtà renduta e ttratto</l>
+						<l xml:id="Inf.08.099">d’alto periglio che contro mi stette,  </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.100">non mi lasciar », diss’io, « così diffatto;</l>
+						<l xml:id="Inf.08.101">e sse l’andar più oltre c’è negato, </l>
+					</lg>
+          <cb n="b"/>
+          <lg type="terzina">
+            <l xml:id="Inf.08.102">ritorniano l’orme nostre insieme ratto ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.103">E quel signore che llà m’avia menato, </l>
+						<l xml:id="Inf.08.104">mi disse: « Non temere; ché ’l nostro passo </l>
+						<l xml:id="Inf.08.105">non ci può ttòrre alcuno: da ttal n’è dato. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.106">Or qui m’attendi, e llo spirito lasso </l>
+						<l xml:id="Inf.08.107">conforta e ciba di speranza buona, </l>
+						<l xml:id="Inf.08.108">ch’io non ti lascerò nel mondo basso ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.109">Così sen va, e quindi m’abandona</l>
+						<l xml:id="Inf.08.110">lo dolce padre, e io rimango in forse, </l>
+						<l xml:id="Inf.08.111">che ’l no e ’l sí nel capo mi tenciona. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.112">Udir non poté quel ch’allor si porse; </l>
+						<l xml:id="Inf.08.113">ma e’ non stette là con essi guari,</l>
+						<l xml:id="Inf.08.114">che ciascun dentro a pruova si ricorse.</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.08.115">Chiuser le porti que’ nostri aversari</l>
+						<l xml:id="Inf.08.116">nel petto al mio signor, che fuori rimase </l>
+						<l xml:id="Inf.08.117">e rivolsesi a me con passi rari. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.118">Gli ochi a la terra e le ciglia avie rase </l>
+						<l xml:id="Inf.08.119">d’ogne baldanza, e dicea ne’ sospiri:</l>
+						<l xml:id="Inf.08.120"> « Chi m’ha negate le dolenti case ! »</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.121">E a me disse: « Tu, perch’io m’adiri, </l>
+						<l xml:id="Inf.08.122">non sbigottir, ch’i vincerò la pruova,</l>
+						<l xml:id="Inf.08.123">qual ch’a la difensione dentro s’aggiri.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.124">Questa lor tracontanza non m’è nuova;</l>
+						<l xml:id="Inf.08.125">ché già l’usaro a mme in segreta porta,</l>
+						<l xml:id="Inf.08.126">la qual sanza <choice><orig>serame</orig><reg>serrame</reg></choice> ancor si truova.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.127">Sopr’essa vedestú la scritta morta: </l>
+						<l xml:id="Inf.08.128">e ggià di qua da llei discende l’erta, </l>
+						<l xml:id="Inf.08.129">passando per li cerchi sanza scorta, </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.08.130">tal che per lui ne fia la terra aperta ».</l>
+					</lg>
+      </div>
+    
     </body>
   </text>
 </TEI>
