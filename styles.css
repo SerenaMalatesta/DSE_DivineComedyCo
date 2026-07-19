@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Dante Commedia MS Harley 3459
-   Digital Scholarly Edition Style 
+   Dante Commedia Ã‚Â· Inferno Ã¢â‚¬â€ MS Harley 3459
+   Digital Scholarly Edition Ã¢â‚¬â€ Styles
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap');
@@ -955,11 +955,7 @@ body.dark .choice-orig:hover {
 .marginal-ref-quote,
 .marginal-ref-quote .mentioned {
   font-style: normal;
-  text-decoration-line: underline;
-  text-decoration-style: solid;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--accent);
+  text-decoration: none;
 }
 
 /* margin indicators */
@@ -1270,6 +1266,94 @@ body.dark .choice-orig:hover {
   font-family: var(--font-serif);
   font-size: 1rem;
   line-height: 1.7;
+}
+
+/* Scheda dei marginalia: stabile, indipendente e trascinabile */
+.margin-popup {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 720;
+  display: none;
+  width: min(590px, calc(100vw - 32px));
+  max-height: min(72vh, 720px);
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--popup-bg);
+  box-shadow: 0 20px 60px var(--popup-shadow);
+}
+.margin-popup.visible { display: flex; }
+.margin-popup.dragging { user-select: none; box-shadow: 0 26px 72px var(--popup-shadow); }
+.margin-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--bg-panel-alt), var(--bg-panel));
+  cursor: move;
+  touch-action: none;
+}
+.margin-popup-kicker {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent);
+  font: 800 .61rem var(--font-sans);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.margin-popup-title {
+  display: block;
+  color: var(--text);
+  font: 700 .82rem var(--font-sans);
+}
+.margin-popup-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.margin-popup-body {
+  padding: 14px 16px 18px;
+  overflow: auto;
+  color: var(--text);
+}
+
+/* Apparato filologico incorporato nella scheda marginale */
+.margin-choice-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0 14px;
+  padding: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: var(--bg-panel-alt);
+}
+.margin-choice-column {
+  min-width: 0;
+  padding: 9px;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--bg-panel);
+}
+.margin-choice-column.edited { box-shadow: inset 3px 0 var(--accent); }
+.margin-choice-details .choice-popup-form {
+  margin-top: 7px;
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+.margin-choice-note {
+  grid-column: 1 / -1;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  background: var(--accent-bg);
+  border-radius: calc(var(--radius) - 2px);
+}
+.margin-choice-note > div { margin-top: 6px; font-family: var(--font-serif); line-height: 1.55; }
+
+@media (max-width: 640px) {
+  .margin-popup { right: 8px; bottom: 8px; width: calc(100vw - 16px); max-height: 78vh; }
+  .margin-choice-details { grid-template-columns: 1fr; }
+  .margin-choice-note { grid-column: auto; }
 }
 
 /* Margin tooltip */

@@ -85,6 +85,10 @@ function cacheDom() {
     searchInput: $('#searchInput'),
     searchResults: $('#searchResults'),
     notePopup: $('#notePopup'),
+    marginPopup: $('#marginPopup'),
+    marginPopupHandle: $('#marginPopupHandle'),
+    marginPopupTitle: $('#marginPopupTitle'),
+    marginPopupBody: $('#marginPopupBody'),
     marginTooltip: $('#marginTooltip'),
     aboutModal: $('#aboutModal'),
     columnBadges: $('#columnBadges'),
@@ -1005,6 +1009,7 @@ function parseMarginalia(doc) {
           const id = xmlId;
 
           const type = detectMarginaliaType(note);
+          const materialLocation = getMarginalMaterialLocation(note, cantoDiv);
 
           const item = {
             id,
@@ -1013,6 +1018,8 @@ function parseMarginalia(doc) {
             content: note.textContent.trim(),
             contentHtml: renderMarginaliaBody(note, anchorTarget),
             place: place || '',
+            folio: materialLocation.folio,
+            column: materialLocation.column,
             targets: allTargets,
             anchorTarget
           };
@@ -1046,7 +1053,6 @@ function renderMarginaliaNode(node, anchorTarget = '') {
   switch (name) {
     case 'ref': {
       const content = renderMarginaliaChildren(node, anchorTarget);
-      const underlinedContent = `<span class="marginal-ref-quote">${content}</span>`;
 
       const targets = parseTargets(node.getAttribute('target'))
         .filter(isLineTarget);
@@ -1060,7 +1066,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       const crossTargets = targets.filter(target => target !== anchorTarget);
 
       if (!crossTargets.length) {
-        return underlinedContent;
+        return content;
       }
 
       const links = crossTargets.map(target => `
@@ -1072,7 +1078,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
         </button>
       `).join('');
 
-      return `${underlinedContent} ${links}`;
+      return `${content} ${links}`;
     }
 
     case 'emph':
@@ -1080,7 +1086,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       return `<em class="mentioned">${renderMarginaliaChildren(node, anchorTarget)}</em>`;
 
     case 'quote':
-      return `<span class="marginal-ref-quote">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
+      return renderMarginaliaChildren(node, anchorTarget);
 
     case 'note': {
       if (isChoiceEmendationNote(node)) return '';
@@ -1229,6 +1235,30 @@ function getParentPlace(el) {
   }
 
   return '';
+}
+
+function getMarginalMaterialLocation(note, cantoDiv) {
+  const descendantPb = qsaTEI(note, 'pb')[0];
+  const descendantCb = qsaTEI(note, 'cb')[0];
+  let folio = descendantPb?.getAttribute('n') || '';
+  let column = descendantCb?.getAttribute('n') || '';
+
+  if (!folio || !column) {
+    const milestones = [...qsaTEI(cantoDiv, 'pb'), ...qsaTEI(cantoDiv, 'cb')]
+      .filter(marker => marker !== note && Boolean(marker.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING))
+      .sort((a, b) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+
+    milestones.forEach(marker => {
+      if (marker.localName === 'pb') {
+        folio = marker.getAttribute('n') || folio;
+        column = '';
+      } else if (marker.localName === 'cb') {
+        column = marker.getAttribute('n') || column;
+      }
+    });
+  }
+
+  return { folio, column };
 }
 
 function isNestedNoteWithin(note, rootDiv) {
@@ -1534,10 +1564,35 @@ function bindNoteIndicators(container) {
       const isCorr = choice.classList.contains('choice-corr');
       const originalLabel = choice.dataset.choiceOriginalLabel || 'Lezione del manoscritto';
       const editedLabel = choice.dataset.choiceEditedLabel || (isCorr ? 'Lezione dell’edizione di riferimento' : 'Resa editoriale');
+      const isMarginalChoice = choice.dataset.choiceContext === 'marginalia';
+
+      if (choice.closest('#marginPopup')) {
+        const currentDetails = choice.nextElementSibling?.classList.contains('margin-choice-details')
+          ? choice.nextElementSibling
+          : null;
+        if (currentDetails) {
+          currentDetails.remove();
+          return;
+        }
+
+        choice.insertAdjacentHTML('afterend', `
+          <div class="margin-choice-details">
+            <div class="margin-choice-column">
+              <span class="choice-popup-label">${escapeHTML(originalLabel)}</span>
+              <div class="choice-popup-form">${originalHtml}</div>
+            </div>
+            <div class="margin-choice-column edited">
+              <span class="choice-popup-label">${escapeHTML(editedLabel)}</span>
+              <div class="choice-popup-form">${editedHtml}</div>
+            </div>
+            ${noteHtml ? `<div class="margin-choice-note"><span class="choice-popup-label">Nota filologica</span><div>${noteHtml}</div></div>` : ''}
+          </div>
+        `);
+        return;
+      }
 
       const body = els.notePopup.querySelector('.note-popup-body');
       els.notePopup.style.width = 'min(520px, calc(100vw - 32px))';
-      const isMarginalChoice = choice.dataset.choiceContext === 'marginalia';
       els.notePopup.querySelector('.note-popup-title').textContent = isMarginalChoice ? 'Intervento editoriale nel marginale' : originalLabel;
 
       body.innerHTML = `
@@ -1574,6 +1629,19 @@ function bindNoteIndicators(container) {
       els.notePopup.classList.add('visible');
       positionNotePopup(choice, 520);
       bindNoteIndicators(body);
+    };
+  });
+
+  // Quando è attiva la lezione del manoscritto, anche la forma orig/sic
+  // deve poter aprire il medesimo dettaglio filologico.
+  container?.querySelectorAll('.choice-orig').forEach(originalChoice => {
+    originalChoice.onclick = e => {
+      e.stopPropagation();
+      let editedChoice = originalChoice.previousElementSibling;
+      while (editedChoice && !editedChoice.classList.contains('choice-reg')) {
+        editedChoice = editedChoice.previousElementSibling;
+      }
+      editedChoice?.click();
     };
   });
 }
@@ -2055,28 +2123,73 @@ function showMarginNotePopup(e, indicator) {
     'external_margin': 'Margine esterno',
     'internal_margin': 'Margine interno',
     'intercolumn': 'Intercolumnio',
-    'inferior_margin': 'Margine inferiore'
+    'inferior_margin': 'Margine inferiore',
+    'superior_margin': 'Margine superiore'
   };
 
   const title = placeLabels[item?.place || place] || item?.place || place || 'Nota marginale';
-  const body = els.notePopup.querySelector('.note-popup-body');
-
-  els.notePopup.style.width = 'min(560px, calc(100vw - 32px))';
-  els.notePopup.querySelector('.note-popup-title').textContent = title;
+  const folioLabel = item?.folio ? `c. ${item.folio}` : 'Carta non codificata';
+  const columnLabel = item?.column ? `Col. ${item.column}` : '';
   const typeLabel = item?.type === 'non_verbal' ? 'Marginale non verbale' : 'Marginale verbale';
-  const anchorLabel = item?.anchorTarget ? formatLineRef(item.anchorTarget) : '';
   const contentHtml = item?.contentHtml || escapeHTML(indicator.dataset.marginContent || '');
-  body.innerHTML = `
+
+  if (!els.marginPopup || !els.marginPopupBody) return;
+  els.marginPopupTitle.textContent = title;
+  els.marginPopupBody.innerHTML = `
     <div class="margin-popup-meta">
+      <span>${escapeHTML(folioLabel)}</span>
+      <span>${escapeHTML(title)}</span>
+      ${columnLabel ? `<span>${escapeHTML(columnLabel)}</span>` : ''}
       <span>${escapeHTML(typeLabel)}</span>
-      ${anchorLabel ? `<span>Luogo: ${escapeHTML(anchorLabel)}</span>` : ''}
     </div>
     <div class="margin-popup-content">${contentHtml}</div>
   `;
-  els.notePopup.classList.add('visible');
+  els.marginPopup.classList.add('visible');
+  bindNoteIndicators(els.marginPopupBody);
+}
 
-  positionNotePopup(indicator, 560);
-  bindNoteIndicators(body);
+function resetMarginPopupPosition() {
+  if (!els.marginPopup) return;
+  els.marginPopup.style.left = '';
+  els.marginPopup.style.top = '';
+  els.marginPopup.style.right = '';
+  els.marginPopup.style.bottom = '';
+}
+
+function bindMarginPopupDragging() {
+  if (!els.marginPopup || !els.marginPopupHandle) return;
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  els.marginPopupHandle.addEventListener('pointerdown', e => {
+    if (e.target.closest('button')) return;
+    const rect = els.marginPopup.getBoundingClientRect();
+    dragging = true;
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    els.marginPopupHandle.setPointerCapture(e.pointerId);
+    els.marginPopup.classList.add('dragging');
+  });
+
+  els.marginPopupHandle.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const maxLeft = Math.max(8, window.innerWidth - els.marginPopup.offsetWidth - 8);
+    const maxTop = Math.max(8, window.innerHeight - els.marginPopup.offsetHeight - 8);
+    els.marginPopup.style.left = `${Math.max(8, Math.min(e.clientX - offsetX, maxLeft))}px`;
+    els.marginPopup.style.top = `${Math.max(8, Math.min(e.clientY - offsetY, maxTop))}px`;
+    els.marginPopup.style.right = 'auto';
+    els.marginPopup.style.bottom = 'auto';
+  });
+
+  const stopDragging = e => {
+    if (!dragging) return;
+    dragging = false;
+    els.marginPopup.classList.remove('dragging');
+    if (els.marginPopupHandle.hasPointerCapture(e.pointerId)) els.marginPopupHandle.releasePointerCapture(e.pointerId);
+  };
+  els.marginPopupHandle.addEventListener('pointerup', stopDragging);
+  els.marginPopupHandle.addEventListener('pointercancel', stopDragging);
 }
 
 function positionNotePopup(indicator, preferredWidth = 380) {
@@ -2102,13 +2215,17 @@ function showMarginTooltip(e, indicator) {
     'external_margin': 'Margine esterno',
     'internal_margin': 'Margine interno',
     'intercolumn': 'Intercolumnio',
-    'inferior_margin': 'Margine inferiore'
+    'inferior_margin': 'Margine inferiore',
+    'superior_margin': 'Margine superiore'
   };
 
   const title = item?.place || place;
   const bodyHtml = item?.contentHtml || escapeHTML(content || '');
+  const materialLabel = [item?.folio ? `c. ${item.folio}` : '', placeLabels[title] || title, item?.column ? `col. ${item.column}` : '']
+    .filter(Boolean)
+    .join(' · ');
 
-  els.marginTooltip.innerHTML = `${title ? `<span class="margin-ref">${placeLabels[title] || title}</span>` : ''}${bodyHtml}`;
+  els.marginTooltip.innerHTML = `${materialLabel ? `<span class="margin-ref">${escapeHTML(materialLabel)}</span>` : ''}${bodyHtml}`;
   els.marginTooltip.classList.add('visible');
 
   const rect = indicator.getBoundingClientRect();
@@ -3015,6 +3132,9 @@ function bindEvents() {
 
   const notePopupClose = els.notePopup?.querySelector('.note-popup-close');
   if (notePopupClose) notePopupClose.onclick = hideNotePopup;
+  $('#closeMarginPopup')?.addEventListener('click', () => els.marginPopup?.classList.remove('visible'));
+  $('#resetMarginPopup')?.addEventListener('click', resetMarginPopupPosition);
+  bindMarginPopupDragging();
 
   let searchTimer;
   if (els.searchInput) {
@@ -3028,6 +3148,7 @@ function bindEvents() {
     if (e.key === 'Escape') {
       els.aboutModal?.classList.remove('visible');
       hideNotePopup();
+      els.marginPopup?.classList.remove('visible');
       els.searchResults?.classList.remove('visible');
       els.searchInput?.blur();
       closeFacsimileFullscreen();

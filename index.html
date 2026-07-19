@@ -25,7 +25,7 @@
         </svg>
         <div class="header-titles">
           <h1 class="site-title">Dante, <em>Commedia</em> · Inferno - Purgatorio</h1>
-          <p class="site-subtitle">Edizione digitale del testo e del commento volgarizzato dell'Anonimo Lombardo contenuto nel ms. Harley 3459 a cura di Serena Malatesta</p>
+          <p class="site-subtitle">MS Harley 3459 · Edizione digitale del commento dell'Anonimo Lombardo volgarizzato a cura di Serena Malatesta</p>
         </div>
       </div>
       <div class="header-actions">
@@ -242,6 +242,21 @@
       </button>
     </div>
     <div class="note-popup-body"></div>
+  </div>
+
+  <!-- Scheda stabile e spostabile per i marginalia -->
+  <div id="marginPopup" class="margin-popup" role="dialog" aria-modal="false" aria-labelledby="marginPopupTitle">
+    <div id="marginPopupHandle" class="margin-popup-header">
+      <div>
+        <span class="margin-popup-kicker">Marginalia</span>
+        <strong id="marginPopupTitle" class="margin-popup-title">Nota marginale</strong>
+      </div>
+      <div class="margin-popup-actions">
+        <button id="resetMarginPopup" class="icon-btn-sm" type="button" aria-label="Ripristina posizione" title="Ripristina posizione"><i data-lucide="locate-fixed"></i></button>
+        <button id="closeMarginPopup" class="icon-btn-sm" type="button" aria-label="Chiudi marginale" title="Chiudi"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+    <div id="marginPopupBody" class="margin-popup-body"></div>
   </div>
 
   <!-- Margin tooltip -->

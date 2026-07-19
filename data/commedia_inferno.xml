@@ -2371,7 +2371,7 @@
 
       <!-- Canto 10-->
       <div n="10" type="canto" xml:id="Inferno_10">
-       <pb n="11v" facs="#c11v" corresp="#carta_011v"/>
+       <pb n="14r" facs="#c14r" corresp="#carta_014r"/>
         <cb n="b"/>
         <head><choice ana="#normalizzazione"><orig>Clap(it)lo </orig><reg>Capitolo</reg></choice> Ottavo Inferni</head>
         <lg type="terzina">
