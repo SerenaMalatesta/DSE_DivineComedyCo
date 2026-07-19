@@ -223,10 +223,56 @@
                </note>
                <pb n="12r" facs="#c12r" corresp="#carta_012r"/>
                <cb n="a"/>
-               <note xml:id="Ha-An-Ma-Inf.08.094" type="non_verbal" place="internal_margin" target="#Inf.08.094">
+               <note xml:id="Ha-An-Ma-Inf.08.094a" type="non_verbal" place="internal_margin" target="#Inf.08.094">
                   <p><quote>Richiamo ^</quote></p>
                </note>
+               <note xml:id="Ha-An-Ma-Inf.08.095a" type="non_verbal" place="internal_margin" target="#Inf.08.095">
+                  <p><quote>Richiamo ^</quote></p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.08.094b" type="verbal" place="external_margin" target="#Inf.08.094">
+                  <p><quote>Perché Vergilio non trattò nulla de la città di <choice><reg>Dite</reg><orig><del rend="overstrike"> <gap reason="illegible" quantity="5" unit="character"/></del></orig></choice>, e però gli pare malagevole per l’alta e forte materia; e però dice che le mura gli parevano di ferro. La ½ era al termine d’esso trattato: fu cacciato da fFirenze e, sì per la pivertà e ssì per lo sdegno, per queste due cagioni dice che ma’ più credette tornare a seguitare questa opera. </quote></p>
+               </note>
+                  <note xml:id="Ha-An-Ma-Inf.08.095b" type="verbal" place="external_margin" target="#Inf.08.095">
+                  <p><quote>Da Minòs, da Pluto, da Carone e in molti altri luoghi, che da Virgilio, cioè da ssua dottrina, ebe avuto e aviso; e no carca era i<g ref="#middle_dot"/>llui prosunzione di trattar di ciò, ma per la confidenza di Dio.</quote></p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.08.001a" type="verbal" place="inferior_margin" target="#Inf.08.025 #Inf.08.026 #Inf.08.027 #Inf.08.028 #Inf.08.029">
+                  <p>Dice che quando Dante entrò ne la detta barca dietro a Virgilio, e <choice><reg>solo</reg><orig>soo</orig></choice> quando fu dentro per carca ciò ne la poesia e nel suo trattato fu scritto a pieno di poesia a suficienza più che in alcun altro che mai di ciò trattasse; e però per lui fu carica la barca. Per l’<ref type="lemma" target="#Inf.07.029"><emph>antica plora</emph></ref>, l’antica poesia lunga dice che fu anticamente; ma nullo ne fu sì profondo come Dante. E però  dice <ref type="lemma" target="#Inf.07.029"><emph>segando</emph></ref> cioè che l’altra s’annulla. Dice che Vergilio non disse nel suo trattato da Dite in giù, e <choice><orig>p(er)</orig><reg>però</reg></choice> a Dante par più malagevole, perché ha a ttrattare da ssé medesimo.</p>
+               </note>
             </div>
+            <!-- MARGINE INF.9 -->
+         <div type="canto" n="9">
+            <div type="margin" xml:id="Ha_Marg_Inf.09">
+               <pb n="13r" facs="#c13r" corresp="#carta_013r"/>
+               <note xml:id="Ha-An-Ma-Inf.09.078" type="verbal" place="internal_margin" target="#Inf.09.078 #Inf.09.079 #Inf.09.080 #Inf.09.081 #Inf.09.082">
+                  <p>Questo fu Christo; fuggite da llui per pecato.</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.09.085" type="verbal" place="internal_margin" target="#Inf.09.085">
+                  <p> e dice io non hai Vergilio e co<g ref="#middle_dot"/>la sicurta di v° entrò questa opera </p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.09.001" type="verbal" place="inferior_margin" target="#Inf.09.001">
+                  <p>In disiderio di me si perns’ora male e ancora di questo seguirà che di me si dice male e poi, consequentemente, mi potrebbe essere messo l’odio in opera, cioè male operato inviso di lui. E questo è lo ’mpedimento de le tre furie, da le quali cioè da loro interpretati nomi, nascono tutti e’ mali. <del rend="erased">e q(ueste) tre furie</del> Ma pur poi, per la grazia di Dio vinse la pugna.</p>
+                  <p><ref type="lemma" target="#Inf.09.038"><quote>[38] E di sangue tinta:</quote></ref>ché el fine d’esso trattato considerava potere essere infusione di sangue in verso l’autore. E qua che ben conobele, cioè Vergilio la conobe, che ne trattò.</p>
+                  <p><ref type="lemma" target="#Inf.09.043"><quote>[43] Meschine</quote></ref>: vuol dire che fanno ne’ sopradetti modi altrui mesto e dolenti. </p>
+                  <p><ref type="lemma" target="#Inf.09.045"><quote>[45] Erine</quote></ref> vuol dire signoresse da Erino signore.</p>
+                  <p><ref type="lemma" target="#Inf.09.047"><quote>[47] Alietto</quote></ref> per cattiva cogitazione di morte; e [113] pPola dal lato destro, come principio de l’opra per la cogitazione.</p>
+                  <p><ref type="lemma" target="#Inf.09.048"><quote>[48] Tessifone</quote></ref> è nel mezzo, cioè lo cattivo parlare. [46] Agera, per lo male operare; e <ref type="lemma" target="#Inf.09.113"><quote>[113] pPolla</quote></ref> da ssinistra, perché questa più sinistra, cioè nuoca a chi fa e a chi riceve, e Pola pone da sinistra. </p>
+                  <p><ref type="lemma" target="#Inf.09.052">[52] Medusa</ref> fu figlia del re Forco e ttanto bella che chi la riguardava diveniva <del rend="erased">inse</del> quasi insensato.</p> 
+                  <p>E queste tre furie la chiamano perché facesse così a Dante, sì chè, insensato e sseco, non potrebe seguire l’opera ma elli non vi riguardò, sì <choice><orig>p</orig><reg>per</reg></choice> suo sapere e sì perché dal senno di Virgilio ne fu amaestrato. </p>
+                  <p><ref type="lemma" target="#Inf.09.056">[56] che se ’l Gorgón si mostra</ref>, cioè tu ’l vedessi non torneresti mai sì, cioè non verresti al fine del trattato.</p>
+               </note>
+               <note xml:id="Ha-An-Ma-Inf.09.089" type="verbal" place="external_margin" target="#Inf.09.089">
+                  <p>Per questo senso de la <ref type="lemma" target="#Inf.09.089"><quote>[89] verghetta</quote></ref> significa la maestà di Christo, sotto la quale è ogni cosa; per lo simile s’hanno e’ rettori temporali. E ha in sé tre forme: la prima capitale, cioè el capo; la seconda mediale, cioè il mezzo;  la terza finale, cioè la fine. E è interpretata: la maestà di Dio, la virtù di Dio, la volontà di Dio. E queste tre furono lume e aiuto a Dante ad entrare a la porta, cioè a seguire l’opera, la qual materia finge le mure forte come ferro. E però, da Cristo confortato a pazienza contra la guerra, contra la povertà, entrò dentro sanza alcuna guerra, però che al valore di Christo non si può resistere né dole. </p>
+                  <p><ref type="lemma" target="#Inf.09.093"><quote>[93] Tracuntanza </quote></ref>è un vocabolo francioso; interpetrasi contradizione, profunzione, temerità, perversità e llerta, cioè volere resistere al volere di Dio, el quale volere non può mai essere mozzo, perché in Dio son tre parti: prima, ché antivede d’ogni ffine e ssine fine; ija diritto sapere; iija forte volere.</p>
+                  <p><ref type="lemma" target="#Inf.09.096"><quote>[96] Più volte scresciuta doglia</quote></ref>: cioè tutte le cose di Dio mostrate per patriarchi e profeti e martiri in aluminare la fede nostra; simile Christo <choice><orig>per per</orig><reg>per</reg></choice> la sua passione e poi lo spogliare el Limbo: tutte queste cose crescono doglia a’ dimoni, e così ancora tutte l’opere che tornano in lalde e onore di Dio.  </p>
+                  <p><ref type="lemma" target="#Inf.09.097"><quote>[97] Dar di cozzo</quote></ref> cioè volere resistere a Cristo, che è prima causa. Fata s’appella e scrivesi causa generante in verbis; e dice essere vanità a contradire a Dio, che ‹è› prima causa di tutte le cause; ché è vanità non che farlo, ma pe‹n›sarlo di veglia; fatato è un dire essere diterminato che nel divino volere s’adempia. </p>
+                  <p><ref type="lemma" target="#Inf.09.099">[99] Cerbero ha pelato el gozzo</ref> perché, volendo contradire a tTeseo, Ercole lo percosse col bastone; e così gli fa cadere più peli, che mai vi rimiseno perché faceva contro a la volontà di Dio.</p>
+               </note>
+            </div>
+            
+         </div>
+
+         
+
          </div>
       </body>
    </text>

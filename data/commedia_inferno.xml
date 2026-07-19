@@ -1901,7 +1901,7 @@
       <div n="8" type="canto" xml:id="Inferno_08">
        <pb n="11v" facs="#c11v" corresp="#carta_011v"/>
         <cb n="b"/>
-        <head><choice ana="#normalizzazione"><orig>Clap(it)lo</orig><reg>Capitolo</reg></choice> Ottavo Inferni</head>
+        <head><choice ana="#normalizzazione"><orig>Clap(it)lo </orig><reg>Capitolo</reg></choice> Ottavo Inferni</head>
         <lg type="terzina">
           <l xml:id="Inf.08.001">  Io dico, seguitando, che assai prima </l>
           <l xml:id="Inf.08.002">che noi fussimo a ppiè dell’alta torre,   </l>
@@ -2129,7 +2129,257 @@
 						<l xml:id="Inf.08.130">tal che per lui ne fia la terra aperta ».</l>
 					</lg>
       </div>
-    
+      <!-- Canto 9-->
+      <div n="9" type="canto" xml:id="Inferno_09">
+       <pb n="12v" facs="#c12v" corresp="#carta_012v"/>
+        <cb n="a"/>
+        <head>Capitolo nono <choice ana="#correzione-manoscritto"><orig><del rend="erased">purghatori</del> Inferni </orig><reg>Inferni</reg></choice></head>
+        <lg type="terzina">
+          <l xml:id="Inf.09.001">Quel colore che viltà di fuori mi pinse </l>
+          <l xml:id="Inf.09.002">vedendo el duca mio tornare in volta, </l>
+          <l xml:id="Inf.09.003">più ttosto dentro il suo <choice ana="#correzione-manoscritto"><orig>no<del rend="erased">vo</del><add place="supralinear">me</add></orig><reg>nome</reg></choice> restrinse. </l>
+        </lg>
+        <lg type="terzina">
+						<l xml:id="Inf.09.004">Attento si fermò com’uom ch’ascolta;</l>
+						<l xml:id="Inf.09.005">ché l’ochio nol potia menare a llunga </l>
+						<l xml:id="Inf.09.006">per l’aere nero e per la nebia folta.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.007">« Pur a nnoi converrà vincer la pugna »,</l>
+						<l xml:id="Inf.09.008">cominciò el, « se non … Tal ne s’oferse.</l>
+						<l xml:id="Inf.09.009">Oh quanto tarde a me ch’altri qui giunga! »</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.09.010">I’vidi ben sí com’e’ ricoperse</l>
+						<l xml:id="Inf.09.011">il cominiciar co<g ref="middle_dot"/>ll’altro che poi vene, </l>
+						<l xml:id="Inf.09.012">che fur parola a le prime diverse;</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.013">ma nondimen paura el suo dire dienne,</l>
+          </lg>
+          <cb n="b"/>
+          <lg type="terzina">
+						<l xml:id="Inf.09.014">perch’io traeva la parola tronca </l>
+						<l xml:id="Inf.09.015">forse a peggior sentenza che non tenne. </l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.09.016">« In questo fondo de la trista conca</l>
+						<l xml:id="Inf.09.017">discende mai alcuno del primo grado,</l>
+						<l xml:id="Inf.09.018">che sol per pena ha la speranza tronca? ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.019">Questa question fec’io; e quei « Di rado </l>
+						<l xml:id="Inf.09.020">incontra », mi rispose, « che di noi </l>
+						<l xml:id="Inf.09.021">faccia ’l camino alcun pe ’l qual io vado. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.022">Ver è ch’altra fiata quaggiù fui </l>
+						<l xml:id="Inf.09.023">congiurato da quella Ericón cruda </l>
+						<l xml:id="Inf.09.024">che richiamava l’ombre a’ corpi sui. </l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.09.025">Di poco era di me la carne inuda</l>
+						<l xml:id="Inf.09.026">ch’ela mi fece ’ntrar dintr’a quel muro,</l>
+						<l xml:id="Inf.09.027">per trarne uno spirito del cerchio di Giuda.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.028">Quest’è ’l più basso loco e ’l più oscuro,</l>
+						<l xml:id="Inf.09.029">e ’l più lontan dal ciel che ttutto gira:</l>
+						<l xml:id="Inf.09.030">ben so ’l cammin; però ti fa sicuro.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.031">Questa padule che ’l gran puzzo spira</l>
+						<l xml:id="Inf.09.032">cinge d’intorno la città dolente,</l>
+						<l xml:id="Inf.09.033">u’ non potemo entrare omai sanz’ira ».</l>
+					</lg>
+          <lg type="terzina">
+						<l xml:id="Inf.09.034">E altro disse, ma non ll’ho a mente; </l>
+						<l xml:id="Inf.09.035">per ché l’ochio m’avia tutto ritratto </l>
+						<l xml:id="Inf.09.036">ver’ l’alta torre a la cima rovente, </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.037">dove in un punto furon dritte ratto</l>
+						<l xml:id="Inf.09.038">tre furïe infernali di sangue tinte,</l>
+						<l xml:id="Inf.09.039">che membra feminili avieno e atto,</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.040">e con idre verdissime eran cinte;</l>
+						<l xml:id="Inf.09.041">serpentelli e ccerastre avien per crine, </l>
+						<l xml:id="Inf.09.042">di che le fiere tempie erano avinte. </l>
+          </lg>
+          <lg type="terzina">
+						<l xml:id="Inf.09.043">E que’, che ben conobe le meschine</l>
+						<l xml:id="Inf.09.044">de la regina de l’etterno pianto,</l>
+						<l n="45" xml:id="Inf.09.045">«  Guarda », mi disse, « le feroci <choice><reg>Erine</reg><orig><del rend="erased">c</del><add place="supralinear">e</add>rine <add place="margin">erine</add></orig></choice>. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.046">Quell’è Agera dal sinistro canto;</l>
+						<l xml:id="Inf.09.047">quella che piange dal destro è Aletto;</l>
+						<l n="48" xml:id="Inf.09.048">Tesifón è nel mezzomezzo »; e ttacque a ttanto.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.049">Co<g ref="#middle_dot"/>ll’unghia si fendea ciascuna ’l petto;</l>
+          </lg>
+          <pb n="13r" facs="#c13r" corresp="#carta_013r"/>
+          <cb n="a"/>
+          <lg type="terzina">
+						<l xml:id="Inf.09.050">battiensi a ppalme e gridavan sí alto,</l>
+						<l xml:id="Inf.09.051">ch’i’ mi strins’al poeta per sospetto.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.052">« Venga Medus: e nol faren di smalto »,</l>
+						<l xml:id="Inf.09.053">gridavan tutte riguardando in giuso;</l>
+						<l xml:id="Inf.09.054">« mal non vedemo in Tesëo l’assalto ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.055">« Volgiti indietro e ttieni ’l viso chiuso; </l>
+						<l xml:id="Inf.09.056">che se ’l Gorgón si mostra e ttu ’l vedessi, </l>
+						<l xml:id="Inf.09.057">nulla sarebe del tornar mai suso ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.058">Così disse ’l maestro; e elli stessi</l>
+						<l xml:id="Inf.09.059">si volse, e non si tenne a le mie mani, </l>
+						<l xml:id="Inf.09.060">che co<g ref="#middle_dot"/>le sue ancora no mi chiudessi.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.061">O voi ch’avete gl’intelletti sani,</l>
+						<l xml:id="Inf.09.062">mirate la dottrina che s’asconde</l>
+						<l xml:id="Inf.09.063">sotto ’l velame de li versi strani.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.064">E ggià venìa su per le sucide onde </l>
+						<l xml:id="Inf.09.065">un fracasso d’un suon, pien di spavento,</l>
+						<l xml:id="Inf.09.066">per cui tremavano ambedue le sponde,</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.067">non altrimenti facia che d’un vento </l>
+						<l xml:id="Inf.09.068">impetüoso per gli aversi ardori, </l>
+						<l xml:id="Inf.09.069"> che fier la selva sanz’alcun talento </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.070">li rami schianta, abatte e ggitta fuori; </l>
+						<l xml:id="Inf.09.071">dinanzi polveroso va superbo, </l>
+						<l xml:id="Inf.09.072">e ffa ffuggir le fiere e lli pastori. </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.073">El mio maestro disse: « Drizza ’l nerbo</l>
+						<l xml:id="Inf.09.074">del viso su per quella schiuma antica </l>
+						<l xml:id="Inf.09.075">per inde ove quel fumo è ppiù acerbo ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.076"> Come le rane avanti a la nimica </l>
+						<l xml:id="Inf.09.077"> biscia per l’acqua si dileguan tutte, </l>
+						<l xml:id="Inf.09.078"> fin che a la terra ciascuna s’abica,</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.079">vid’io più di mill’anime distrutte </l>
+						<l xml:id="Inf.09.080">che fuggivan dinanzi a un ch’al passo</l>
+						<l xml:id="Inf.09.081">passava Stige co<g ref="#middle_dot"/>le piant’asciutte.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.082">Dall’un lato movia quell’aire grasso,</l>
+						<l xml:id="Inf.09.083">menando la sinistra inanzi spesso;</l>
+						<l xml:id="Inf.09.084">e ssol di quella angoscia paria lasso.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.085">Be’ m’acors’io che gli era del ciel messo, </l>
+						<l xml:id="Inf.09.086">el savio mio maestro fece segno</l>
+          </lg>
+          <cb n="b"/>
+          <lg type="terzina">
+						<l xml:id="Inf.09.087">ch’io stessi cheto e inchinassi ad esso.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.088">Oh quanto mi paria pien di disdegno!</l>
+						<l xml:id="Inf.09.089">Vene a la porta e con una verghetta</l>
+						<l xml:id="Inf.09.090">l’aperse, che non ebbe alcuno ritegno.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.091">« O cacciati dal cielo, giente sospetta », </l>
+						<l xml:id="Inf.09.092">cominciò elli in sull’oribil soglia,</l>
+						<l xml:id="Inf.09.093">« ond’esta tracontanza in voi s’elletta? </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.094">Perché ricalcitrate a quella voglia </l>
+						<l xml:id="Inf.09.095">a la qual non può mai fine esser mozzo, </l>
+						<l xml:id="Inf.09.096">e che ppiù volte va cresciuto doglia?</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.097">Che giova ne le fate dar di cozzo?</l>
+						<l xml:id="Inf.09.098">Cerbero vostro, se ben vi ricorda,</l>
+						<l xml:id="Inf.09.099">ne porta ’ncor pelato e ’l mento e ’l gozzo ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.100">Poi si rivolse per la strada lorda,</l>
+						<l xml:id="Inf.09.101">e e’ non fe motto a me, ma ffé sembiante</l>
+						<l xml:id="Inf.09.102">d’uomo chi vi altra cura stringa e morda</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.103">che quella di colui che gli è davante;</l>
+						<l xml:id="Inf.09.104">e noi volgemo e’ piedi in ver la tera, </l>
+						<l xml:id="Inf.09.105">sicuri appresso le parole sante.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.106">Dentro gli entramo sanz’alcuna guerra; </l>
+						<l xml:id="Inf.09.107">e io, ch’avea di riguardar disio</l>
+						<l xml:id="Inf.09.108">la condizion che tal fortezza serra,</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.109">com’io fu’ dentro, l’ochio intorno invio:</l>
+						<l xml:id="Inf.09.110">e vidi da ogni mano gran compagna, </l>
+						<l xml:id="Inf.09.111">piena di duolo e di tormento rio.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.112">Sí come ad Arli, ove ’l Rodino stagna,</l>
+						<l xml:id="Inf.09.113">sí come a pPola, presso dal Carnaro</l>
+						<l xml:id="Inf.09.114">che Italia chiude e suo’ termini bagna,</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.115">fanno i sepulcri quivi i·lloco varo,</l>
+						<l xml:id="Inf.09.116">così ffacevan quivi d’ogni parte, </l>
+						<l xml:id="Inf.09.117">salvo che ’l modo v’era più amaro;</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.118">ché tra li avelli fiame erano sparte, </l>
+						<l xml:id="Inf.09.119">per e’ li quali eran sí del tutto accesi</l>
+						<l xml:id="Inf.09.120"> che fero più non chiede verun’arte.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.121">Tutti li lor coperchi erano sospesi,</l>
+						<l xml:id="Inf.09.122">e ffuor n’uscivan sí duri lamenti, </l>
+						<l xml:id="Inf.09.123">che ben parien di miseri ed offesi</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.124">E io: « Maestro, chi sson quelle genti</l>
+						<l xml:id="Inf.09.125">che, soppellite dentro da quell’arche,</l>
+						<l xml:id="Inf.09.126">si fan sentire co<g ref="#middle_dot"/>lli sospiri dolenti? ».</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.127">E elli a me: « Quelli sono <choice><orig><del rend="erased">eg</del>ecresiarche</orig><reg>ecresïarche</reg></choice></l>
+						<l xml:id="Inf.09.128">co·lor seguaci, di lor sette, e molto </l>
+						<l xml:id="Inf.09.129">più che non credi sono le tombe carche.</l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.130">Simile qui con simile è sepolto,</l>
+						<l xml:id="Inf.09.131"> e ’ monimenti son più e men caldi ».</l>
+						<l xml:id="Inf.09.132">E poi ch’a la man destra si fu vòlto, </l>
+					</lg>
+					<lg type="terzina">
+						<l xml:id="Inf.09.133">passamo tra martíri e gli alti spaldi.</l>
+					</lg>
+      </div>
+
+      <!-- Canto 10-->
+      <div n="10" type="canto" xml:id="Inferno_10">
+       <pb n="11v" facs="#c11v" corresp="#carta_011v"/>
+        <cb n="b"/>
+        <head><choice ana="#normalizzazione"><orig>Clap(it)lo </orig><reg>Capitolo</reg></choice> Ottavo Inferni</head>
+        <lg type="terzina">
+          <l xml:id="Inf.10.001">  Io dico, seguitando, che assai prima </l>
+          <l xml:id="Inf.10.002">che noi fussimo a ppiè dell’alta torre,   </l>
+          <l xml:id="Inf.10.003">gli ochi mie se n’andar suso a la cima  </l>
+        </lg>
+      </div>
     </body>
   </text>
 </TEI>

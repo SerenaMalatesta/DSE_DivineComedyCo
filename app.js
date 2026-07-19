@@ -338,6 +338,16 @@ function getChoiceDisplayInfo(choiceEl, pairType = 'orig-reg') {
   };
 }
 
+function getMarginalChoiceDisplayInfo(choiceEl, pairType = 'orig-reg') {
+  const base = getChoiceDisplayInfo(choiceEl, pairType);
+  return {
+    ...base,
+    originalLabel: 'Lezione del manoscritto',
+    editedLabel: 'Lezione emendata',
+    tooltipPrefix: 'Intervento editoriale nel marginale'
+  };
+}
+
 function renderChoiceNoteContent(noteEl, mode = 'line', anchorTarget = '') {
   if (!noteEl) return '';
 
@@ -501,11 +511,16 @@ function renderInlineElement(el) {
     case 'subst':
       const delSub = qsTEI(el, 'del');
       const addSub = qsTEI(el, 'add');
-      return `${delSub ? `<span class="scribal-del">${renderLineContent(delSub)}</span>` : ''}${addSub ? `<span class="scribal-add">${renderLineContent(addSub)}</span>` : ''}`;
+      const addSubInMargin = (addSub?.getAttribute('place') || '').toLowerCase().includes('margin');
+      return `${delSub ? `<span class="scribal-del">${renderLineContent(delSub)}</span>` : ''}${addSub ? `<span class="scribal-add${addSubInMargin ? ' marginal-add' : ''}"${addSubInMargin ? ' title="Aggiunta nel margine"' : ''}>${renderLineContent(addSub)}</span>` : ''}`;
 
     case 'del': return `<span class="scribal-del">${renderLineContent(el)}</span>`;
-    case 'add': return `<span class="scribal-add">${renderLineContent(el)}</span>`;
-    case 'supplied': return `[${renderLineContent(el)}]`;
+    case 'add': {
+      const place = (el.getAttribute('place') || '').toLowerCase();
+      const isMargin = place.includes('margin');
+      return `<span class="scribal-add${isMargin ? ' marginal-add' : ''}"${isMargin ? ' title="Aggiunta nel margine"' : ''}>${renderLineContent(el)}</span>`;
+    }
+    case 'supplied': return `<span class="editorial-supplied" title="Integrazione editoriale">${renderLineContent(el)}</span>`;
     case 'note': {
       if (isChoiceEmendationNote(el)) return '';
 
@@ -819,12 +834,17 @@ function renderCommentaryNode(node, context = { folio: '', column: 'A' }) {
 
     case 'subst': {
       const delSub = qsTEI(node, 'del'), addSub = qsTEI(node, 'add');
-      return `${delSub ? `<span class="scribal-del">${escapeHTML(delSub.textContent)}</span>` : ''}${addSub ? `<span class="scribal-add">${escapeHTML(addSub.textContent)}</span>` : ''}`;
+      const addSubInMargin = (addSub?.getAttribute('place') || '').toLowerCase().includes('margin');
+      return `${delSub ? `<span class="scribal-del">${renderCommentaryChildren(delSub, context)}</span>` : ''}${addSub ? `<span class="scribal-add${addSubInMargin ? ' marginal-add' : ''}"${addSubInMargin ? ' title="Aggiunta nel margine"' : ''}>${renderCommentaryChildren(addSub, context)}</span>` : ''}`;
     }
 
     case 'del': return `<span class="scribal-del">${renderCommentaryChildren(node, context)}</span>`;
-    case 'add': return `<span class="scribal-add">${escapeHTML(node.textContent)}</span>`;
-    case 'supplied': return `[${renderCommentaryChildren(node, context)}]`;
+    case 'add': {
+      const place = (node.getAttribute('place') || '').toLowerCase();
+      const isMargin = place.includes('margin');
+      return `<span class="scribal-add${isMargin ? ' marginal-add' : ''}"${isMargin ? ' title="Aggiunta nel margine"' : ''}>${renderCommentaryChildren(node, context)}</span>`;
+    }
+    case 'supplied': return `<span class="editorial-supplied" title="Integrazione editoriale">${renderCommentaryChildren(node, context)}</span>`;
 
     case 'pb': {
       const folio = node.getAttribute('n') || context.folio || '';
@@ -1026,6 +1046,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
   switch (name) {
     case 'ref': {
       const content = renderMarginaliaChildren(node, anchorTarget);
+      const underlinedContent = `<span class="marginal-ref-quote">${content}</span>`;
 
       const targets = parseTargets(node.getAttribute('target'))
         .filter(isLineTarget);
@@ -1039,7 +1060,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       const crossTargets = targets.filter(target => target !== anchorTarget);
 
       if (!crossTargets.length) {
-        return content;
+        return underlinedContent;
       }
 
       const links = crossTargets.map(target => `
@@ -1051,7 +1072,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
         </button>
       `).join('');
 
-      return `${content} ${links}`;
+      return `${underlinedContent} ${links}`;
     }
 
     case 'emph':
@@ -1059,7 +1080,7 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       return `<em class="mentioned">${renderMarginaliaChildren(node, anchorTarget)}</em>`;
 
     case 'quote':
-      return `«${renderMarginaliaChildren(node, anchorTarget)}»`;
+      return `<span class="marginal-ref-quote">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
 
     case 'note': {
       if (isChoiceEmendationNote(node)) return '';
@@ -1104,12 +1125,13 @@ function renderMarginaliaNode(node, anchorTarget = '') {
       const reg = qsTEI(node, 'reg');
 
       if (sic && corr) {
-        const choiceInfo = getChoiceDisplayInfo(node, 'sic-corr');
+        const choiceInfo = getMarginalChoiceDisplayInfo(node, 'sic-corr');
         const sicContent = renderMarginaliaChildren(sic, anchorTarget);
         const corrContent = renderMarginaliaChildren(corr, anchorTarget);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'marginalia', anchorTarget);
 
         return `<span class="choice-reg choice-corr"
+                      data-choice-context="marginalia"
                       data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(sicContent))}"
                       data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
                       data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
@@ -1123,9 +1145,10 @@ function renderMarginaliaNode(node, anchorTarget = '') {
         const origContent = renderMarginaliaChildren(orig, anchorTarget);
         const regContent = renderMarginaliaChildren(reg, anchorTarget);
         const noteContent = renderChoiceNoteContent(getChoiceEmendationNote(node), 'marginalia', anchorTarget);
-        const choiceInfo = getChoiceDisplayInfo(node, 'orig-reg');
+        const choiceInfo = getMarginalChoiceDisplayInfo(node, 'orig-reg');
 
         return `<span class="choice-reg"
+                      data-choice-context="marginalia"
                       data-tooltip="${escapeAttr(choiceInfo.tooltipPrefix)}: ${escapeAttr(stripHTML(origContent))}"
                       data-choice-original-label="${escapeAttr(choiceInfo.originalLabel)}"
                       data-choice-edited-label="${escapeAttr(choiceInfo.editedLabel)}"
@@ -1150,18 +1173,22 @@ function renderMarginaliaNode(node, anchorTarget = '') {
     case 'subst': {
       const delSub = qsTEI(node, 'del');
       const addSub = qsTEI(node, 'add');
+      const addSubInMargin = (addSub?.getAttribute('place') || '').toLowerCase().includes('margin');
 
-      return `${delSub ? `<span class="scribal-del">${renderMarginaliaChildren(delSub, anchorTarget)}</span>` : ''}${addSub ? `<span class="scribal-add">${renderMarginaliaChildren(addSub, anchorTarget)}</span>` : ''}`;
+      return `${delSub ? `<span class="scribal-del">${renderMarginaliaChildren(delSub, anchorTarget)}</span>` : ''}${addSub ? `<span class="scribal-add${addSubInMargin ? ' marginal-add' : ''}"${addSubInMargin ? ' title="Aggiunta nel margine"' : ''}>${renderMarginaliaChildren(addSub, anchorTarget)}</span>` : ''}`;
     }
 
     case 'del':
       return `<span class="scribal-del">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
 
-    case 'add':
-      return `<span class="scribal-add">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
+    case 'add': {
+      const place = (node.getAttribute('place') || '').toLowerCase();
+      const isMargin = place.includes('margin');
+      return `<span class="scribal-add${isMargin ? ' marginal-add' : ''}"${isMargin ? ' title="Aggiunta nel margine"' : ''}>${renderMarginaliaChildren(node, anchorTarget)}</span>`;
+    }
 
     case 'supplied':
-      return `[${renderMarginaliaChildren(node, anchorTarget)}]`;
+      return `<span class="editorial-supplied" title="Integrazione editoriale">${renderMarginaliaChildren(node, anchorTarget)}</span>`;
 
     case 'lb':
       return '<br>';
@@ -1423,7 +1450,13 @@ function renderTextForCanto(canto) {
     if (cantoButton) goToCanto(parseInt(cantoButton.dataset.cantoGo, 10));
   };
 
-  els.textContent.querySelectorAll('.margin-indicator').forEach(ind => {
+  bindMarginIndicators(els.textContent);
+
+  bindNoteIndicators(els.textContent);
+}
+
+function bindMarginIndicators(container) {
+  container?.querySelectorAll('.margin-indicator').forEach(ind => {
     ind.onmouseenter = e => showMarginTooltip(e, ind);
     ind.onmouseleave = hideMarginTooltip;
     ind.onclick = e => {
@@ -1432,8 +1465,6 @@ function renderTextForCanto(canto) {
       showMarginNotePopup(e, ind);
     };
   });
-
-  bindNoteIndicators(els.textContent);
 }
 
 function renderCantoNavigation(cantoN) {
@@ -1458,13 +1489,14 @@ function goToCanto(cantoN) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function renderTerzina(el) {
+function renderTerzina(el, options = {}) {
+  const { includeMargins = true } = options;
   return '<div class="terzina">' + el.lines.map(line => {
-    const margins = (state.marginalia[line.xmlId] || []).map(m =>
+    const margins = includeMargins ? (state.marginalia[line.xmlId] || []).map(m =>
       m.type === 'non_verbal'
         ? `<span class="margin-indicator nonverbal" data-margin-id="${escapeAttr(m.id)}" data-margin-type="non_verbal" data-margin-content="${escapeAttr(m.content.trim() || '⁋ capitulum')}" data-margin-place="${escapeAttr(m.place || '')}">⁋</span>`
         : `<span class="margin-indicator" data-margin-id="${escapeAttr(m.id)}" data-margin-type="verbal" data-margin-content="${escapeAttr(m.content)}" data-margin-place="${escapeAttr(m.place || '')}">m</span>`
-    ).join('');
+    ).join('') : '';
 
     return `<div class="verse-line" data-line-id="${line.xmlId}"><span class="line-number">${line.lineNum}</span><span class="verse-text">${line.html}</span>${margins}</div>`;
   }).join('') + '</div>';
@@ -1505,7 +1537,8 @@ function bindNoteIndicators(container) {
 
       const body = els.notePopup.querySelector('.note-popup-body');
       els.notePopup.style.width = 'min(520px, calc(100vw - 32px))';
-      els.notePopup.querySelector('.note-popup-title').textContent = originalLabel;
+      const isMarginalChoice = choice.dataset.choiceContext === 'marginalia';
+      els.notePopup.querySelector('.note-popup-title').textContent = isMarginalChoice ? 'Intervento editoriale nel marginale' : originalLabel;
 
       body.innerHTML = `
         <div class="choice-popup-section" style="padding: 12px 0 16px;">
@@ -1529,7 +1562,7 @@ function bindNoteIndicators(container) {
         ${noteHtml ? `
           <div class="choice-popup-note" style="padding: 14px 0 2px; border-top: 1px solid var(--border-light);">
             <div class="choice-popup-label" style="font-family: var(--font-sans); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
-              Nota editoriale
+              ${isMarginalChoice ? 'Nota filologica' : 'Nota editoriale'}
             </div>
             <div style="font-family: var(--font-serif); font-size: .98rem; line-height: 1.55;">
               ${noteHtml}
@@ -1616,10 +1649,11 @@ function renderCommentoManuscript() {
   els.commentoManuscriptTitle.textContent = `${isPetrocchi ? 'Testo Petrocchi' : 'Testo Harley 3459'} — Canto ${toRoman(canto.n)}`;
   els.commentoManuscriptContent.innerHTML = `
     <div class="canto-heading">${canto.headingHtml || escapeHTML(canto.heading)}</div>
-    ${canto.elements.filter(el => el.type === 'terzina').map(renderTerzina).join('')}
+    ${canto.elements.filter(el => el.type === 'terzina').map(el => renderTerzina(el, { includeMargins: !isPetrocchi })).join('')}
     ${renderCantoNavigation(canto.n)}
   `;
   bindNoteIndicators(els.commentoManuscriptContent);
+  bindMarginIndicators(els.commentoManuscriptContent);
   els.commentoManuscriptContent.onclick = e => {
     const button = e.target.closest('[data-canto-go]');
     if (button) goToCanto(parseInt(button.dataset.cantoGo, 10));
@@ -2029,7 +2063,16 @@ function showMarginNotePopup(e, indicator) {
 
   els.notePopup.style.width = 'min(560px, calc(100vw - 32px))';
   els.notePopup.querySelector('.note-popup-title').textContent = title;
-  body.innerHTML = item?.contentHtml || escapeHTML(indicator.dataset.marginContent || '');
+  const typeLabel = item?.type === 'non_verbal' ? 'Marginale non verbale' : 'Marginale verbale';
+  const anchorLabel = item?.anchorTarget ? formatLineRef(item.anchorTarget) : '';
+  const contentHtml = item?.contentHtml || escapeHTML(indicator.dataset.marginContent || '');
+  body.innerHTML = `
+    <div class="margin-popup-meta">
+      <span>${escapeHTML(typeLabel)}</span>
+      ${anchorLabel ? `<span>Luogo: ${escapeHTML(anchorLabel)}</span>` : ''}
+    </div>
+    <div class="margin-popup-content">${contentHtml}</div>
+  `;
   els.notePopup.classList.add('visible');
 
   positionNotePopup(indicator, 560);
@@ -2452,8 +2495,8 @@ function expandPhonosyntacticDot(text) {
     .replace(new RegExp('\\bCO·([' + LETTERS + ']+)', 'g'), 'CO(N) $1')
 
     // Generalizzazione del raddoppiamento fonosintattico marcato con middle dot:
-    // a·llui, a·lluogo, a·lla, e·lli, o·rribile, i·ssuoi ecc.
-    // diventano due token: a llui, a lluogo, a lla, e lli, o rribile, i ssuoi.
+    // a·llui, a·lluogo, a·lla, e·lli ecc.
+    // diventano due token: a llui, a lluogo, a lla, e lli.
     // La riduzione llui→lui, lluogo→luogo ecc. avviene poi in normalizeTokenFormal().
     .replace(new RegExp('\\b([' + LETTERS + ']+)·(' + doubledInitial + '[' + LETTERS + ']*)', 'gi'), '$1 $2')
 

@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Dante Commedia Ã‚Â· Inferno Ã¢â‚¬â€ MS Harley 3459
-   Digital Scholarly Edition Ã¢â‚¬â€ Styles
+   Dante Commedia MS Harley 3459
+   Digital Scholarly Edition Style 
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap');
@@ -928,6 +928,40 @@ body.dark .choice-orig:hover {
   vertical-align: super;
 }
 
+.marginal-add {
+  vertical-align: baseline;
+  padding: 0 3px;
+  border-left: 2px solid var(--accent);
+  background: var(--accent-bg);
+}
+.marginal-add::after {
+  content: " aggiunto al margine";
+  margin-left: 4px;
+  font-family: var(--font-sans);
+  font-size: .68em;
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+.editorial-supplied {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent-bg) 65%, transparent);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.editorial-supplied::before { content: "["; color: var(--accent); }
+.editorial-supplied::after { content: "]"; color: var(--accent); }
+
+.marginal-ref-quote,
+.marginal-ref-quote .mentioned {
+  font-style: normal;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--accent);
+}
+
 /* margin indicators */
 .margin-indicator {
   display: inline-flex;
@@ -1200,6 +1234,42 @@ body.dark .choice-orig:hover {
   font-size: 0.92rem;
   line-height: 1.65;
   color: var(--text);
+}
+
+.choice-popup-section {
+  margin: 0 -2px;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  border-radius: var(--radius);
+  background: var(--bg-panel-alt);
+}
+.choice-popup-section + .choice-popup-section { margin-top: 8px; }
+.choice-popup-note {
+  margin-top: 10px;
+  padding: 14px 12px 4px !important;
+  border-radius: var(--radius);
+  background: var(--accent-bg);
+}
+
+.margin-popup-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+.margin-popup-meta span {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  font: 700 .66rem var(--font-sans);
+}
+.margin-popup-content {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 /* Margin tooltip */
