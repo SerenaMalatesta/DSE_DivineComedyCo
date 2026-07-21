@@ -949,8 +949,8 @@ body.dark .choice-orig:hover {
   border-radius: 2px;
   padding: 0 2px;
 }
-.editorial-supplied::before { content: "["; color: var(--accent); }
-.editorial-supplied::after { content: "]"; color: var(--accent); }
+.editorial-supplied::before { content: "‹"; color: var(--accent); }
+.editorial-supplied::after { content: "›"; color: var(--accent); }
 
 .marginal-ref-quote,
 .marginal-ref-quote .mentioned {
