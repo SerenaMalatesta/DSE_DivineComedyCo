@@ -43,7 +43,7 @@ const state = {
 };
 
 /* --- Facsimile file mapping (Dynamically Generated) --- */
-const FOLIO_ORDER = ['2r', '2v', '3r', '3v', '4r', '4v', '5r', '5v', '6r', '6v', '7r', '7v', '8r', '8v', '9r', '9v', '10r', '10v', '11r', '11v', '12r', '12v', '13r', '13v'];
+const FOLIO_ORDER = ['2r', '2v', '3r', '3v', '4r', '4v', '5r', '5v', '6r', '6v', '7r', '7v', '8r', '8v', '9r', '9v', '10r', '10v', '11r', '11v', '12r', '12v', '13r', '13v', '14r', '14v', '15r', '15v', '16r', '16v', '17r','17v', '18r','18v', '19r', '19v', '20r', '20v', '21r', '21v', '22r', '22v'];
 
 const FACSIMILE_MAP = Object.fromEntries(
   FOLIO_ORDER.map((folio, i) => {
