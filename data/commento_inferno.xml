@@ -457,9 +457,9 @@
 
             <!--CANTO III-->
             <div n="3" type="commentary" xml:id="Ha_An_Inf.03">
-               <!-- Carta 6rA -->
-               <pb n="6v" facs="#c6r"/>
-               <cb n="A"/>
+               <!-- Carta 6rb -->
+               <pb n="6r" facs="#c6r"/>
+               <cb n="b"/>
                <div type="commentary" xml:id="Ha_An_Inf.03.001">
                   <p>[1] <ref target="#Inf.03.001">
                         <emph>Pe me si va ne la<del rend="erasure">dle</del> città
@@ -580,7 +580,6 @@
                <div type="commentary" xml:id="Ha_An_Inf.04.125">
                   <p><ref target="Inf.04.125"><quote>[125]<emph>Re Latino</emph></quote></ref>. Questo re Latino fu re di Italia, padre de Lavina, per la quale 
                <!-- Carta 7vb -->
-               <pb n="7" facs="c7v"/>
                <cb n="b"/>    
                   Enea combatté con Turno, imperciò che Amata <del rend="erased"> q </del>, moglie del detto re Latino, non voleva che Enea avesse Lavina sua figliuola per moglie, e ’l re Latino, sapendo come Enea era in Italia e udendo de le sue virtudi, disiderava d’averlo per genero e a lui fece molti doni, e Amata mandò per Turno. Onde Enea e Turno combatterono insieme, e avendo Enea vinto, prese Lavina per moglie, la quale era di maravigliosa bellezza. E per questa cagione Enea, dopo la morte del re Latino, possedeo el regno di Italia. </p>
                </div>
@@ -812,7 +811,7 @@
                   <p><ref target="Inf.10.131"><quote>[131]<emph> Di quella ’l cui bell’occhio tutto vede </emph></quote></ref>. In questa parte intende l’autore di Biatrice, la qual dice essere in cielo. </p>
                </div>
                <div type="commentary" xml:id="Ha_An_Inf.10.136"> 
-                  <p><ref target="Inf.10.136"><quote>[136]<emph> Che infin lassù faccia spiacere suo olezzo </emph></quote></ref>. Cioè stupore putrido. </p>
+                  <p><ref target="Inf.10.136"><quote>[136]<emph> Che infin lassù faccia spiacere suo olezzo </emph></quote></ref>. Cioè stupore putrido. ./. </p>
                </div>
 
             </div>

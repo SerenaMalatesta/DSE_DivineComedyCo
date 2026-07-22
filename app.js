@@ -43,7 +43,12 @@ const state = {
 };
 
 /* --- Facsimile file mapping (Dynamically Generated) --- */
-const FOLIO_ORDER = ['2r', '2v', '3r', '3v', '4r', '4v', '5r', '5v', '6r', '6v', '7r', '7v', '8r', '8v', '9r', '9v', '10r', '10v', '11r', '11v', '12r', '12v', '13r', '13v', '14r', '14v', '15r', '15v', '16r', '16v', '17r','17v', '18r','18v', '19r', '19v', '20r', '20v', '21r', '21v', '22r', '22v'];
+// The codex navigation is available through c. 200.  Generating the list
+// avoids maintaining hundreds of brittle, hand-written references.
+const FOLIO_ORDER = Array.from(
+  { length: 199 },
+  (_, index) => index + 2
+).flatMap(number => [`${number}r`, `${number}v`]);
 
 const FACSIMILE_MAP = Object.fromEntries(
   FOLIO_ORDER.map((folio, i) => {
@@ -64,6 +69,7 @@ function cacheDom() {
     viewHome: $('#viewHome'),
     viewFacsimile: $('#viewFacsimile'),
     viewCommento: $('#viewCommento'),
+    viewCarta: $('#viewCarta'),
     viewConfronto: $('#viewConfronto'),
     cantoSelect: $('#cantoSelect'),
     textContent: $('#textContent'),
@@ -102,6 +108,8 @@ function cacheDom() {
     facsimileFullscreen: $('#facsimileFullscreen'),
     fullscreenFacsimileImg: $('#fullscreenFacsimileImg'),
     fullscreenFolioLabel: $('#fullscreenFolioLabel'),
+    manuscriptPage: $('#manuscriptPage'),
+    layoutFolioLabel: $('#layoutFolioLabel'),
   });
 }
 
@@ -1000,11 +1008,9 @@ function parseMarginalia(doc) {
 
           const anchorTarget = pickAnchorTarget(allTargets, cantoN);
 
-          if (!anchorTarget) return;
-
           const xmlId =
             getAttr(note, 'xml:id') ||
-            `margin-${cantoN}-${anchorTarget}-${Object.keys(state.marginNotes).length + 1}`;
+            `margin-${cantoN}-${anchorTarget || 'unanchored'}-${Object.keys(state.marginNotes).length + 1}`;
 
           const id = xmlId;
 
@@ -1026,7 +1032,7 @@ function parseMarginalia(doc) {
 
           state.marginNotes[id] = item;
 
-          pushMarginalia(anchorTarget, item);
+          if (anchorTarget) pushMarginalia(anchorTarget, item);
         });
     });
 
@@ -1446,6 +1452,266 @@ function renderFacsimileView() {
   updateFacsimile();
 }
 
+/* ========================================================================== 
+   Reconstructed manuscript page
+   ========================================================================== */
+function normalizeLayoutPlace(place = '') {
+  const value = String(place).trim().toLowerCase().replace(/[\s-]+/g, '_');
+  const aliases = {
+    upper_margin: 'superior_margin', top_margin: 'superior_margin',
+    lower_margin: 'inferior_margin', bottom_margin: 'inferior_margin',
+    inner_margin: 'internal_margin', outer_margin: 'external_margin',
+    intercolumnar: 'intercolumn', intercolumn_margin: 'intercolumn'
+  };
+  return aliases[value] || value;
+}
+
+function collectTextForFolio(folioN) {
+  const columns = { A: [], B: [] };
+  let folio = '', column = 'A', cantoN = 0;
+
+  const folioFromFacs = node => {
+    const facs = node.getAttribute('facs') || '';
+    const match = facs.match(/#?c(\d+[rv])(?:_|$)/i);
+    return match ? match[1].toLowerCase() : '';
+  };
+
+  const walk = node => {
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    if (node.namespaceURI === TEI_NS && node.localName === 'pb') {
+      folio = node.getAttribute('n') || folio;
+      column = 'A';
+      return;
+    }
+    if (node.namespaceURI === TEI_NS && node.localName === 'cb') {
+      column = normalizeCommentaryColumn(node.getAttribute('n'));
+      return;
+    }
+    if (node.namespaceURI === TEI_NS && node.localName === 'div' && node.getAttribute('type') === 'canto') {
+      cantoN = parseInt(node.getAttribute('n'), 10) || cantoN;
+    }
+    if (node.namespaceURI === TEI_NS && node.localName === 'head') {
+      const text = node.textContent.replace(/\s+/g, ' ').trim();
+      // Il TEI di riferimento non usa @type per distinguere questi <head>:
+      // le rubriche sono gli <head> interni ai div type="canto", mentre
+      // l'unico incipit generale è identificato dal testo attestato nel ms.
+      const isGeneralIncipit = text === 'Incipit Liber dantis alighieri';
+      const isCantoTitle = cantoN > 0 && !isGeneralIncipit;
+
+      if (isGeneralIncipit) {
+        const incipitFolio = folioFromFacs(node) || folio;
+        if (incipitFolio === folioN) {
+          columns.A.push({ kind: 'general-incipit', cantoN: 0, html: renderLineContent(node).trim() });
+        }
+      } else if (isCantoTitle && folio === folioN) {
+        columns[column].push({ kind: 'canto-title', cantoN, html: renderLineContent(node).trim() });
+      }
+      return;
+    }
+    if (node.namespaceURI === TEI_NS && node.localName === 'l' && folio === folioN) {
+      const id = getAttr(node, 'xml:id') || '';
+      columns[column].push({ kind: 'verse', id, cantoN, number: extractLineNum(id), html: renderLineContent(node) });
+      return;
+    }
+    node.childNodes.forEach(walk);
+  };
+
+  const body = state.commediaDoc?.getElementsByTagNameNS(TEI_NS, 'body')[0];
+  if (body) walk(body);
+  return columns;
+}
+
+function collectCommentaryForFolio(folioN) {
+  const columns = { A: [], B: [] };
+  Object.values(state.commentary).flat().forEach(entry => {
+    splitCommentaryEntryByLocation(entry)
+      .filter(segment => segment.folio === folioN)
+      .forEach(segment => columns[normalizeCommentaryColumn(segment.column)].push(segment));
+  });
+  return columns;
+}
+
+/*
+ * A commentary entry may cross a page or column boundary.  bodyHtml retains
+ * the TEI milestones as marker spans; split at those markers so that the
+ * reconstructed page receives only the portion physically written there.
+ * A new page always starts in column A unless a following <cb> says otherwise.
+ */
+function splitCommentaryEntryByLocation(entry) {
+  let folio = entry.folio || '';
+  let column = normalizeCommentaryColumn(entry.column || 'A');
+  const segments = [];
+  let current = { ...entry, folio, column, bodyHtml: '', showLemma: true };
+
+  const flush = () => {
+    const plainText = stripHTML(current.bodyHtml).replace(/\s+/g, ' ').trim();
+    if (plainText || /<(?:img|br|hr)\b/i.test(current.bodyHtml)) segments.push(current);
+  };
+
+  const markerPattern = /<span\s+class="commentary-(folio|column)-marker"([^>]*)>[\s\S]*?<\/span>/gi;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = markerPattern.exec(entry.bodyHtml || ''))) {
+    current.bodyHtml += (entry.bodyHtml || '').slice(lastIndex, match.index);
+    flush();
+
+    const attrs = match[2] || '';
+    const folioMatch = attrs.match(/data-folio="([^"]*)"/i);
+    const columnMatch = attrs.match(/data-column="([^"]*)"/i);
+
+    if (match[1].toLowerCase() === 'folio') {
+      folio = folioMatch?.[1] || folio;
+      column = 'A';
+    } else {
+      column = normalizeCommentaryColumn(columnMatch?.[1] || 'A');
+    }
+
+    current = { ...entry, folio, column, bodyHtml: '', showLemma: segments.length === 0 };
+    lastIndex = markerPattern.lastIndex;
+  }
+
+  current.bodyHtml += (entry.bodyHtml || '').slice(lastIndex);
+  flush();
+  return segments;
+}
+
+function collectMarginsForFolio(folioN) {
+  const groups = {
+    superior_margin: [], inferior_margin: [], internal_margin: [],
+    external_margin: [], intercolumn: [], unspecified: []
+  };
+  Object.values(state.marginNotes).forEach(item => {
+    if (item.folio !== folioN) return;
+    const place = normalizeLayoutPlace(item.place);
+    (groups[place] || groups.unspecified).push(item);
+  });
+  return groups;
+}
+
+function renderLayoutTextColumn(items) {
+  if (!items.length) return '';
+  return `<section class="layout-text-block" aria-label="Testo della Commedia">${items.map(item => {
+    if (item.kind === 'general-incipit') return `<div class="layout-general-incipit">${item.html}</div>`;
+    if (item.kind === 'canto-title') return `<div class="layout-canto-title">${item.html}</div>`;
+    return `<div class="layout-verse" data-line-id="${escapeAttr(item.id)}">
+      <span>${escapeHTML(item.number)}</span><span>${item.html}</span>
+    </div>`;
+  }).join('')}</section>`;
+}
+
+function groupLayoutTextByCanto(lines) {
+  const groups = [];
+  lines.forEach(line => {
+    const cantoN = Number(line.cantoN) || 0;
+    let group = groups[groups.length - 1];
+    if (!group || group.cantoN !== cantoN) {
+      group = { type: 'text', cantoN, lines: [] };
+      groups.push(group);
+    }
+    group.lines.push(line);
+  });
+  return groups;
+}
+
+/*
+ * Text and commentary live in separate TEI documents, so DOM order cannot
+ * establish their mutual position on a mixed column.  The canto number does:
+ * the text of a canto precedes its commentary, while that commentary precedes
+ * the text of the following canto.  This also handles both physical joins:
+ *   end of canto -> beginning of its commentary
+ *   end of commentary -> beginning of the next canto
+ */
+function renderLayoutColumn(lines, entries) {
+  const blocks = [
+    ...groupLayoutTextByCanto(lines),
+    ...entries.map((entry, sourceIndex) => ({
+      type: 'commentary',
+      cantoN: Number(entry.cantoN) || 0,
+      entry,
+      sourceIndex
+    }))
+  ];
+
+  blocks.sort((a, b) => {
+    if (a.cantoN !== b.cantoN) return a.cantoN - b.cantoN;
+    if (a.type !== b.type) return a.type === 'text' ? -1 : 1;
+    return (a.sourceIndex || 0) - (b.sourceIndex || 0);
+  });
+
+  if (!blocks.length) {
+    return '<span class="layout-empty">Colonna priva di contenuto codificato</span>';
+  }
+
+  return blocks.map(block => block.type === 'text'
+    ? renderLayoutTextColumn(block.lines)
+    : renderLayoutCommentary([block.entry])
+  ).join('');
+}
+
+function renderLayoutCommentary(entries) {
+  if (!entries.length) return '';
+  return `<section class="layout-commentary-block" aria-label="Commento">${entries.map(entry => `
+    <article class="layout-commentary-entry" data-line-ref="${escapeAttr(entry.lineRef || '')}">
+      ${entry.showLemma !== false && entry.lemmaHtml ? `<strong>${entry.lemmaHtml}</strong>` : ''}
+      <div>${entry.bodyHtml}</div>
+    </article>`).join('')}</section>`;
+}
+
+function renderLayoutMargin(items, label) {
+  if (!items.length) return `<span class="layout-empty">${escapeHTML(label)}</span>`;
+  return items.map(item => `
+    <article class="layout-margin-note ${item.type === 'non_verbal' ? 'nonverbal' : ''}" tabindex="0" role="button"
+      data-margin-id="${escapeAttr(item.id)}" data-margin-place="${escapeAttr(item.place || '')}"
+      data-margin-content="${escapeAttr(item.content || '')}">
+      ${item.type === 'non_verbal' ? '⁋' : item.contentHtml}
+    </article>`).join('');
+}
+
+function renderManuscriptPage() {
+  if (!els.manuscriptPage) return;
+  const folioN = FOLIO_ORDER[state.currentFolioIdx] || FOLIO_ORDER[0];
+  const text = collectTextForFolio(folioN);
+  const commentary = collectCommentaryForFolio(folioN);
+  const margins = collectMarginsForFolio(folioN);
+  const side = folioN.endsWith('v') ? 'verso' : 'recto';
+  const column = key => renderLayoutColumn(text[key], commentary[key]);
+
+  els.layoutFolioLabel.textContent = `c. ${folioN}`;
+  els.manuscriptPage.className = `manuscript-page ${side}`;
+  els.manuscriptPage.innerHTML = `
+    <aside class="layout-margin layout-superior"><span class="layout-region-label">Margine superiore</span>${renderLayoutMargin(margins.superior_margin, 'Nessuna annotazione')}</aside>
+    <aside class="layout-margin layout-internal"><span class="layout-region-label">Margine interno</span>${renderLayoutMargin(margins.internal_margin, 'Nessuna annotazione')}</aside>
+    <div class="layout-column layout-column-a"><span class="layout-region-label">Col. A</span>${column('A')}</div>
+    <aside class="layout-margin layout-intercolumn"><span class="layout-region-label">Intercolumnio</span>${renderLayoutMargin(margins.intercolumn, '')}</aside>
+    <div class="layout-column layout-column-b"><span class="layout-region-label">Col. B</span>${column('B')}</div>
+    <aside class="layout-margin layout-external"><span class="layout-region-label">Margine esterno</span>${renderLayoutMargin(margins.external_margin, 'Nessuna annotazione')}</aside>
+    <aside class="layout-margin layout-inferior"><span class="layout-region-label">Margine inferiore</span>${renderLayoutMargin(margins.inferior_margin, 'Nessuna annotazione')}${margins.unspecified.length ? `<div class="layout-unspecified"><b>Posizione non specificata</b>${renderLayoutMargin(margins.unspecified, '')}</div>` : ''}</aside>`;
+
+  els.manuscriptPage.querySelectorAll('.layout-margin-note').forEach(note => {
+    const open = e => {
+      e.stopPropagation();
+      showMarginNotePopup(e, note);
+    };
+    note.addEventListener('click', open);
+    note.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open(e);
+      }
+    });
+  });
+  bindNoteIndicators(els.manuscriptPage);
+  els.manuscriptPage.querySelectorAll('.layout-verse').forEach(line => {
+    line.onclick = () => {
+      els.manuscriptPage.querySelectorAll('.layout-verse.active').forEach(el => el.classList.remove('active'));
+      line.classList.add('active');
+    };
+  });
+  $('#prevLayoutFolio')?.toggleAttribute('disabled', state.currentFolioIdx <= 0);
+  $('#nextLayoutFolio')?.toggleAttribute('disabled', state.currentFolioIdx >= FOLIO_ORDER.length - 1);
+}
+
 function renderTextForCanto(canto) {
   els.textPanelTitle.textContent = `Testo poetico — Canto ${toRoman(canto.n)}`;
 
@@ -1516,6 +1782,13 @@ function goToCanto(cantoN) {
   if (state.currentView === 'facsimile') renderFacsimileView();
   else if (state.currentView === 'commento') renderCommentoView();
   else if (state.currentView === 'confronto') renderConfrontoView();
+  else if (state.currentView === 'carta') {
+    const canto = state.cantos.find(c => c.n === cantoN);
+    const firstFolio = canto?.elements.find(el => el.type === 'pb')?.n;
+    const idx = FOLIO_ORDER.indexOf(firstFolio);
+    if (idx >= 0) state.currentFolioIdx = idx;
+    renderManuscriptPage();
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2015,6 +2288,7 @@ function setFolioFromLine(lineId) {
 function setCurrentFolioIdx(idx) {
   state.currentFolioIdx = Math.max(0, Math.min(idx, FOLIO_ORDER.length - 1));
   updateFacsimile();
+  if (state.currentView === 'carta') renderManuscriptPage();
 }
 
 function syncTextWithFolio(folioN) {
@@ -2428,6 +2702,7 @@ function setCurrentView(view) {
     home: els.viewHome,
     facsimile: els.viewFacsimile,
     commento: els.viewCommento,
+    carta: els.viewCarta,
     confronto: els.viewConfronto
   };
 
@@ -2444,6 +2719,8 @@ function setCurrentView(view) {
     updateCompletePanelVisibility();
   } else if (view === 'commento') {
     renderCommentoView();
+  } else if (view === 'carta') {
+    renderManuscriptPage();
   } else if (view === 'confronto') {
     renderConfrontoView();
   }
@@ -3084,7 +3361,11 @@ function bindEvents() {
     if (state.currentView === 'facsimile') renderFacsimileView();
     else if (state.currentView === 'commento') renderCommentoView();
     else if (state.currentView === 'confronto') renderConfrontoView();
+    else if (state.currentView === 'carta') goToCanto(state.currentCanto);
   };
+
+  $('#prevLayoutFolio')?.addEventListener('click', () => setCurrentFolioIdx(state.currentFolioIdx - 1));
+  $('#nextLayoutFolio')?.addEventListener('click', () => setCurrentFolioIdx(state.currentFolioIdx + 1));
 
   $('#prevFolio').onclick = () => setCurrentFolioIdx(state.currentFolioIdx - 1);
   $('#nextFolio').onclick = () => setCurrentFolioIdx(state.currentFolioIdx + 1);
@@ -3266,6 +3547,7 @@ async function init() {
     renderCommentoView();
     renderFacsimileView();
     renderConfrontoView();
+    renderManuscriptPage();
     updateCompletePanelVisibility();
     setCurrentView('home');
 

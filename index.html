@@ -57,6 +57,10 @@
           <i data-lucide="message-square-text" style="width:16px;height:16px"></i>
           Commento
         </button>
+        <button class="view-tab" data-view="carta">
+          <i data-lucide="book-open" style="width:16px;height:16px"></i>
+          Mise en page ricostruita
+        </button>
         <button class="view-tab" data-view="confronto">
           <i data-lucide="git-compare" style="width:16px;height:16px"></i>
           Confronto Harley/Petrocchi
@@ -108,6 +112,12 @@
         <span class="home-card-icon"><i data-lucide="message-square-text"></i></span>
         <span class="home-card-title">Commento</span>
         <span class="home-card-text">Lettura distesa del commento affiancato al testo del manoscritto o dell'edizione Petrocchi </span>
+      </button>
+
+      <button class="home-view-card manuscript-card" type="button" data-open-view="carta">
+        <span class="home-card-icon"><i data-lucide="book-open"></i></span>
+        <span class="home-card-title">Carta ricostruita</span>
+        <span class="home-card-text">Ricostruzione della disposizione materiale: doppia colonna, commento e annotazioni nei margini codificati.</span>
       </button>
 
       <button class="home-view-card" type="button" data-open-view="confronto">
@@ -192,6 +202,22 @@
       </div>
       <div id="commentoContent" class="commento-content"></div>
       </div>
+    </div>
+  </main>
+
+  <!-- Vista: ricostruzione della mise en page della carta -->
+  <main id="viewCarta" class="view view-carta">
+    <div class="manuscript-viewer">
+      <div class="manuscript-toolbar">
+        <button id="prevLayoutFolio" class="folio-btn" type="button" aria-label="Carta precedente"><i data-lucide="chevron-left"></i></button>
+        <div>
+          <span class="manuscript-kicker">Ricostruzione della mise en page</span>
+          <h2 id="layoutFolioLabel">c. 2r</h2>
+        </div>
+        <button id="nextLayoutFolio" class="folio-btn" type="button" aria-label="Carta successiva"><i data-lucide="chevron-right"></i></button>
+      </div>
+      <p class="manuscript-disclaimer">Visualizzazione interpretativa generata dai marcatori TEI; non sostituisce il facsimile.</p>
+      <div id="manuscriptPage" class="manuscript-page" aria-live="polite"></div>
     </div>
   </main>
 
